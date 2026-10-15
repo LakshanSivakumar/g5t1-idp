@@ -1,105 +1,70 @@
-/**
- * Screen: Tab 2 — Insights Module
- * Conforming to Apple iOS HIG Data Visualizations and Inset Grouped Tables
- */
+/** Screen: Insights tab (Insights · Print.png) + shared pie chart builder */
+(function () {
+  var fmt = App.fmt.money;
 
-window.App = window.App || {};
+  /** Pie chart from [{pct, color}] — returns SVG markup. */
+  App.pie = function (segs, cls) {
+    var r = 50, cx = 60, cy = 60, a0 = -Math.PI / 2, total = segs.reduce(function (s, x) { return s + x.pct; }, 0);
+    var out = '';
+    segs.forEach(function (s) {
+      var a1 = a0 + (s.pct / total) * Math.PI * 2;
+      var x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0), x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      out += '<path d="M' + cx + ' ' + cy + ' L' + x0.toFixed(2) + ' ' + y0.toFixed(2) + ' A' + r + ' ' + r + ' 0 ' + (s.pct / total > 0.5 ? 1 : 0) + ' 1 ' + x1.toFixed(2) + ' ' + y1.toFixed(2) + 'Z" fill="' + s.color + '" stroke="var(--sn-bg-card)" stroke-width="2"/>';
+      a0 = a1;
+    });
+    return '<svg class="pie ' + (cls || '') + '" viewBox="0 0 120 120" role="img" aria-label="Spending by category">' + out + '</svg>';
+  };
 
-window.App.registerScreen('insights', {
-  id: 'screen-insights',
-  title: 'Insights — Spending Breakdown',
+  /** Week aggregates derived from the expense ledger. */
+  App.weekStats = function () {
+    var all = App.WEEK_EXPENSES, small = all.filter(function (e) { return e.amount < 5; });
+    var sum = function (a) { return a.reduce(function (s, e) { return s + e.amount; }, 0); };
+    return { all: all, small: small, total: sum(all), smallTotal: sum(small), sum: sum };
+  };
 
-  render() {
-    return `
-      <section class="screen app-tab-screen" id="screen-insights">
-        <!-- iOS Navigation Bar -->
-        <header class="ios-nav-bar">
-          <span class="ios-nav-title">Insights</span>
-          <span style="font-size: 13px; font-weight: 600; color: var(--ios-gray-1);">SEP 2026</span>
-        </header>
+  App.registerScreen('insights', {
+    tab: 'insights',
+    title: 'Insights',
 
-        <div class="screen-scrollable-body" style="padding-top: 0;">
-          <h1 class="ios-large-title">Insights</h1>
+    render() {
+      var cats = App.CATEGORIES;
+      var w = App.weekStats();
+      var pct = Math.round(w.smallTotal / w.total * 100);
+      var timeline = [38, 52, 30, 60, 44, 58, 70].map(function (v, i, a) {
+        return '<div class="bar ' + (i === a.length - 1 ? 'ink' : '') + '" style="height:' + v + '%"></div>';
+      }).join('');
+      return `
+        <div class="screen-body">
+          <div class="ins-top"><span class="brand">Savenow</span><span class="pill">Sep 2026</span></div>
+          ${App.ui.head('Insights', 'Learn more about how you spend')}
 
-          <!-- iOS Segmented Control (Time Range) -->
-          <div class="ios-segmented-control" style="margin-bottom: 16px;">
-            <button class="ios-segment-btn">Week</button>
-            <button class="ios-segment-btn active">Month</button>
-            <button class="ios-segment-btn">Year</button>
-          </div>
-
-          <!-- Card 1: Categories Donut (iOS Inset Group) -->
-          <div class="ios-section-header">CATEGORY SPENDING</div>
-          <div class="ios-inset-group">
-            <div style="padding: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                <div>
-                  <div style="font-size: 32px; font-weight: 800; font-family: var(--font-mono); color: var(--sn-text-primary);">$584</div>
-                  <div style="font-size: 13px; color: var(--sn-text-secondary);">spent last month · August</div>
-                </div>
-                <!-- 5-Category Donut Chart -->
-                <div class="donut-chart-wrap">
-                  <div class="insights-donut">
-                    <div class="insights-donut-hole">
-                      <span>$584</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="insights-cat-tags">
-                <span class="cat-tag-pill food" style="border-radius: var(--ios-radius-capsule);">Food 34%</span>
-                <span class="cat-tag-pill transport" style="border-radius: var(--ios-radius-capsule);">Transport 22%</span>
-                <span class="cat-tag-pill shopping" style="border-radius: var(--ios-radius-capsule);">Shop 20%</span>
-              </div>
+          <button class="card ins-card" data-goto="categories">
+            <div class="card-head"><span class="eyebrow">${App.icon('chart.pie.fill', 14)} Categories</span><span class="go">View all ${App.icon('chevron.right', 7)}</span></div>
+            <div class="ins-split">
+              <div><div class="ins-big">$584</div><div class="ins-cap">spent last month · August</div>
+                <div class="legend" style="margin-top:10px"><div><span class="dot" style="background:${cats[0].color}"></span><b>Food</b> 34%</div><div><span class="dot" style="background:${cats[1].color}"></span><b>Transport</b> 22%</div></div></div>
+              ${App.pie(cats.map(function (c) { return { pct: c.pct, color: c.color }; }))}
             </div>
-          </div>
+          </button>
 
-          <!-- Card 2: Timeline Bar Chart (iOS Inset Group) -->
-          <div class="ios-section-header">WEEKLY PACE &amp; TIMELINE</div>
-          <div class="ios-inset-group">
-            <div style="padding: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
-                <div>
-                  <div style="font-size: 28px; font-weight: 800; color: var(--sn-emerald-600); font-family: var(--font-mono);">&minus;18%</div>
-                  <div style="font-size: 13px; color: var(--sn-text-secondary);">less than last week</div>
-                </div>
+          <button class="card ins-card" data-goto="home" data-param="graph">
+            <div class="card-head"><span class="eyebrow">${App.icon('chart.pie.fill', 14)} Timeline</span><span class="go" style="color:var(--sn-text-secondary)">7 days</span></div>
+            <div class="ins-split"><div><div class="ins-big delta">−18%</div><div class="ins-cap">less than last week</div></div><div class="bars mini-bars" aria-hidden="true">${timeline}</div></div>
+          </button>
 
-                <div class="insights-bars-container">
-                  <div class="day-bar-col"><div class="day-bar" style="height: 28px;"></div><span>M</span></div>
-                  <div class="day-bar-col"><div class="day-bar" style="height: 38px;"></div><span>T</span></div>
-                  <div class="day-bar-col"><div class="day-bar" style="height: 22px;"></div><span>W</span></div>
-                  <div class="day-bar-col"><div class="day-bar highlight" style="height: 52px; background: var(--sn-emerald-500);"></div><span>T</span></div>
-                  <div class="day-bar-col"><div class="day-bar" style="height: 32px;"></div><span>F</span></div>
-                  <div class="day-bar-col"><div class="day-bar" style="height: 44px;"></div><span>S</span></div>
-                  <div class="day-bar-col"><div class="day-bar" style="height: 36px;"></div><span>S</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button class="card ins-card" data-goto="small-purchases">
+            <div class="card-head"><span class="eyebrow">${App.icon('bag.fill', 14)} Small purchases</span><span class="go">Details ${App.icon('chevron.right', 7)}</span></div>
+            <div class="ins-big">${fmt(w.smallTotal)}</div>
+            <div class="ins-cap">${w.small.length} purchases under $5 this week</div>
+            <div class="prog-row"><div class="progress" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><b>${pct}%</b></div>
+          </button>
 
-          <!-- Card 3: Small Purchases Tracker (iOS Inset Group) -->
-          <div class="ios-section-header">MICRO-SPENDING BEHAVIOR</div>
-          <div class="ios-inset-group">
-            <div style="padding: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <div>
-                  <div style="font-size: 22px; font-weight: 800; font-family: var(--font-mono);">$64.10</div>
-                  <div style="font-size: 13px; color: var(--sn-text-secondary);">27 purchases under $5 this week</div>
-                </div>
-                <div style="font-size: 17px; font-weight: 700; color: var(--ios-gray-1);">50%</div>
-              </div>
-              <div class="insights-bar-track" style="height: 8px; border-radius: 4px; background: var(--ios-fill);">
-                <div class="insights-bar-fill" style="width: 50%; height: 100%; border-radius: 4px; background: var(--sn-emerald-500);"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    `;
-  },
-
-  init() {
-    // Insights events if any
-  }
-});
+          <button class="card ins-card" data-goto="goal-tradeoff">
+            <div class="card-head"><span class="eyebrow">${App.icon('lightbulb', 14)} Goal trade-off</span><span class="go">Details ${App.icon('chevron.right', 7)}</span></div>
+            <div class="ins-big" style="color:var(--sn-indigo-500)">4.5%</div>
+            <div class="ins-cap">$90.00 of your $2,000 ${App.escapeHTML(App.state.goal.purpose)} goal · August</div>
+          </button>
+        </div>`;
+    }
+  });
+})();

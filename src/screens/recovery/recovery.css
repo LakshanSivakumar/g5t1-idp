@@ -1,0 +1,10 @@
+.rec-card { background: var(--sn-indigo-50); border-color: var(--sn-indigo-100); }
+.rec-card h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+.rec-card .sub { font-size: 14px; color: var(--sn-text-secondary); margin: 6px 0 12px; }
+.rec-card .body { font-size: 18px; line-height: 1.35; }
+.rec-card .guide { font-size: 15px; font-weight: 700; margin: 14px 0 16px; }
+.rec-card .btn-primary { background: var(--sn-indigo-500); color: #fff; }
+.rec-eyebrow { color: var(--sn-indigo-600); display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+[data-theme="dark"] .rec-eyebrow { color: #A5B4FC; }
+.rec-big { font-size: 34px; font-weight: 800; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.how-title { font-size: 20px; font-weight: 700; margin: 28px 4px 8px; }

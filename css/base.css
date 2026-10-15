@@ -1,6 +1,11 @@
 /**
- * Savenow Base Stylesheet — Apple iOS Human Interface Guidelines (HIG)
- * Edge-to-edge mobile viewport, native iOS typography, safe-area layout & transitions
+ * Savenow Base — reset, standalone-PWA shell, safe areas, typography, screen stack.
+ *
+ * Layout contract:
+ *   #app            phone-width column (max 430px), 100dvh, never scrolls itself
+ *   .statusbar-sim  decorative 9:41 bar, only when simulating a device in desktop Chrome
+ *   .screen         absolutely stacked pages; only .screen-body scrolls
+ *   .tabbar         fixed to the bottom, padded by the bottom safe area
  */
 
 *, *::before, *::after {
@@ -10,211 +15,216 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body, button, input, select, textarea, optgroup {
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+  background: var(--sn-bg-canvas);
+  color-scheme: light;
+}
+
+html[data-theme="dark"] { color-scheme: dark; }
+
+body {
+  height: 100%;
   font-family: var(--font-sans);
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  background-color: var(--ios-grouped-bg);
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
   color: var(--sn-text-primary);
-  line-height: 1.4;
+  background: var(--sn-bg-canvas);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  user-select: none;
+  overscroll-behavior: none;
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
+  user-select: none;
 }
 
-#app-viewport-wrapper {
-  width: 100%;
-  height: 100dvh;
-  display: flex;
-  background-color: var(--ios-grouped-bg);
+button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
+button { background: none; border: none; cursor: pointer; touch-action: manipulation; }
+input, select, textarea { -webkit-user-select: text; user-select: text; }
+/* 16px minimum stops iOS Safari zooming into focused fields */
+input, select, textarea { font-size: 16px; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; flex-shrink: 0; }
+.num { font-variant-numeric: tabular-nums; }
+
+:focus-visible { outline: 2px solid var(--sn-emerald-500); outline-offset: 2px; }
+
+/* ---------- App shell ---------- */
+#app {
   position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
   overflow: hidden;
-  justify-content: center;
+  background: var(--sn-bg-canvas);
+  isolation: isolate;
 }
 
-.mobile-app-root {
-  width: 100%;
-  height: 100dvh;
-  background-color: var(--ios-grouped-bg);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+/* On larger windows, present the app as a phone-width column */
+@media (min-width: 520px) {
+  html { background: var(--sn-obsidian-950); }
+  html[data-theme="dark"] { background: #05070c; }
+  #app { box-shadow: 0 0 0 1px var(--sn-border-hairline), 0 24px 80px rgba(0, 0, 0, 0.35); }
 }
-/* Discrete Floating Theme Switcher */
-.app-micro-header {
+
+/* Simulated device chrome (desktop Chrome emulation only) */
+.statusbar-sim {
+  display: none;
   position: absolute;
-  top: 10px;
-  right: 14px;
-  z-index: 95;
-  pointer-events: auto;
-}
-
-.theme-micro-toggle {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: var(--ios-blur-material);
-  -webkit-backdrop-filter: var(--ios-blur-material);
-  border: 0.5px solid var(--ios-separator);
-  color: var(--sn-text-primary);
-  font-size: 11.5px;
+  top: 0; left: 0; right: 0;
+  height: var(--sat-sim, 47px);
+  z-index: 120;
+  padding: 14px 30px 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-size: 15px;
   font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--ios-radius-capsule);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.16s ease;
+  pointer-events: none;
+  background: var(--sn-material);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
 }
+.on-dark .statusbar-sim { color: #fff; background: transparent; }
+.statusbar-sim .sb-right { display: flex; gap: 6px; align-items: center; }
+html.sim-device .statusbar-sim { display: flex; }
 
-[data-theme="dark"] .theme-micro-toggle {
-  background: rgba(44, 44, 46, 0.85);
+.home-indicator-sim {
+  display: none;
+  position: absolute;
+  left: 50%; bottom: 8px;
+  width: 134px; height: 5px;
+  margin-left: -67px;
+  border-radius: 3px;
+  background: var(--sn-text-primary);
+  opacity: 0.85;
+  z-index: 130;
+  pointer-events: none;
 }
+html.sim-device .home-indicator-sim { display: block; }
 
-.theme-micro-toggle:active {
-  transform: scale(0.94);
-}
-
-/* Viewport & Screen Transitions */
-.screens-viewport {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+/* ---------- Screen stack ---------- */
+#screens {
+  position: absolute;
+  inset: 0;
 }
 
 .screen {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  opacity: 0;
+  background: var(--sn-bg-canvas);
+  visibility: hidden;
   pointer-events: none;
-  transform: translateX(100%);
-  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  background-color: var(--ios-grouped-bg);
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.26s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.32s;
 }
-
 .screen.active {
-  opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-  transform: translateX(0);
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
 }
+.screen.leaving { transform: translateX(-24px); }
+.screen.instant { transition: none; }
 
-.screen.sliding-back {
-  opacity: 0.7;
-  transform: translateX(-20%);
-}
-
-.screen-scrollable-body {
+.screen-body {
   flex: 1;
-  overflow-y: auto;
+  min-height: 0;
   overflow-x: hidden;
-  padding: 12px 16px 90px;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding: calc(var(--sat) + 8px) 16px 28px;
   display: flex;
   flex-direction: column;
 }
-
-.app-tab-screen {
-  padding-bottom: 90px;
+/* Never let flex squash cards/lists; the body scrolls instead */
+.screen-body > * { flex-shrink: 0; }
+/* Screens that show the tab bar leave room for it */
+.screen.has-tabbar .screen-body {
+  padding-bottom: calc(var(--tab-h) + var(--sab) + 24px);
 }
-
-/* ==============================================================
-   iOS Navigation Bar (UINavigationBar)
-   ============================================================== */
-.ios-nav-bar {
-  height: var(--ios-nav-height);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
+/* Pinned action row (Back / Continue) */
+.screen-footer {
   flex-shrink: 0;
-  background: transparent;
-  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px calc(var(--sab) + 16px);
 }
 
-.ios-nav-back {
+/* ---------- Typography ---------- */
+.eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: var(--sn-emerald-600);
-  background: none;
-  border: none;
-  font-family: var(--font-sans);
-  font-size: 17px;
-  font-weight: 400;
-  cursor: pointer;
-  padding: 4px 0;
-  letter-spacing: -0.4px;
-}
-
-.ios-nav-back:active {
-  opacity: 0.4;
-}
-
-.ios-nav-title {
-  font-size: 17px;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: -0.4px;
-  color: var(--sn-text-primary);
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sn-text-muted);
 }
-
-.ios-large-title {
-  font-size: 34px;
-  font-weight: 800;
-  letter-spacing: -0.4px;
-  color: var(--sn-text-primary);
-  padding: 4px 16px 12px;
-  line-height: 1.15;
+.large-title { font-size: 34px; font-weight: 700; letter-spacing: -0.6px; line-height: 1.1; }
+.page-sub { font-size: 15px; color: var(--sn-text-secondary); margin-top: 4px; }
+.section-label {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--sn-text-muted);
+  margin: 24px 4px 8px;
 }
+.footnote { font-size: 13px; line-height: 1.4; color: var(--sn-text-secondary); margin: 12px 4px 0; }
+.muted { color: var(--sn-text-muted); }
+.accent { color: var(--sn-accent); }
 
-.ios-large-subtitle {
-  font-size: 14px;
-  color: var(--sn-text-secondary);
-  padding: 0 16px 16px;
-  letter-spacing: -0.2px;
-}
-
-/* ==============================================================
-   iOS Home Indicator Bar
-   ============================================================== */
-.ios-home-indicator-wrap {
-  width: 100%;
-  height: 24px;
+/* ---------- Nav bar (back link) ---------- */
+.nav-row {
+  min-height: var(--nav-h);
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin: 0 -8px 4px;
+}
+.nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  padding: 0 8px;
+  font-size: 17px;
+  color: var(--sn-accent);
+}
+.nav-back:active { opacity: 0.4; }
+
+.screen-head { margin-bottom: 20px; }
+.screen-head.centered { text-align: center; margin-top: 8px; }
+
+/* ---------- Toast ---------- */
+.toast {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  left: 50%;
+  top: calc(var(--sat) + 8px);
+  transform: translate(-50%, -140%);
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--sn-obsidian-900);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 300;
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
   pointer-events: none;
-  z-index: 70;
+  box-shadow: var(--sn-shadow-lg);
 }
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+[data-theme="dark"] .toast { background: var(--sn-obsidian-800); border: 1px solid var(--sn-border-strong); }
 
-.ios-home-indicator {
-  width: 134px;
-  height: 5px;
-  border-radius: 100px;
-  background: #000000;
-  opacity: 0.85;
-}
-
-[data-theme="dark"] .ios-home-indicator {
-  background: #FFFFFF;
+@media (prefers-reduced-motion: reduce) {
+  .screen, .toast { transition: none; }
 }

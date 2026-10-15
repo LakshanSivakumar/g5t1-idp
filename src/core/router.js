@@ -1,133 +1,135 @@
 /**
- * Savenow Core — Router & Screen Manager
- * Manages screen registration, mounts, transitions, and Maze hash-based URL paths.
+ * Savenow Core — Router & screen manager
+ *
+ * A screen module is registered with App.registerScreen(name, mod):
+ *   mod.render()   -> inner HTML (usually a .screen-body and optional .screen-footer)
+ *   mod.tab        -> 'home' | 'insights' | 'social' | 'settings' to show the tab bar
+ *   mod.init()     -> once, after mount
+ *   mod.onEnter(p) -> every time the screen becomes visible (p = route param)
+ *
+ * Declarative navigation (works anywhere in the DOM):
+ *   data-goto="name"  [data-param="x"]   push a screen
+ *   data-back[="fallback"]               pop, or go to fallback if there is no history
+ *   data-tab="name"                      switch tab root (clears history)
+ * Hash routes: #name or #name/param (used by Maze missions and for testing).
  */
 
 window.App = window.App || {};
-
 window.App.screens = {};
-
-window.App.registerScreen = function(screenName, screenModule) {
-  window.App.screens[screenName] = screenModule;
-};
+window.App.registerScreen = function (name, mod) { window.App.screens[name] = mod; };
 
 window.App.router = {
-  mainTabs: ['screen-home', 'screen-insights', 'screen-social', 'screen-settings'],
+  stack: [],
+  current: null,
+  param: null,
 
   init() {
-    this.mountAllScreens();
-    this.bindGlobalNavigation();
-    this.handleInitialRoute();
-
-    window.addEventListener('hashchange', () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash) {
-        const screenId = 'screen-' + hash;
-        if (document.getElementById(screenId) && screenId !== window.App.state.currentScreen) {
-          this.navigateTo(screenId, 'none', false);
-        }
-      }
+    var host = document.getElementById('screens');
+    var self = this;
+    Object.keys(App.screens).forEach(function (name) {
+      var mod = App.screens[name];
+      var el = document.createElement('section');
+      el.className = 'screen' + (mod.tab ? ' has-tabbar' : '');
+      el.id = 'screen-' + name;
+      el.setAttribute('aria-label', mod.title || name);
+      el.innerHTML = mod.render();
+      host.appendChild(el);
     });
-  },
-
-  mountAllScreens() {
-    const container = document.getElementById('screens-viewport');
-    if (!container) return;
-
-    // Render HTML for all registered screens
-    Object.keys(window.App.screens).forEach(key => {
-      const screen = window.App.screens[key];
-      if (typeof screen.render === 'function') {
-        const screenHtml = screen.render();
-        container.insertAdjacentHTML('beforeend', screenHtml);
-      }
+    Object.keys(App.screens).forEach(function (name) {
+      if (typeof App.screens[name].init === 'function') App.screens[name].init();
     });
 
-    // Run init lifecycle for each screen
-    Object.keys(window.App.screens).forEach(key => {
-      const screen = window.App.screens[key];
-      if (typeof screen.init === 'function') {
-        screen.init();
-      }
-    });
-  },
-
-  bindGlobalNavigation() {
-    document.addEventListener('click', (e) => {
-      const gotoBtn = e.target.closest('[data-goto]');
-      if (gotoBtn) {
+    document.addEventListener('click', function (e) {
+      var back = e.target.closest('[data-back]');
+      if (back) { e.preventDefault(); self.back(back.getAttribute('data-back')); return; }
+      var tab = e.target.closest('[data-tab]');
+      if (tab) { e.preventDefault(); self.go(tab.getAttribute('data-tab'), { root: true }); return; }
+      var go = e.target.closest('[data-goto]');
+      if (go) {
         e.preventDefault();
-        const targetScreen = gotoBtn.getAttribute('data-goto');
-        this.navigateTo(targetScreen);
+        self.go(go.getAttribute('data-goto').replace(/^screen-/, ''), { param: go.getAttribute('data-param') });
       }
     });
+
+    window.addEventListener('hashchange', function () {
+      var r = self.parseHash();
+      if (r && r.name !== self.current) self.go(r.name, { param: r.param, hash: false, instant: true });
+    });
+
+    var start = this.parseHash();
+    this.go(start ? start.name : 'onboarding', { param: start && start.param, hash: false, instant: true, root: true });
   },
 
-  handleInitialRoute() {
-    const hash = window.location.hash.replace('#', '');
-    if (hash) {
-      const screenId = 'screen-' + hash;
-      if (document.getElementById(screenId)) {
-        this.navigateTo(screenId, 'none', false);
-        return;
-      }
-    }
-    this.updateBottomNavVisibility(window.App.state.currentScreen);
+  parseHash() {
+    var h = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
+    if (!h) return null;
+    var parts = h.split('/');
+    return App.screens[parts[0]] ? { name: parts[0], param: parts[1] || null } : null;
   },
 
-  navigateTo(targetId, direction = 'forward', updateHash = true) {
-    const state = window.App.state;
-    const current = document.getElementById(state.currentScreen);
-    const target = document.getElementById(targetId);
+  go(name, opts) {
+    opts = opts || {};
+    var mod = App.screens[name];
+    var target = document.getElementById('screen-' + name);
+    if (!mod || !target) return;
+    var cur = this.current && document.getElementById('screen-' + this.current);
 
-    if (!target || targetId === state.currentScreen) return;
-
-    if (current) {
-      current.classList.remove('active');
-      if (direction === 'forward') {
-        current.classList.add('sliding-back');
-        setTimeout(() => current.classList.remove('sliding-back'), 250);
-      }
+    if (cur && cur !== target) {
+      if (opts.root) this.stack = [];
+      else this.stack.push({ name: this.current, param: this.param });
+      if (opts.instant) { cur.classList.add('instant'); requestAnimationFrame(function () { cur.classList.remove('instant'); }); }
+      this.deactivate(cur, !opts.instant && !opts.back);
     }
+    this.current = name;
+    this.param = opts.param || null;
+    App.state.currentScreen = 'screen-' + name;
 
-    state.previousScreen = state.currentScreen;
-    state.currentScreen = targetId;
-
+    target.classList.toggle('instant', !!opts.instant);
+    target.classList.remove('leaving');
     target.classList.add('active');
-    target.scrollTop = 0;
+    var body = target.querySelector('.screen-body');
+    if (body && !opts.keepScroll) body.scrollTop = 0;
+    if (opts.instant) requestAnimationFrame(function () { target.classList.remove('instant'); });
 
-    // Sync hash URL for Maze A/B testing missions
-    if (updateHash) {
-      const cleanHash = targetId.replace('screen-', '');
-      history.pushState(null, null, '#' + cleanHash);
+    if (opts.hash !== false) {
+      try { history.replaceState(null, '', '#' + name + (this.param ? '/' + this.param : '')); } catch (err) { /* file:// */ }
     }
+    document.documentElement.classList.toggle('on-dark', name === 'lock');
+    this.syncTabbar(mod);
+    if (typeof mod.onEnter === 'function') mod.onEnter(this.param);
+    App.state.emit('route', name);
+  },
 
-    this.updateBottomNavVisibility(targetId);
-
-    // Call onEnter lifecycle if defined
-    const cleanKey = targetId.replace('screen-', '');
-    if (window.App.screens[cleanKey] && typeof window.App.screens[cleanKey].onEnter === 'function') {
-      window.App.screens[cleanKey].onEnter();
+  deactivate(el, forward) {
+    el.classList.remove('active');
+    if (forward) {
+      el.classList.add('leaving');
+      setTimeout(function () { el.classList.remove('leaving'); }, 340);
     }
   },
 
-  updateBottomNavVisibility(screenId) {
-    const nav = document.getElementById('app-bottom-nav');
-    if (!nav) return;
-
-    if (this.mainTabs.includes(screenId)) {
-      nav.style.display = 'flex';
-      
-      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-        const tabTarget = btn.getAttribute('data-goto');
-        if (tabTarget === screenId) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-    } else {
-      nav.style.display = 'none';
+  back(fallback) {
+    var prev = this.stack.pop();
+    if (prev) {
+      var cur = document.getElementById('screen-' + this.current);
+      if (cur) this.deactivate(cur, false);
+      var stack = this.stack;
+      this.current = null;
+      this.go(prev.name, { param: prev.param, back: true });
+      this.stack = stack;
+    } else if (fallback) {
+      this.go(fallback.replace(/^screen-/, ''), { root: true });
     }
+  },
+
+  syncTabbar(mod) {
+    var bar = document.getElementById('tabbar');
+    if (!bar) return;
+    bar.classList.toggle('visible', !!mod.tab);
+    bar.querySelectorAll('[data-tab]').forEach(function (b) {
+      var on = b.getAttribute('data-tab') === mod.tab;
+      b.classList.toggle('active', on);
+      if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
   }
 };

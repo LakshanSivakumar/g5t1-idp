@@ -1,195 +1,39 @@
-/**
- * Screen: Setup Step 3 — Recurring Expenses Stylesheet
- */
+.rec-form { display: flex; flex-direction: column; gap: 12px; }
+.rec-day { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 12px; align-items: center; }
+.rec-day .of { font-size: 14px; font-weight: 600; color: var(--sn-text-secondary); line-height: 1.2; }
 
-.recurring-day-calendar-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+/* Custom dropdown (matches the wireframe's inline category list) */
+.dd { position: relative; }
+.dd-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; min-height: 24px; color: var(--sn-text-primary); }
+.dd-btn.placeholder { color: var(--sn-text-muted); }
+.dd-list {
+  position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 6px);
+  background: var(--sn-bg-card); border: 1px solid var(--sn-border-strong); border-radius: var(--radius-field);
+  box-shadow: var(--sn-shadow-lg); overflow: hidden; display: none;
 }
+.dd.open .dd-list { display: block; }
+.dd-opt { display: block; width: 100%; text-align: left; min-height: var(--touch-min); padding: 0 14px; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
+.dd-opt + .dd-opt { border-top: 1px solid var(--sn-border-hairline); }
+.dd-opt:active, .dd-opt[aria-selected="true"] { background: var(--sn-bg-subtle); }
 
-.recurring-day-box {
-  width: 76px;
-  margin-bottom: 0;
-}
+.exp-list { padding: 0; min-height: 168px; position: relative; }
+.exp-list > .label { position: absolute; top: -8px; left: 12px; padding: 0 6px; background: var(--sn-bg-canvas); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sn-text-muted); }
 
-.day-helper-text {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--sn-text-secondary);
-  white-space: nowrap;
+.swipe { position: relative; overflow: hidden; }
+.swipe + .swipe { border-top: 1px solid var(--sn-border-hairline); }
+.swipe-action {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 96px;
+  background: var(--sn-rose-500); color: #fff; font-weight: 700; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
 }
-
-.recurring-cal-box {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-.category-dropdown-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  height: 24px;
-}
-
-.category-dropdown-value {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--sn-text-primary);
-}
-
-.expense-list-container {
-  background: var(--sn-bg-card);
-  border: 1.5px solid var(--sn-border-strong);
-  border-radius: var(--radius-lg);
-  padding: 14px;
-  position: relative;
-  min-height: 140px;
-  margin-top: 12px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-}
-
-.expense-list-container-label {
-  position: absolute;
-  top: -8px;
-  left: 12px;
-  background: var(--sn-bg-card);
-  padding: 0 6px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--sn-text-secondary);
-}
-
-.empty-expense-state {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px 10px;
-}
-
-.empty-expense-title {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--sn-text-primary);
-  margin-bottom: 4px;
-}
-
-.empty-expense-subtitle {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--sn-text-muted);
-}
-
-.recurring-expense-card {
-  border-bottom: 1.5px solid var(--sn-border-hairline);
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-
-.recurring-expense-card:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.recurring-main-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.rec-title {
-  font-size: 14.5px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: var(--sn-text-primary);
-}
-
-.rec-cat {
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--sn-text-muted);
-}
-
-.rec-amount {
-  font-size: 15.5px;
-  font-weight: 800;
-  color: var(--sn-text-primary);
-  text-align: right;
-}
-
-.rec-freq {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--sn-text-secondary);
-  text-align: right;
-  text-transform: uppercase;
-}
-
-.rec-actions-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 4px;
-}
-
-.rec-action-link {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--sn-text-primary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 3px 6px;
-  border-radius: 4px;
-}
-
-.rec-action-link.remove {
-  color: var(--sn-rose-600);
-}
-
-.swipe-hint-text {
-  text-align: center;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--sn-text-muted);
-  margin-bottom: 6px;
-}
-
-.category-select-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.category-option-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--sn-border-hairline);
-  background: var(--sn-bg-card);
-  cursor: pointer;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--sn-text-primary);
-}
+.swipe-front { position: relative; background: var(--sn-bg-card); padding: 12px 16px 4px; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); touch-action: pan-y; }
+.swipe-front.dragging { transition: none; }
+.swipe-top { display: flex; justify-content: space-between; gap: 12px; }
+.swipe-name { font-size: 16px; font-weight: 700; }
+.swipe-meta { font-size: 13px; color: var(--sn-text-secondary); margin-top: 2px; }
+.swipe-amt { text-align: right; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.swipe-acts { display: flex; justify-content: flex-end; gap: 4px; margin-top: 2px; }
+.swipe-acts .link-btn { font-size: 14px; font-weight: 600; color: var(--sn-text-primary); }
+.swipe-acts .link-btn.rm { color: var(--sn-rose-text); }
+[data-theme="dark"] .swipe-acts .link-btn.rm { color: var(--nudge-rose-fg); }
+.exp-empty { display: grid; place-items: center; min-height: 168px; }

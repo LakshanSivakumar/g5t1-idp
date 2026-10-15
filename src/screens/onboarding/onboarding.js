@@ -1,55 +1,23 @@
-/**
- * Screen: Onboarding Module
- * Team members can edit this file exclusively without merge conflicts!
- */
-
-window.App = window.App || {};
-
-window.App.registerScreen('onboarding', {
-  id: 'screen-onboarding',
-  title: 'Save Now — Welcome',
+/** Screen: Onboarding (Onboarding.png) */
+App.registerScreen('onboarding', {
+  title: 'Welcome',
 
   render() {
     return `
-      <section class="screen onboarding-screen active" id="screen-onboarding">
-        <div class="onboarding-content-wrap">
-          <!-- Save Now Logo (Geometric Monogram from wireframe) -->
-          <div class="brand-monogram-container">
-            <svg width="90" height="116" viewBox="0 0 110 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Left Stem -->
-              <path d="M14 140V34C14 15.2 29.2 0 48 0H48V140H14Z" fill="currentColor"/>
-              <!-- Thin curve connector -->
-              <path d="M48 48C68 48 76 66 76 88" stroke="currentColor" stroke-width="2.5" fill="none"/>
-              <!-- Bottom Dot -->
-              <circle cx="76" cy="116" r="22" fill="currentColor"/>
-              <!-- Floating Coin Icon -->
-              <g transform="translate(68, 6)">
-                <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="3.5" fill="var(--sn-bg-card)"/>
-                <text x="20" y="26" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro', sans-serif" font-size="20" font-weight="900" text-anchor="middle" fill="currentColor">$</text>
-              </g>
-            </svg>
-          </div>
-
-          <h1 class="onboarding-title">Save Now</h1>
-          <p class="onboarding-tagline">FINANCE MADE EASY</p>
-
-          <div class="onboarding-pills">
-            <span class="onboarding-chip"><span class="onboarding-chip-dot"></span> Live Bank Sync</span>
-            <span class="onboarding-chip"><span class="onboarding-chip-dot"></span> $20 Daily Pace</span>
-            <span class="onboarding-chip"><span class="onboarding-chip-dot"></span> Social Streaks</span>
-          </div>
-        </div>
-
-        <!-- Bottom Action Buttons: Large, non-wide, thumb-friendly -->
-        <div class="onboarding-bottom-actions">
-          <button class="btn btn-hero btn-hero-primary" data-goto="screen-setup-1">Get Started</button>
-          <button class="btn btn-hero btn-hero-outline" data-goto="screen-home">Login</button>
-        </div>
-      </section>
-    `;
-  },
-
-  init() {
-    // Screen specific logic if needed
+      <div class="screen-body onb-body">
+        <svg class="onb-mark" viewBox="0 0 120 150" fill="none" role="img" aria-label="Savenow logo">
+          <path d="M14 148V40C14 20 30 4 50 4V148H14Z" fill="var(--sn-text-primary)"/>
+          <path d="M50 54c22 0 28 18 28 40" stroke="var(--sn-text-primary)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="78" cy="124" r="22" fill="var(--sn-emerald-500)"/>
+          <circle cx="92" cy="26" r="18" fill="var(--sn-bg-canvas)" stroke="var(--sn-text-primary)" stroke-width="4"/>
+          <text x="92" y="33" text-anchor="middle" font-size="21" font-weight="800" fill="var(--sn-text-primary)" font-family="-apple-system, system-ui, sans-serif">$</text>
+        </svg>
+        <h1 class="onb-title">Save Now</h1>
+        <p class="onb-tag">Finance made easy</p>
+      </div>
+      <div class="onb-actions">
+        <button class="btn btn-primary btn-block" data-goto="register">Get Started</button>
+        <button class="btn btn-secondary btn-block" data-goto="login">Login</button>
+      </div>`;
   }
 });

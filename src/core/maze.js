@@ -5,6 +5,17 @@
 window.App = window.App || {};
 
 window.App.maze = {
+  loadSnippet(key) {
+    if (!key || key === 'YOUR_MAZE_API_KEY' || window.mazeUniversalSnippetApiKey) return;
+    (function (m, a, z, e) {
+      var s = a.createElement('script');
+      s.src = z + '?apiKey=' + e;
+      s.async = true;
+      a.getElementsByTagName('head')[0].appendChild(s);
+      m.mazeUniversalSnippetApiKey = e;
+    })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', key);
+  },
+
   init() {
     const params = new URLSearchParams(window.location.search);
     const urlKey = params.get('mazeKey');
@@ -15,6 +26,7 @@ window.App.maze = {
       localStorage.setItem('savenow_maze_api_key', urlKey);
     }
     window.__MAZE_API_KEY__ = mazeKey;
+    this.loadSnippet(mazeKey);
 
     // A/B Variant Parameter check
     const variantParam = params.get('variant');
@@ -36,7 +48,7 @@ window.App.maze = {
       keyInput.value = savedKey;
       if (statusBadge) {
         statusBadge.textContent = 'Active (Live)';
-        statusBadge.style.color = 'var(--sn-emerald-600)';
+        statusBadge.style.color = 'var(--sn-accent)';
       }
     }
 
@@ -47,7 +59,7 @@ window.App.maze = {
           localStorage.setItem('savenow_maze_api_key', keyVal);
           if (statusBadge) {
             statusBadge.textContent = 'Key Saved ✓';
-            statusBadge.style.color = 'var(--sn-emerald-600)';
+            statusBadge.style.color = 'var(--sn-accent)';
           }
           window.App.showToast('Maze API Key saved! Refresh to load tracking.');
         }

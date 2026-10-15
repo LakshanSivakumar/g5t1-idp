@@ -1,103 +1,66 @@
 /**
- * Savenow Application Bootstrap & Global Modal Handlers
- * Boots routing, Maze analytics, global modals (quick add, category picker), and toast notifications.
+ * Savenow bootstrap — device simulation, theme, tab bar, overlays, routing.
  */
 
 window.App = window.App || {};
 
-// Global HTML Escaper
-window.App.escapeHTML = function(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+/* ---------- Device context ---------- */
+(function detectDevice() {
+  var root = document.documentElement;
+  var params = new URLSearchParams(location.search);
+  var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  // Desktop Chrome (device emulation or a window) has no real status bar or home indicator,
+  // so we draw them. iOS Safari / Home Screen app never does (no userAgentData there).
+  var chromium = !!navigator.userAgentData && !/Android/i.test(navigator.userAgent);
+  var sim = !standalone && chromium;
+  if (params.get('statusbar') === '1') sim = true;
+  if (params.get('statusbar') === '0') sim = false;
+  App.device = { standalone: standalone, sim: sim };
+  if (sim) {
+    root.classList.add('sim-device');
+    root.style.setProperty('--sat-sim', '47px');
+    root.style.setProperty('--sab-sim', '34px');
+  }
+  if (standalone) root.classList.add('standalone');
+})();
+
+/* ---------- Theme ---------- */
+App.theme = {
+  mq: window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null,
+  apply(pref) {
+    var s = App.state;
+    s.themePref = pref || s.themePref;
+    var dark = s.themePref === 'dark' || (s.themePref === 'system' && this.mq && this.mq.matches);
+    s.theme = dark ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', s.theme);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', dark ? '#0B0F19' : '#F8FAFC');
+    s.emit('theme', s.theme);
+  },
+  init() {
+    var saved = null;
+    try { saved = localStorage.getItem('savenow_theme'); } catch (e) { /* private mode */ }
+    if (saved) App.state.themePref = saved;
+    this.apply();
+    if (this.mq && this.mq.addEventListener) this.mq.addEventListener('change', function () { App.theme.apply(); });
+  },
+  set(pref) {
+    try { localStorage.setItem('savenow_theme', pref); } catch (e) { /* private mode */ }
+    this.apply(pref);
+  }
 };
 
-// Global Toast System
-let toastTimeout = null;
-window.App.showToast = function(message) {
-  const toast = document.getElementById('app-toast');
-  if (!toast) return;
+/* ---------- Boot ---------- */
+document.addEventListener('DOMContentLoaded', function () {
+  App.theme.init();
 
-  toast.innerHTML = `<span>&#9679;</span> ${window.App.escapeHTML(message)}`;
-  toast.classList.add('show');
+  var scrim = document.getElementById('scrim');
+  scrim.addEventListener('click', function () { App.overlay.close(); });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-close-overlay]')) App.overlay.close();
+  });
 
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => {
-    toast.classList.remove('show');
-  }, 2400);
-};
-
-// Global Quick Add Modal (Center (+) Button in Bottom Nav)
-function initGlobalModals() {
-  const addCenterBtn = document.getElementById('nav-add-expense-btn');
-  const addModal = document.getElementById('add-expense-modal');
-  const addConfirmBtn = document.getElementById('confirm-add-expense-btn');
-
-  if (addCenterBtn && addModal) {
-    addCenterBtn.addEventListener('click', () => {
-      addModal.classList.add('open');
-    });
-
-    addModal.addEventListener('click', (e) => {
-      if (e.target === addModal) addModal.classList.remove('open');
-    });
-  }
-
-  if (addConfirmBtn) {
-    addConfirmBtn.addEventListener('click', () => {
-      const titleInput = document.getElementById('quick-exp-title');
-      const amtInput = document.getElementById('quick-exp-amt');
-      const catSelect = document.getElementById('quick-exp-cat');
-
-      const title = (titleInput && titleInput.value.trim()) || 'Coffee & snack';
-      const amt = parseFloat(amtInput && amtInput.value.replace(/[^0-9.]/g, '')) || 4.20;
-      const cat = (catSelect && catSelect.value) || 'food';
-
-      window.App.state.home.spentToday += amt;
-      window.App.state.home.latestExpenses.unshift({
-        id: 'exp_' + Date.now(),
-        title: title,
-        sub: 'Nearby · Just now',
-        initials: title.substring(0, 2).toUpperCase(),
-        amount: amt,
-        category: cat
-      });
-
-      window.App.state.emit('budgetChange');
-
-      if (addModal) addModal.classList.remove('open');
-      if (titleInput) titleInput.value = '';
-      if (amtInput) amtInput.value = '';
-      window.App.showToast(`Recorded $${amt.toFixed(2)} for ${title}`);
-    });
-  }
-
-  // Theme toggle button in desktop preview bar
-  const themeBtn = document.getElementById('toggle-theme-btn');
-  if (themeBtn) {
-    themeBtn.addEventListener('click', () => {
-      window.App.state.theme = window.App.state.theme === 'light' ? 'dark' : 'light';
-      document.body.setAttribute('data-theme', window.App.state.theme);
-      themeBtn.innerHTML = window.App.state.theme === 'light' ? '&#9790; Dark' : '&#9788; Light';
-    });
-  }
-}
-
-// App Entry Point
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Maze A/B testing
-  if (window.App.maze && typeof window.App.maze.init === 'function') {
-    window.App.maze.init();
-  }
-
-  // Initialize Global Modals & Notifications
-  initGlobalModals();
-
-  // Initialize Modular Screen Router
-  if (window.App.router && typeof window.App.router.init === 'function') {
-    window.App.router.init();
-  }
+  (App.overlays || []).forEach(function (o) { o.mount(document.getElementById('app')); });
+  App.router.init();
+  if (App.maze) App.maze.init();
 });

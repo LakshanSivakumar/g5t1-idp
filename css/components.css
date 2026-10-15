@@ -1,592 +1,373 @@
 /**
- * Savenow Components Stylesheet — Apple iOS HIG Specifications
- * Inset Grouped Tables, SF Symbol Icons, Segmented Controls, Switches, iOS Tab Bar & Sheets
+ * Savenow Components — iOS HIG controls built on the palette tokens.
+ * Every interactive control is >= 44pt in its hit area.
  */
 
-/* ==============================================================
-   1. iOS Buttons (UIButton Styles)
-   ============================================================== */
+/* ---------- Buttons ---------- */
 .btn {
-  height: 50px;
-  border-radius: var(--ios-radius-btn);
-  font-family: var(--font-sans);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  border: none;
-  cursor: pointer;
+  min-height: 50px;
+  padding: 0 20px;
+  border-radius: var(--radius-btn);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease;
-  text-decoration: none;
-  flex: 1;
-  padding: 0 16px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
+  text-align: center;
 }
+.btn:active { transform: scale(0.98); opacity: 0.85; }
+.btn[disabled], .btn.is-disabled { opacity: 0.4; pointer-events: none; }
+.btn-block { width: 100%; }
+.btn-grow { flex: 1; }
 
-.btn:active {
-  transform: scale(0.97);
-  opacity: 0.85;
-}
-
-/* iOS Prominent Filled Button */
-.btn-primary {
-  background-color: var(--sn-obsidian-900);
-  color: #FFFFFF;
-}
-
-[data-theme="dark"] .btn-primary {
-  background-color: #FFFFFF;
-  color: #000000;
-}
-
-/* iOS Tinted Emerald Button */
-.btn-emerald {
-  background-color: var(--sn-emerald-500);
-  color: #0B0F19;
-  font-weight: 700;
-}
-
-/* iOS Gray / Secondary Button */
-.btn-outline {
-  background-color: var(--ios-tertiary-fill);
+.btn-primary { background: var(--sn-cta-bg); color: var(--sn-cta-fg); }
+.btn-secondary {
+  background: var(--sn-bg-card);
   color: var(--sn-text-primary);
+  border: 1px solid var(--sn-border-strong);
 }
+.btn-tint { background: var(--sn-emerald-50); color: var(--sn-accent); }
+.btn-ghost { color: var(--sn-accent); min-height: var(--touch-min); }
 
-[data-theme="dark"] .btn-outline {
-  background-color: var(--ios-tertiary-fill);
-  color: #FFFFFF;
+/* Text link-style control with a guaranteed 44pt hit area */
+.link-btn {
+  min-height: var(--touch-min);
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+  color: var(--sn-accent);
+  font-weight: 500;
 }
+.link-btn:active { opacity: 0.4; }
 
-/* iOS Hero Buttons (Onboarding) */
-.btn-hero {
-  height: 64px;
-  border-radius: var(--ios-radius-card);
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  max-width: 295px;
-  width: 100%;
-  margin: 0 auto;
+/* ---------- Cards ---------- */
+.card {
+  background: var(--sn-bg-card);
+  border: 1px solid var(--sn-border-hairline);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--sn-shadow-md);
 }
+.card + .card { margin-top: 12px; }
+button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: block; cursor: pointer; }
+.card[data-goto]:active { opacity: 0.85; }
+.card-head { display: flex; align-items: center; justify-content: space-between; min-height: 24px; }
+.card-head .eyebrow { display: inline-flex; align-items: center; gap: 6px; }
 
-.btn-hero-primary {
-  background-color: var(--sn-obsidian-900);
-  color: #FFFFFF;
+/* ---------- Grouped list ---------- */
+.list {
+  background: var(--sn-bg-card);
+  border: 1px solid var(--sn-border-hairline);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--sn-shadow-md);
 }
-
-[data-theme="dark"] .btn-hero-primary {
-  background-color: #FFFFFF;
-  color: #000000;
-}
-
-.btn-hero-outline {
-  background-color: var(--ios-tertiary-fill);
-  color: var(--sn-text-primary);
-}
-
-/* ==============================================================
-   2. iOS Stepper Indicator (Setup Flow)
-   ============================================================== */
-.step-stepper {
+.row {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 6px;
-  margin-bottom: 16px;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
 }
-
-.step-dot {
-  width: 20px;
-  height: 4px;
-  border-radius: var(--ios-radius-capsule);
-  background: var(--ios-gray-4);
-  transition: all 0.25s ease;
+.row + .row::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 16px; right: 0;
+  height: 1px;
+  background: var(--sn-border-hairline);
 }
+.row.is-link { cursor: pointer; }
+.row.is-link:active { background: var(--sn-bg-subtle); }
+.row-main { flex: 1; min-width: 0; }
+.row-title { font-size: 16px; font-weight: 600; line-height: 1.25; }
+.row-sub { font-size: 13px; color: var(--sn-text-secondary); margin-top: 2px; line-height: 1.3; }
+.row-value { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row-value.sec { font-weight: 500; color: var(--sn-text-secondary); }
+.row .chev { color: var(--sn-text-muted); }
 
-.step-dot.active {
-  width: 32px;
-  background: var(--sn-emerald-500);
+.tile {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  font-size: 12px; font-weight: 700;
+  background: var(--sn-bg-subtle);
+  color: var(--sn-text-secondary);
 }
+.tile.food { background: var(--sn-cat-food-tint); color: var(--sn-cat-food); }
+.tile.transport { background: var(--sn-cat-transport-tint); color: var(--sn-cat-transport); }
+.tile.shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping); }
+.tile.bills { background: var(--sn-cat-bills-tint); color: var(--sn-cat-bills); }
+.tile.other { background: var(--sn-cat-other-tint); color: var(--sn-cat-other); }
+.tile.emerald { background: var(--sn-emerald-50); color: var(--sn-accent); }
 
-.step-dot.done {
-  background: var(--sn-obsidian-900);
+/* Flat ledger rows (category lists) */
+.ledger { border-top: 1px solid var(--sn-border-hairline); }
+.ledger-day {
+  display: flex; justify-content: space-between;
+  font-size: 14px; font-weight: 600;
+  padding: 18px 4px 8px;
 }
-
-[data-theme="dark"] .step-dot.done {
-  background: #FFFFFF;
+.ledger-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 4px;
+  border-top: 1px solid var(--sn-border-hairline);
 }
+.ledger-item:first-of-type { border-top: 0; }
 
-.setup-header-group {
-  text-align: center;
-  margin-bottom: 20px;
-  padding: 0 12px;
+/* ---------- Form fields (outlined, floating caption like the wireframes) ---------- */
+.field {
+  position: relative;
+  display: block;
+  min-height: 56px;
+  padding: 22px 14px 6px;
+  background: var(--sn-bg-card);
+  border: 1px solid var(--sn-border-strong);
+  border-radius: var(--radius-field);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-
-.setup-eyebrow {
-  font-size: 12px;
+.field:focus-within {
+  border-color: var(--sn-emerald-500);
+  box-shadow: 0 0 0 3px var(--sn-emerald-100);
+}
+.field > .label {
+  position: absolute;
+  top: 7px; left: 14px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--ios-gray-1);
-  margin-bottom: 4px;
+  color: var(--sn-text-muted);
+  pointer-events: none;
 }
-
-.setup-title {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+.field input, .field select {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  min-height: 24px;
   color: var(--sn-text-primary);
-  margin-bottom: 6px;
-  line-height: 1.2;
+  -webkit-appearance: none;
+  appearance: none;
 }
-
-.setup-subtitle {
-  font-size: 14px;
+.field input::placeholder { color: var(--sn-text-muted); }
+.field.prefix { display: flex; align-items: baseline; gap: 6px; }
+.field.prefix .sym { color: var(--sn-text-secondary); font-weight: 600; }
+.field .eye {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: var(--touch-min);
+  display: grid; place-items: center;
   color: var(--sn-text-secondary);
-  line-height: 1.4;
-  letter-spacing: -0.2px;
 }
+.field.invalid { border-color: var(--sn-rose-500); }
+.field-error { font-size: 13px; color: var(--sn-rose-text); margin: 6px 4px 0; }
+[data-theme="dark"] .field-error { color: var(--nudge-rose-fg); }
+.field-stack { display: flex; flex-direction: column; gap: 12px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field-hint {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.field-hint .hint { font-size: 13px; color: var(--sn-text-muted); text-align: right; flex: 0 0 38%; }
+.field-hint .field { flex: 1; }
 
-/* ==============================================================
-   3. iOS Inset Grouped Table View (UITableViewStyleInsetGrouped)
-   ============================================================== */
-.ios-section-header {
+/* ---------- Pills & badges ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
   font-size: 13px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: -0.08px;
-  color: var(--ios-gray-1);
-  padding: 16px 16px 6px;
-  margin: 0;
-}
-
-.ios-inset-group {
-  background: var(--ios-secondary-grouped-bg);
-  border-radius: var(--ios-radius-card);
-  margin: 0 0 18px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-}
-
-.ios-list-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 48px;
-  padding: 12px 16px;
-  position: relative;
-  cursor: pointer;
-  background: transparent;
-  text-decoration: none;
-  color: inherit;
-  transition: background-color 0.15s ease;
-}
-
-.ios-list-row:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 56px;
-  right: 0;
-  height: 0.5px;
-  background-color: var(--ios-separator);
-}
-
-.ios-list-row:active {
-  background-color: var(--ios-fill);
-}
-
-.ios-row-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex: 1;
-}
-
-.ios-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  flex-shrink: 0;
-}
-
-.ios-icon-box.emerald { background: var(--sn-emerald-500); }
-.ios-icon-box.blue { background: var(--ios-system-blue); }
-.ios-icon-box.orange { background: var(--ios-system-orange); }
-.ios-icon-box.purple { background: var(--ios-system-purple); }
-.ios-icon-box.red { background: var(--ios-system-red); }
-.ios-icon-box.gray { background: var(--ios-gray-1); }
-
-.ios-row-title {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: -0.3px;
+  background: var(--sn-bg-subtle);
   color: var(--sn-text-primary);
-}
-
-.ios-row-sub {
-  font-size: 13px;
-  color: var(--sn-text-secondary);
-  letter-spacing: -0.1px;
-  margin-top: 1px;
-}
-
-.ios-row-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--ios-gray-2);
-  font-size: 15px;
-}
-
-.ios-disclosure {
-  width: 8px;
-  height: 13px;
-  color: var(--ios-gray-3);
-  stroke-width: 2.5;
-}
-
-/* ==============================================================
-   4. iOS Segmented Control (UISegmentedControl)
-   ============================================================== */
-.ios-segmented-control {
-  display: flex;
-  background: var(--ios-tertiary-fill);
-  border-radius: 9px;
-  padding: 2px;
-  margin: 8px 0 16px;
-  position: relative;
-}
-
-.ios-segment-btn {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--sn-text-primary);
-  padding: 6px 10px;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: center;
+  border: 1px solid var(--sn-border-hairline);
   white-space: nowrap;
 }
+.pill-streak { background: var(--sn-streak-50); color: var(--sn-streak-600); border-color: var(--sn-streak-border); text-transform: uppercase; letter-spacing: 0.04em; font-size: 12px; font-weight: 700; }
+[data-theme="dark"] .pill-streak { color: #FB923C; }
+.pill-ontrack { background: var(--sn-emerald-50); color: var(--sn-emerald-600); border-color: var(--sn-emerald-border); font-size: 12px; font-weight: 700; min-height: 28px; }
+[data-theme="dark"] .pill-ontrack { color: var(--nudge-emerald-fg); border-color: var(--nudge-emerald-bd); }
+.pill-shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping); border-color: transparent; }
 
-.ios-segment-btn.active {
-  background: var(--ios-secondary-grouped-bg);
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-/* ==============================================================
-   5. iOS Switch (UISwitch)
-   ============================================================== */
-.ios-switch {
-  position: relative;
-  display: inline-block;
-  width: 51px;
-  height: 31px;
-  flex-shrink: 0;
-}
-
-.ios-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.ios-switch-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--ios-fill);
-  transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 31px;
-}
-
-.ios-switch-slider::before {
-  position: absolute;
-  content: "";
-  height: 27px;
-  width: 27px;
-  left: 2px;
-  bottom: 2px;
-  background-color: #FFFFFF;
-  transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 50%;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.05);
-}
-
-.ios-switch input:checked + .ios-switch-slider {
-  background-color: var(--sn-emerald-500);
-}
-
-.ios-switch input:checked + .ios-switch-slider::before {
-  transform: translateX(20px);
-}
-
-/* ==============================================================
-   6. Form Inputs & Floating Outlines (iOS Style)
-   ============================================================== */
-.input-outline-box {
-  background: var(--ios-secondary-grouped-bg);
-  border: 1px solid var(--ios-separator);
-  border-radius: var(--ios-radius-btn);
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  transition: border-color 0.18s ease;
-}
-
-.input-outline-box:focus-within {
-  border-color: var(--sn-emerald-500);
-}
-
-.input-outline-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ios-gray-1);
-  margin-bottom: 2px;
-}
-
-.input-outline-field {
-  width: 100%;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--sn-text-primary);
-}
-
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.category-dropdown-trigger {
+/* Nudge banner (full-width capsule) */
+.nudge {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  cursor: pointer;
-  padding-top: 2px;
-}
-
-.category-dropdown-value {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--sn-text-primary);
-}
-
-/* ==============================================================
-   7. iOS Tab Bar (UITabBar with Translucent Blur & Home Indicator)
-   ============================================================== */
-.bottom-nav-bar {
-  display: none;
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  gap: 10px;
   width: 100%;
-  height: 83px; /* 49px tab content + 34px safe area */
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: var(--ios-blur-material);
-  -webkit-backdrop-filter: var(--ios-blur-material);
-  border-top: 0.5px solid var(--ios-separator);
+  min-height: var(--touch-min);
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  border: 1px solid;
+}
+.nudge .nudge-text { display: flex; align-items: center; gap: 8px; }
+.nudge.amber { background: var(--nudge-amber-bg); color: var(--nudge-amber-fg); border-color: var(--nudge-amber-bd); }
+.nudge.rose { background: var(--nudge-rose-bg); color: var(--nudge-rose-fg); border-color: var(--nudge-rose-bd); }
+.nudge.emerald { background: var(--nudge-emerald-bg); color: var(--nudge-emerald-fg); border-color: var(--nudge-emerald-bd); }
+
+/* ---------- Segmented control ---------- */
+.segmented {
+  display: flex;
+  padding: 2px;
+  border-radius: 10px;
+  background: var(--sn-bg-subtle);
+  border: 1px solid var(--sn-border-hairline);
+}
+.segmented button {
+  flex: 1;
+  min-height: 40px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sn-text-secondary);
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.segmented button.active {
+  background: var(--sn-bg-card);
+  color: var(--sn-text-primary);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+[data-theme="dark"] .segmented button.active { background: var(--sn-border-strong); }
+
+/* ---------- Switch (UISwitch 51x31) ---------- */
+.switch { position: relative; width: 51px; height: 31px; flex-shrink: 0; display: inline-block; }
+.switch input { position: absolute; inset: -7px -2px; width: calc(100% + 4px); height: calc(100% + 14px); opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch .track { position: absolute; inset: 0; border-radius: 16px; background: var(--sn-border-strong); transition: background-color 0.22s ease; }
+.switch .track::after {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: 27px; height: 27px; border-radius: 50%; background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.switch input:checked + .track { background: var(--sn-emerald-500); }
+.switch input:checked + .track::after { transform: translateX(20px); }
+.switch input:focus-visible + .track { outline: 2px solid var(--sn-emerald-500); outline-offset: 2px; }
+
+/* ---------- Progress ---------- */
+.progress { height: 10px; border-radius: 5px; background: var(--sn-bg-subtle); overflow: hidden; border: 1px solid var(--sn-border-hairline); }
+.progress > i { display: block; height: 100%; border-radius: 5px; background: var(--sn-amber-500); transition: width 0.5s ease; }
+
+/* ---------- Tab bar ---------- */
+.tabbar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  display: none;
   align-items: flex-start;
   justify-content: space-around;
-  padding: 6px 8px 0;
-  z-index: 60;
-  box-sizing: border-box;
+  padding: 6px 4px calc(var(--sab) + 2px);
+  min-height: calc(var(--tab-h) + var(--sab));
+  background: var(--sn-material);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--sn-border-hairline);
 }
-
-[data-theme="dark"] .bottom-nav-bar {
-  background: rgba(28, 28, 30, 0.88);
-}
-
-.nav-tab-btn {
+.tabbar.visible { display: flex; }
+.tab {
+  flex: 1;
+  min-height: var(--touch-min);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--ios-gray-1);
   font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: var(--ios-radius-btn);
-  position: relative;
-  transition: all 0.15s ease;
-  flex: 1;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--sn-text-muted);
+  transition: color 0.15s ease;
 }
+.tab svg { height: 24px; width: auto; }
+.tab.active { color: var(--sn-accent); font-weight: 700; }
+.tab:active { opacity: 0.55; }
+.tab-add { color: var(--sn-text-primary); }
 
-.nav-tab-btn:active {
-  opacity: 0.5;
+/* ---------- Sheets, alerts ---------- */
+.scrim {
+  position: absolute; inset: 0; z-index: 200;
+  background: var(--sn-overlay);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
 }
+.scrim.open { opacity: 1; visibility: visible; transition-delay: 0s; }
 
-.nav-tab-btn.active {
-  color: var(--sn-emerald-600);
-}
-
-[data-theme="dark"] .nav-tab-btn.active {
-  color: var(--sn-emerald-400);
-}
-
-.nav-tab-icon {
-  width: 22px;
-  height: 22px;
-}
-
-.nav-center-add {
-  transform: translateY(-8px);
-}
-
-.nav-add-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--sn-obsidian-900);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
-  border: 2px solid var(--ios-secondary-grouped-bg);
-  transition: transform 0.15s ease;
-}
-
-[data-theme="dark"] .nav-add-circle {
-  background: var(--sn-emerald-500);
-  color: #000000;
-}
-
-.nav-center-add:active .nav-add-circle {
-  transform: scale(0.92);
-}
-
-/* ==============================================================
-   8. iOS Sheet Modal (UISheetPresentationController)
-   ============================================================== */
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.modal-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.bottom-sheet {
-  width: 100%;
-  background: var(--ios-secondary-grouped-bg);
-  border-radius: var(--ios-radius-sheet) var(--ios-radius-sheet) 0 0;
-  padding: 12px 18px max(24px, env(safe-area-inset-bottom, 24px));
-  box-shadow: var(--shadow-float);
-  transform: translateY(100%);
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  max-height: 85%;
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 210;
+  background: var(--sn-bg-card);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  padding: 8px 16px calc(var(--sab) + 16px);
+  transform: translateY(105%);
+  visibility: hidden;
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.34s;
+  box-shadow: var(--sn-shadow-lg);
+  max-height: 92%;
   overflow-y: auto;
 }
+.sheet.open { transform: none; visibility: visible; transition-delay: 0s; }
+.sheet .grabber { width: 36px; height: 5px; border-radius: 3px; background: var(--sn-border-strong); margin: 0 auto 12px; }
+.sheet-title { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+.sheet-sub { font-size: 14px; color: var(--sn-text-secondary); margin: 2px 0 12px; }
 
-.modal-overlay.open .bottom-sheet {
-  transform: translateY(0);
+.alert-wrap {
+  position: absolute; inset: 0; z-index: 220;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  visibility: hidden; pointer-events: none;
 }
+.alert-wrap.open { visibility: visible; pointer-events: auto; }
+.alert {
+  width: 100%;
+  background: var(--sn-bg-card);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: var(--sn-shadow-lg);
+  transform: scale(0.94); opacity: 0;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+.alert-wrap.open .alert { transform: none; opacity: 1; }
+.alert h2 { font-size: 18px; font-weight: 700; }
+.alert .alert-big { font-size: 34px; font-weight: 700; letter-spacing: -0.8px; margin: 6px 0 2px; }
+.alert p { font-size: 15px; color: var(--sn-text-secondary); margin-top: 8px; line-height: 1.4; }
+.alert .stack { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
 
-.sheet-handle-bar {
-  width: 36px;
-  height: 5px;
-  border-radius: 2.5px;
-  background: var(--ios-gray-3);
-  margin: 0 auto 16px;
+/* ---------- Keypad ---------- */
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.key {
+  min-height: 52px;
+  border-radius: 12px;
+  background: var(--sn-bg-subtle);
+  font-size: 24px;
+  font-weight: 500;
+  display: grid; place-items: center;
+  transition: background-color 0.1s ease;
 }
+.key:active { background: var(--sn-border-hairline); }
 
-.sheet-title {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--sn-text-primary);
-  margin-bottom: 2px;
-}
+/* ---------- Charts ---------- */
+.bars { display: flex; align-items: flex-end; gap: 8px; }
+.bar { flex: 1; border-radius: 6px 6px 2px 2px; background: var(--sn-border-strong); min-height: 4px; }
+.bar.accent { background: var(--sn-emerald-500); }
+.bar.amber { background: var(--sn-amber-500); }
+.bar.rose { background: var(--sn-rose-500); }
+.bar.ink { background: var(--sn-text-primary); }
 
-.sheet-subtitle {
-  font-size: 13px;
-  color: var(--sn-text-secondary);
-  margin-bottom: 16px;
-}
+/* ---------- Empty state ---------- */
+.empty { text-align: center; padding: 28px 16px; color: var(--sn-text-muted); }
+.empty strong { display: block; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sn-text-secondary); margin-bottom: 4px; }
+.empty span { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
 
-/* ==============================================================
-   9. iOS Dynamic Notification / Island Toast
-   ============================================================== */
-.toast-notice {
-  position: absolute;
-  top: 54px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: rgba(15, 23, 42, 0.94);
-  backdrop-filter: var(--ios-blur-material);
-  -webkit-backdrop-filter: var(--ios-blur-material);
-  color: #FFFFFF;
-  padding: 10px 18px;
-  border-radius: var(--ios-radius-capsule);
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 150;
-  white-space: nowrap;
-}
-
-[data-theme="dark"] .toast-notice {
-  background: rgba(44, 44, 46, 0.94);
-}
-
-.toast-notice.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Footer Action Buttons on Setup Screens */
-.screen-footer-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 16px;
-}
+.stack-12 { display: flex; flex-direction: column; gap: 12px; }
+.spacer { flex: 1; }

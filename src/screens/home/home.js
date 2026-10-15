@@ -1,231 +1,140 @@
-/**
- * Screen: Tab 1 — Home Module
- * Styled according to Apple iOS HIG (Segmented Controls, SF Symbols, Inset Grouped Lists)
- */
+/** Screen: Home — daily budget ring / graph (Within Limit, Over Limit, Graph) + warning alert */
+(function () {
+  var fmt = App.fmt.money;
+  var C = 2 * Math.PI * 100; // ring circumference for r=100
 
-window.App = window.App || {};
+  function tone() { return App.state.budgetStatus(); }
 
-window.App.registerScreen('home', {
-  id: 'screen-home',
-  title: 'Home — Daily Budget Pacing',
+  App.registerScreen('home', {
+    tab: 'home',
+    title: 'Home',
 
-  render() {
-    return `
-      <section class="screen app-tab-screen" id="screen-home">
-        <!-- iOS Navigation Bar -->
-        <header class="ios-nav-bar" style="padding-top: 4px;">
-          <div class="home-brand-title" style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 6px;">
-            Save Now
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--sn-emerald-500); display: inline-block;"></span>
+    render() {
+      return `
+        <div class="screen-body">
+          <header class="home-top">
+            <h1 class="home-brand">Savenow</h1>
+            <button class="pill pill-streak" data-tab="social" id="home-streak"></button>
+          </header>
+          <div class="home-toggle">
+            <div class="segmented" role="tablist" aria-label="Home view">
+              <button role="tab" class="active" data-view="ring">Today</button>
+              <button role="tab" data-view="graph">7 days</button>
+            </div>
           </div>
-
-          <!-- Streak Pill with SF Symbol flame.fill -->
-          <button class="home-streak-pill" data-goto="screen-social" style="background: var(--ios-fill); border-radius: var(--ios-radius-capsule); padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--ios-system-orange); border: none; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 23c6.075 0 10-4.043 10-9.61 0-4.66-3.08-8.23-6.62-10.42a1 1 0 0 0-1.48.97c.21 2.45-.63 4.2-2.12 5.37C10.74 8.13 9.4 6.7 8.7 5.03a1 1 0 0 0-1.8.18C5.23 9.24 2 13.06 2 16.39 2 20.95 5.925 23 12 23z"/>
-            </svg>
-            98-DAY STREAK
+          <div id="home-hero"></div>
+          <div class="home-nudge" id="home-nudge"></div>
+          <button class="card saved-card" data-tab="insights" aria-label="Saved this month">
+            <div class="eyebrow">Saved · Month</div>
+            <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack">${App.icon('arrow.up', 12)} on track</span></div>
           </button>
-        </header>
+          <p class="section-label">Latest expense</p>
+          <div id="home-latest"></div>
+        </div>`;
+    },
 
-        <div class="screen-scrollable-body" style="padding-top: 4px;">
-          <!-- iOS Segmented Control for Limit Simulator -->
-          <div class="ios-segmented-control" style="margin-bottom: 14px;">
-            <button class="ios-segment-btn active" id="sim-state-within">Within Limit</button>
-            <button class="ios-segment-btn" id="sim-state-warning">Warning</button>
-            <button class="ios-segment-btn" id="sim-state-over">Over Limit</button>
-          </div>
-
-          <!-- Dynamic Circular Gauge (Within Limit · Print.png) -->
-          <div class="hero-ring-wrapper" style="margin: 4px 0 16px;">
-            <div class="ring-svg-container">
-              <svg class="ring-svg" viewBox="0 0 220 220">
-                <circle class="ring-bg-track" cx="110" cy="110" r="100"/>
-                <circle class="ring-fill-bar" id="home-ring-fill" cx="110" cy="110" r="100" stroke-dasharray="628.3" stroke-dashoffset="82"/>
-              </svg>
-
-              <div class="ring-center-content">
-                <div class="ring-eyebrow" style="font-size: 11px; font-weight: 700; color: var(--ios-gray-1);">SPENT TODAY</div>
-                <div class="ring-big-num" id="gauge-spent-today" style="font-family: var(--font-mono); font-size: 38px; font-weight: 700; letter-spacing: -0.5px;">$17.40</div>
-                <div class="ring-diff-sub" id="gauge-diff-text" style="font-size: 13px; font-weight: 500;">$2.60 under your $20 limit</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- iOS Notification Banner Pill -->
-          <div class="nudge-pill-banner" id="home-nudge-banner" style="border-radius: var(--ios-radius-btn); margin-bottom: 16px;">
-            <div class="nudge-left" style="display: flex; align-items: center; gap: 8px;">
-              <span class="nudge-icon" style="background: var(--ios-system-orange); color: #FFFFFF; font-weight: 800; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px;">!</span>
-              <span id="home-nudge-text" style="font-size: 13px; font-weight: 600;">$2.60 left today. Plan your dinner ›</span>
-            </div>
-          </div>
-
-          <!-- Saved Month Card (iOS Inset Card) -->
-          <div class="ios-inset-group" data-goto="screen-insights" style="margin-bottom: 18px; cursor: pointer;">
-            <div style="padding: 16px; display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--ios-gray-1); letter-spacing: 0.05em;">SAVED · THIS MONTH</div>
-                <div style="font-size: 28px; font-weight: 800; font-family: var(--font-mono); margin-top: 2px;">$190</div>
-              </div>
-              <div style="background: var(--sn-emerald-100); color: var(--sn-emerald-600); padding: 4px 10px; border-radius: var(--ios-radius-capsule); font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-                <span>&uarr;</span> on track
-              </div>
-            </div>
-          </div>
-
-          <!-- Latest Expense Section (iOS Inset Grouped Table) -->
-          <div class="ios-section-header">LATEST TRANSACTIONS</div>
-          <div class="ios-inset-group" id="home-latest-expense-list"></div>
-        </div>
-      </section>
-    `;
-  },
-
-  init() {
-    this.bindSimulators();
-    this.renderGauge();
-    this.renderExpenses();
-
-    // Listen to global changes
-    window.App.state.on('budgetChange', () => {
-      this.renderGauge();
-      this.renderExpenses();
-    });
-  },
-
-  onEnter() {
-    this.renderGauge();
-    this.renderExpenses();
-  },
-
-  bindSimulators() {
-    const simWithin = document.getElementById('sim-state-within');
-    const simWarning = document.getElementById('sim-state-warning');
-    const simOver = document.getElementById('sim-state-over');
-
-    if (simWithin) {
-      simWithin.addEventListener('click', () => {
-        window.App.state.home.spentToday = 17.40;
-        window.App.state.home.dailyLimit = 20.00;
-        this.setActiveSim(simWithin);
-        this.renderGauge();
-        window.App.showToast('Simulating: Within Limit ($17.40 / $20)');
+    init() {
+      var self = this;
+      document.querySelectorAll('[data-view]').forEach(function (b) {
+        b.addEventListener('click', function () { App.state.home.view = b.dataset.view; self.paint(); });
       });
-    }
-
-    if (simWarning) {
-      simWarning.addEventListener('click', () => {
-        window.App.state.home.spentToday = 19.20;
-        window.App.state.home.dailyLimit = 20.00;
-        this.setActiveSim(simWarning);
-        this.renderGauge();
-        window.App.showToast('Simulating: Daily Budget Warning ($19.20 / $20)');
+      document.getElementById('home-nudge').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-nudge]');
+        if (!b) return;
+        var t = tone();
+        if (t.over) App.router.go('recovery');
+        else App.overlay.open('alert-warning');
       });
-    }
+      App.state.on('budget', function () { self.paint(); });
+    },
 
-    if (simOver) {
-      simOver.addEventListener('click', () => {
-        window.App.state.home.spentToday = 23.80;
-        window.App.state.home.dailyLimit = 20.00;
-        this.setActiveSim(simOver);
-        this.renderGauge();
-        window.App.showToast('Simulating: Over Limit ($23.80 / $20)');
+    onEnter(param) {
+      if (param === 'graph' || param === 'ring') App.state.home.view = param;
+      this.paint();
+    },
+
+    paint() {
+      var h = App.state.home, t = tone();
+      document.querySelectorAll('[data-view]').forEach(function (b) {
+        var on = b.dataset.view === h.view;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on);
       });
-    }
-  },
 
-  setActiveSim(btn) {
-    document.querySelectorAll('.ios-segment-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-  },
+      var streak = document.getElementById('home-streak');
+      streak.innerHTML = App.icon('flame.fill', 14) + (t.over ? h.bestStreak + '-day best' : h.streakDays + '-day streak');
 
-  renderGauge() {
-    const ringFill = document.getElementById('home-ring-fill');
-    const spentTodayEl = document.getElementById('gauge-spent-today');
-    const diffEl = document.getElementById('gauge-diff-text');
-    const nudgeText = document.getElementById('home-nudge-text');
-    const nudgeBanner = document.getElementById('home-nudge-banner');
-
-    const spent = window.App.state.home.spentToday;
-    const limit = window.App.state.home.dailyLimit;
-    const remaining = limit - spent;
-
-    if (spentTodayEl) spentTodayEl.textContent = `$${spent.toFixed(2)}`;
-
-    const circumference = 628.3;
-    const ratio = Math.min(spent / limit, 1);
-    const offset = circumference - (ratio * circumference);
-
-    if (ringFill) ringFill.style.strokeDashoffset = offset;
-
-    if (remaining >= 0) {
-      if (ratio > 0.85) {
-        if (ringFill) ringFill.style.stroke = 'var(--ios-system-orange)';
-        if (diffEl) diffEl.textContent = `$${remaining.toFixed(2)} under your $${limit.toFixed(0)} limit`;
-        if (nudgeText) nudgeText.textContent = `$${remaining.toFixed(2)} left today. Stay mindful! ›`;
-        if (nudgeBanner) {
-          nudgeBanner.style.background = 'var(--sn-amber-50)';
-          nudgeBanner.style.borderColor = 'var(--ios-system-orange)';
-        }
-      } else {
-        if (ringFill) ringFill.style.stroke = 'var(--sn-emerald-500)';
-        if (diffEl) diffEl.textContent = `$${remaining.toFixed(2)} under your $${limit.toFixed(0)} limit`;
-        if (nudgeText) nudgeText.textContent = `$${remaining.toFixed(2)} left today. Plan your dinner ›`;
-        if (nudgeBanner) {
-          nudgeBanner.style.background = 'var(--sn-amber-50)';
-          nudgeBanner.style.borderColor = 'var(--sn-obsidian-900)';
-        }
-      }
-    } else {
-      const overAmt = Math.abs(remaining);
-      if (ringFill) ringFill.style.stroke = 'var(--ios-system-red)';
-      if (diffEl) diffEl.textContent = `$${overAmt.toFixed(2)} over your $${limit.toFixed(0)} limit`;
-      if (nudgeText) nudgeText.textContent = `$${overAmt.toFixed(2)} over limit · Apply recovery plan ›`;
-      if (nudgeBanner) {
-        nudgeBanner.style.background = 'var(--sn-rose-50)';
-        nudgeBanner.style.borderColor = 'var(--ios-system-red)';
-      }
-    }
-  },
-
-  renderExpenses() {
-    const container = document.getElementById('home-latest-expense-list');
-    if (!container) return;
-
-    container.innerHTML = '';
-    window.App.state.home.latestExpenses.slice(0, 3).forEach(exp => {
-      const item = document.createElement('div');
-      item.className = 'ios-list-row';
-      
-      let iconColor = 'orange';
-      let iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 19h16v2H4zM20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 5h-2V5h2v3z"/></svg>`;
-      
-      if (exp.category === 'transport') {
-        iconColor = 'blue';
-        iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-4.42 0-8 .5-8 4v10c0 .88.39 1.67 1 2.22V20a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h8v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4zm-3.5 14a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm7 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zM18 10H6V7h12v3z"/></svg>`;
-      } else if (exp.category === 'shopping') {
-        iconColor = 'purple';
-        iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2z"/></svg>`;
+      document.getElementById('home-hero').innerHTML = h.view === 'ring' ? this.ring(h, t) : this.graph(h, t);
+      if (h.view === 'ring') {
+        var f = document.getElementById('ring-fill');
+        requestAnimationFrame(function () { f.style.strokeDashoffset = C * (1 - Math.min(t.pct, 1)); });
       }
 
-      item.innerHTML = `
-        <div class="ios-row-left">
-          <div class="ios-icon-box ${iconColor}">
-            ${iconSvg}
-          </div>
-          <div>
-            <div class="ios-row-title">${window.App.escapeHTML(exp.title)}</div>
-            <div class="ios-row-sub">${window.App.escapeHTML(exp.sub)}</div>
-          </div>
-        </div>
-        <div class="ios-row-right">
-          <span style="font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--sn-text-primary);">$${exp.amount.toFixed(2)}</span>
-          <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-            <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      `;
-      container.appendChild(item);
-    });
-  }
-});
+      var n = document.getElementById('home-nudge');
+      var msg, link = true, ico = t.tone === 'emerald' ? 'checkmark.circle.fill' : 'info.circle';
+      if (t.over) msg = fmt(h.spentToday - h.dailyLimit) + ' over today. ' + (h.view === 'graph' ? 'Start fresh tomorrow.' : 'See a catch-up plan');
+      else if (t.tone === 'amber') msg = fmt(t.left) + ' left today. Plan your dinner';
+      else msg = fmt(t.left) + ' left today. You’re on pace';
+      if (h.view === 'graph' && t.over) link = false;
+      var inner = '<span class="nudge-text">' + App.icon(ico, 18) + msg + '</span>' + (link ? App.icon('chevron.right', 8) : '');
+      n.innerHTML = link
+        ? '<button class="nudge ' + t.tone + '" data-nudge>' + inner + '</button>'
+        : '<div class="nudge ' + t.tone + '">' + inner + '</div>';
+
+      document.getElementById('home-saved').textContent = fmt(h.monthlySaved, 0);
+      document.getElementById('home-latest').innerHTML = h.latestExpenses.slice(0, 3).map(function (e, i) {
+        return '<div class="card latest-card ' + (i === 0 ? 'accent-edge' : '') + '"><div class="latest-item">' +
+          '<span class="tile ' + e.category + '">' + App.escapeHTML(e.initials) + '</span>' +
+          '<span class="row-main"><span class="row-title" style="display:block">' + App.escapeHTML(e.title) + '</span><span class="row-sub" style="display:block">' + App.escapeHTML(e.sub) + '</span></span>' +
+          '<span class="amt">' + fmt(e.amount) + '</span></div></div>';
+      }).join('');
+    },
+
+    ring(h, t) {
+      var sub = t.over ? fmt(h.spentToday - h.dailyLimit) + ' over your ' + fmt(h.dailyLimit, 0) + ' limit' : fmt(t.left) + ' under your ' + fmt(h.dailyLimit, 0) + ' limit';
+      return '<div class="ring-wrap" role="img" aria-label="Spent today ' + fmt(h.spentToday) + ', ' + sub + '">' +
+        '<svg viewBox="0 0 220 220"><circle class="ring-track" cx="110" cy="110" r="100"/>' +
+        '<circle class="ring-fill ' + t.tone + '" id="ring-fill" cx="110" cy="110" r="100" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
+        '<div class="ring-center"><div class="eyebrow">Spent today</div><div class="ring-amount">' + fmt(h.spentToday) + '</div><div class="ring-sub">' + sub + '</div></div></div>';
+    },
+
+    graph(h, t) {
+      var week = h.week.slice(0, 6).concat([{ d: 'Today', v: h.spentToday }]);
+      var max = Math.max.apply(null, week.map(function (w) { return w.v; }).concat([h.dailyLimit * 1.15]));
+      var limitPct = (h.dailyLimit / max) * 100;
+      var bars = week.map(function (w, i) {
+        var cls = i === week.length - 1 ? t.tone === 'emerald' ? 'accent' : t.tone : (w.v > h.dailyLimit ? 'rose' : '');
+        return '<div class="bar ' + cls + '" style="height:' + (w.v / max * 100) + '%" title="' + w.d + ' ' + fmt(w.v) + '"></div>';
+      }).join('');
+      var sub = t.over ? fmt(h.spentToday - h.dailyLimit) + ' over your ' + fmt(h.dailyLimit, 0) + ' limit' : fmt(t.left) + ' under your ' + fmt(h.dailyLimit, 0) + ' limit';
+      return '<div class="graph-head"><div class="eyebrow">Spent today</div><div><span class="amt">' + fmt(h.spentToday) + '</span><span class="sub">' + sub + '</span></div></div>' +
+        '<div class="graph-box"><div class="graph-limit" style="bottom:' + limitPct + '%"><span>' + fmt(h.dailyLimit, 0) + ' LIMIT</span></div><div class="bars">' + bars + '</div></div>' +
+        '<div class="graph-days">' + week.map(function (w) { return '<span>' + w.d + '</span>'; }).join('') + '</div>';
+    }
+  });
+
+  /* Daily budget warning alert (Daily budget warning · Print.png) */
+  App.overlays = App.overlays || [];
+  App.overlays.push({
+    mount(app) {
+      var el = document.createElement('div');
+      el.className = 'alert-wrap'; el.id = 'alert-warning';
+      el.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="aw-title">' +
+        '<h2 id="aw-title">You’re nearing today’s budget</h2><div class="alert-big num" id="aw-left"></div>' +
+        '<p id="aw-used"></p><p>Your recent dinners average about $6. You have <span id="aw-left2"></span> left today, so tonight needs to be a light one to stay within budget.</p>' +
+        '<div class="stack"><button class="btn btn-primary" id="aw-view">View today’s budget</button><button class="btn btn-secondary" data-close-overlay>Dismiss</button></div></div>';
+      app.appendChild(el);
+      var refresh = function () {
+        var h = App.state.home, t = tone();
+        document.getElementById('aw-left').textContent = fmt(Math.max(t.left, 0)) + ' left today';
+        document.getElementById('aw-left2').textContent = fmt(Math.max(t.left, 0));
+        document.getElementById('aw-used').textContent = fmt(h.spentToday) + ' of your ' + fmt(h.dailyLimit, 0) + ' budget used · ' + Math.round(t.pct * 100) + '%';
+      };
+      var open = App.overlay.open.bind(App.overlay);
+      App.overlay.open = function (id) { if (id === 'alert-warning') refresh(); open(id); };
+      document.getElementById('aw-view').addEventListener('click', function () {
+        App.overlay.close(); App.router.go('home', { root: true, param: 'graph' });
+      });
+    }
+  });
+})();

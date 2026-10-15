@@ -1,219 +1,188 @@
-/**
- * Screen: Tab 4 — Settings Module
- * Formatted strictly according to Apple HIG UITableViewStyleInsetGrouped specifications
- */
+/** Screens: Settings tab and its sub-pages (Settings · Print.png and Settings — * screens) */
+(function () {
+  var fmt = App.fmt.money, ui = App.ui, esc = App.escapeHTML;
 
-window.App = window.App || {};
-
-window.App.registerScreen('settings', {
-  id: 'screen-settings',
-  title: 'Settings',
-
-  render() {
-    return `
-      <section class="screen app-tab-screen" id="screen-settings">
-        <!-- iOS Navigation Bar -->
-        <header class="ios-nav-bar">
-          <span class="ios-nav-title">Settings</span>
-        </header>
-
-        <div class="screen-scrollable-body" style="padding-top: 0;">
-          <h1 class="ios-large-title">Settings</h1>
-
-          <!-- User Profile Inset Card -->
-          <div class="ios-inset-group">
-            <div class="ios-list-row" style="padding: 14px 16px;">
-              <div class="ios-row-left">
-                <div class="ios-icon-box emerald" style="width: 44px; height: 44px; border-radius: 50%; font-size: 18px; font-weight: 700;">
-                  BT
-                </div>
-                <div>
-                  <div class="ios-row-title" style="font-size: 18px; font-weight: 600;">Bob Tan</div>
-                  <div class="ios-row-sub">@bobsaves &middot; SGD Singapore</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-                  <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- MAZE A/B TESTING CARD -->
-          <div class="ios-section-header">MAZE USABILITY &amp; A/B TESTING</div>
-          <div class="ios-inset-group">
-            <div style="padding: 16px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px;">
-                  <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--sn-emerald-500);"></span>
-                  <span>Maze Analytics</span>
-                </div>
-                <span class="maze-status-tag" id="maze-status-badge">Snippet Ready</span>
-              </div>
-              <p style="font-size: 13px; color: var(--sn-text-secondary); margin: 0 0 12px; line-height: 1.4;">
-                Collect quantitative heatmaps, click paths, and mission completion rates directly via Maze.
-              </p>
-
-              <div class="maze-key-input-row" style="margin-bottom: 12px;">
-                <input type="text" class="input-outline-field" id="maze-api-key-input" placeholder="Paste Maze API Key" style="background: var(--ios-fill); padding: 8px 12px; border-radius: 8px; font-size: 13px;">
-                <button class="btn btn-primary" id="btn-save-maze-key" style="height: 36px; font-size: 13px; flex: none; padding: 0 14px;">Save</button>
-              </div>
-
-              <!-- iOS Segmented Control for Variant A/B -->
-              <div style="font-size: 12px; font-weight: 600; color: var(--ios-gray-1); margin-bottom: 4px;">ACTIVE A/B TEST VARIANT:</div>
-              <div class="ios-segmented-control" style="margin-bottom: 12px;">
-                <button class="ios-segment-btn active" id="btn-var-a" onclick="window.App.maze.switchVariant('A')">Variant A</button>
-                <button class="ios-segment-btn" id="btn-var-b" onclick="window.App.maze.switchVariant('B')">Variant B</button>
-              </div>
-
-              <button class="btn btn-outline" id="btn-copy-maze-url" style="width: 100%; height: 40px; font-size: 13px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                </svg>
-                Copy Test URL for Maze
-              </button>
-            </div>
-          </div>
-
-          <!-- Section: YOUR MONEY -->
-          <div class="ios-section-header">YOUR MONEY</div>
-          <div class="ios-inset-group">
-            <!-- Goal & Budget -->
-            <div class="ios-list-row" data-goto="screen-setup-2">
-              <div class="ios-row-left">
-                <div class="ios-icon-box orange">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="6"/>
-                    <circle cx="12" cy="12" r="2"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="ios-row-title">Goal &amp; budget</div>
-                  <div class="ios-row-sub">MacBook Pro &middot; $20 daily limit</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-                  <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Connected Accounts -->
-            <div class="ios-list-row" data-goto="screen-setup-1">
-              <div class="ios-row-left">
-                <div class="ios-icon-box blue">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2 10h20v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V10zm0-5l10-4 10 4v3H2V5z"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="ios-row-title">Connected accounts</div>
-                  <div class="ios-row-sub">DBS connected</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-                  <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Recurring Expenses -->
-            <div class="ios-list-row" data-goto="screen-setup-3">
-              <div class="ios-row-left">
-                <div class="ios-icon-box purple">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="ios-row-title">Recurring expenses</div>
-                  <div class="ios-row-sub">1 expense &middot; $6.48 / month</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-                  <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: PREFERENCES -->
-          <div class="ios-section-header">PREFERENCES</div>
-          <div class="ios-inset-group">
-            <!-- Privacy & Sharing -->
-            <div class="ios-list-row" onclick="window.App.showToast('Privacy preferences updated')">
-              <div class="ios-row-left">
-                <div class="ios-icon-box blue">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="ios-row-title">Privacy &amp; sharing</div>
-                  <div class="ios-row-sub">You choose what friends see</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-                  <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Notifications with iOS Switch -->
-            <div class="ios-list-row">
-              <div class="ios-row-left">
-                <div class="ios-icon-box red">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 22a2.98 2.98 0 0 0 2.82-2H9.18A2.98 2.98 0 0 0 12 22zm7-6v-5c0-3.07-1.64-5.64-4.5-6.32V4a2.5 2.5 0 0 0-5 0v.68C6.63 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="ios-row-title">Near-limit alerts</div>
-                  <div class="ios-row-sub">Push notifications on limit risk</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <label class="ios-switch">
-                  <input type="checkbox" checked onchange="window.App.showToast('Push notifications ' + (this.checked ? 'enabled' : 'disabled'))">
-                  <span class="ios-switch-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Restart Setup Flow -->
-            <div class="ios-list-row" data-goto="screen-onboarding">
-              <div class="ios-row-left">
-                <div class="ios-icon-box gray">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="1 4 1 10 7 10"/>
-                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-                  </svg>
-                </div>
-                <div>
-                  <div class="ios-row-title">Restart Setup Flow</div>
-                  <div class="ios-row-sub">Return to onboarding test screen</div>
-                </div>
-              </div>
-              <div class="ios-row-right">
-                <svg class="ios-disclosure" viewBox="0 0 8 13" fill="none" stroke="currentColor">
-                  <path d="M1.5 1.5L6.5 6.5L1.5 11.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    `;
-  },
-
-  init() {
-    window.App.maze.bindSettingsPanel();
+  function page(name, o) {
+    var mod = Object.assign({}, o, {
+      tab: 'settings',
+      render() { return '<div class="screen-body">' + ui.back('settings') + ui.head(o.title, o.sub) + '<div id="sp-' + name + '">' + (o.html ? o.html() : '') + '</div></div>'; }
+    });
+    App.registerScreen(name, mod);
   }
-});
+
+  function section(label, rows) { return '<p class="section-label">' + label + '</p><div class="list">' + rows.join('') + '</div>'; }
+
+  /* ---------- Settings root ---------- */
+  App.registerScreen('settings', {
+    tab: 'settings',
+    title: 'Settings',
+
+    render() {
+      var u = App.state.user;
+      return `
+        <div class="screen-body">
+          <div class="ins-top"><span class="brand" style="font-size:15px;font-weight:600;color:var(--sn-text-secondary)">Savenow</span></div>
+          ${ui.head('Settings', 'Your account and preferences')}
+          <div class="card profile-card"><span class="avatar">BT</span><div><div class="profile-name">${esc(u.name)}</div><div class="profile-sub">@${esc(u.handle)} · ${u.currency} · ${u.country}</div></div></div>
+          <div id="settings-money"></div>
+          ${section('Preferences', [
+            ui.row({ title: 'Privacy &amp; sharing', sub: 'You choose what friends see', goto: 'settings-privacy' }),
+            ui.row({ title: 'Notifications', sub: 'Near-limit alerts on', goto: 'settings-notifications' }),
+            ui.row({ title: 'Help &amp; support', sub: 'How Savenow works', goto: 'settings-help' })
+          ])}
+          <p class="section-label">Appearance</p>
+          <div class="list seg-pad"><div class="segmented" id="theme-seg" role="radiogroup" aria-label="Appearance">
+            <button role="radio" data-theme-pref="system">System</button><button role="radio" data-theme-pref="light">Light</button><button role="radio" data-theme-pref="dark">Dark</button></div></div>
+
+          <p class="section-label proto">Prototype tools</p>
+          <div class="list proto-grid">
+            <div class="eyebrow">Budget state today</div>
+            <div class="segmented" id="state-seg" role="radiogroup" aria-label="Budget state">
+              <button role="radio" data-state="12">Within</button><button role="radio" data-state="17.4">Near limit</button><button role="radio" data-state="21.2">Over</button></div>
+            <button class="btn btn-secondary" id="proto-warning">Preview budget warning</button>
+            <button class="btn btn-secondary" data-goto="lock">Preview lock-screen alert</button>
+            <div class="eyebrow" style="margin-top:6px">Maze A/B testing <span id="maze-status-badge" class="maze-status">Not connected</span></div>
+            <div class="maze-variants"><button class="btn btn-secondary maze-variant-btn active" id="btn-var-a">Variant A</button><button class="btn btn-secondary maze-variant-btn" id="btn-var-b">Variant B</button></div>
+            <label class="field"><span class="label">Maze API key</span><input id="maze-api-key-input" placeholder="Paste key" autocomplete="off"></label>
+            <button class="btn btn-secondary" id="btn-save-maze-key">Save key</button>
+            <button class="btn btn-secondary" id="btn-copy-maze-url">Copy test link</button>
+          </div>
+          <button class="btn btn-ghost btn-block logout" data-goto="onboarding">Log out</button>
+        </div>`;
+    },
+
+    init() {
+      document.getElementById('theme-seg').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-theme-pref]'); if (b) { App.theme.set(b.dataset.themePref); App.screens.settings.paint(); }
+      });
+      document.getElementById('state-seg').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-state]'); if (!b) return;
+        var h = App.state.home; h.spentToday = parseFloat(b.dataset.state); h.week[h.week.length - 1].v = h.spentToday;
+        App.state.emit('budget'); App.screens.settings.paint();
+      });
+      document.getElementById('proto-warning').onclick = function () { App.overlay.open('alert-warning'); };
+      document.getElementById('btn-var-a').onclick = function () { App.maze.switchVariant('A'); };
+      document.getElementById('btn-var-b').onclick = function () { App.maze.switchVariant('B'); };
+      App.state.on('recurring', function () { App.screens.settings.paint(); });
+    },
+    onEnter() { this.paint(); },
+
+    paint() {
+      var s = App.state, banks = Object.keys(s.connectedBanks).filter(function (k) { return s.connectedBanks[k]; });
+      var rec = s.recurringExpenses, recTot = rec.reduce(function (a, e) { return a + e.amount; }, 0);
+      document.getElementById('settings-money').innerHTML = section('Your money', [
+        ui.row({ title: 'Goal &amp; budget', sub: esc(s.goal.purpose) + ' · ' + fmt(s.budget.daily, 0) + ' daily limit', goto: 'settings-goal' }),
+        ui.row({ title: 'Connected accounts', sub: banks.length ? banks.map(function (b) { return b.toUpperCase(); }).join(', ') + ' connected' : 'DBS connected', goto: 'settings-accounts' }),
+        ui.row({ title: 'Recurring expenses', sub: rec.length + ' expense' + (rec.length === 1 ? '' : 's') + ' · ' + fmt(recTot) + ' / month', goto: 'settings-recurring' })
+      ]);
+      document.querySelectorAll('[data-theme-pref]').forEach(function (b) { b.classList.toggle('active', b.dataset.themePref === s.themePref); b.setAttribute('aria-checked', b.dataset.themePref === s.themePref); });
+      var pct = s.home.spentToday;
+      document.querySelectorAll('[data-state]').forEach(function (b) {
+        var on = Math.abs(parseFloat(b.dataset.state) - pct) < 0.005;
+        b.classList.toggle('active', on); b.setAttribute('aria-checked', on);
+      });
+    }
+  });
+
+  /* ---------- Sub-pages ---------- */
+  page('settings-goal', {
+    title: 'Goal & budget', sub: 'Your target and your limits',
+    html() {
+      var s = App.state;
+      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '"><span class="t">' + t + '</span><span>' + (pre || '') + '<input id="' + id + '" inputmode="decimal" value="' + v + '"></span></label>'; };
+      return '<p class="section-label" style="margin-top:0">Your goal</p><div class="list">' +
+        '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px"></label>' +
+        vf('sg-amount', 'Amount', s.goal.amount, '$') + '</div>' +
+        '<p class="section-label">Your limits</p><div class="list">' +
+        vf('sg-daily', 'Daily limit', s.budget.daily, '$') + vf('sg-weekly', 'Any 7 consecutive days', s.budget.weekly, '$') + vf('sg-monthly', 'Any 30 days', s.budget.monthly, '$') + '</div>' +
+        '<button class="btn btn-secondary btn-block" id="sg-save" style="margin-top:20px">Save changes</button>' +
+        '<p class="save-note">Changing your daily limit does not reset your streak. New limits apply from tomorrow.</p>';
+    },
+    init() {
+      document.getElementById('sg-save').onclick = function () {
+        var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
+        var s = App.state, d = n('sg-daily');
+        if (!d) { App.showToast('Enter a daily limit'); return; }
+        s.goal.purpose = document.getElementById('sg-purpose').value.trim() || s.goal.purpose;
+        s.goal.amount = n('sg-amount') || s.goal.amount;
+        s.budget.daily = d; s.budget.weekly = n('sg-weekly') || d * 7; s.budget.monthly = n('sg-monthly') || d * 30;
+        s.home.dailyLimit = d; s.emit('budget');
+        App.showToast('Changes saved'); App.router.back('settings');
+      };
+    }
+  });
+
+  page('settings-accounts', {
+    title: 'Connected accounts', sub: 'Where your spending is read from',
+    html() {
+      return section('Connected', [ui.row({ title: 'DBS', sub: 'Connected 12 Aug · updates daily', toggle: ui.switchEl('acc-dbs', true) })]).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">') +
+        section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
+        '<p class="footnote">Savenow can read transactions so it can track spending for you. It can never move money or make payments.</p>';
+    },
+    init() { document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); }; }
+  });
+
+  page('settings-recurring', {
+    title: 'Recurring expenses', sub: 'Bills and subscriptions',
+    html() { return '<p class="section-label" style="margin-top:0">This month</p><div class="card exp-list" id="sr-list"></div>' +
+      '<div class="list" style="margin-top:12px">' + ui.row({ title: 'Add a recurring expense', sub: 'Rent, subscriptions, bills', goto: 'setup-3' }) + '</div>' +
+      '<p class="section-label">Total</p><div class="list" id="sr-total"></div>' +
+      '<p class="footnote">Recurring expenses count towards your 30-day cap, not your $20 daily limit, so a bill day will not end your streak.</p>'; },
+    init() { App.state.on('recurring', function () { App.screens['settings-recurring'].paint(); }); },
+    onEnter() { this.paint(); },
+    paint() {
+      App.renderRecurring(document.getElementById('sr-list'));
+      var r = App.state.recurringExpenses, t = r.reduce(function (a, e) { return a + e.amount; }, 0);
+      document.getElementById('sr-total').innerHTML = ui.row({ title: r.length + ' recurring expense' + (r.length === 1 ? '' : 's'), sub: 'Charged each month', value: fmt(t) });
+    }
+  });
+  // the recurring list uses delegated remove buttons
+  document.addEventListener('click', function (e) {
+    var rm = e.target.closest('#sr-list [data-remove]');
+    if (rm) App.removeRecurring(rm.dataset.remove);
+    var ed = e.target.closest('#sr-list [data-edit]');
+    if (ed) { App.router.go('setup-3'); setTimeout(function () { var b = document.querySelector('#rec-list [data-edit="' + ed.dataset.edit + '"]'); if (b) b.click(); }, 50); }
+  });
+
+  page('settings-privacy', {
+    title: 'Privacy & sharing', sub: 'Choose what others can see',
+    html() {
+      var s = App.state.settings;
+      return '<div class="list">' + ui.row({ title: 'Allow friend requests', sub: 'People can find your username', toggle: ui.switchEl('pv-req', s.friendRequests) }) +
+        ui.row({ title: 'Share financial information', sub: 'Your friends can see your exact budget, savings and balances.', toggle: ui.switchEl('pv-fin', s.shareFinancial) }) + '</div>';
+    },
+    init() {
+      document.getElementById('pv-req').onchange = function (e) { App.state.settings.friendRequests = e.target.checked; };
+      document.getElementById('pv-fin').onchange = function (e) { App.state.settings.shareFinancial = e.target.checked; };
+    }
+  });
+
+  page('settings-notifications', {
+    title: 'Notifications', sub: 'What Savenow tells you, and when',
+    html() {
+      var n = App.state.settings.notif;
+      var r = function (id, t, s) { return ui.row({ title: t, sub: s, toggle: ui.switchEl(id, n[id.replace('nt-', '')]) }); };
+      return '<p class="section-label" style="margin-top:0">Budget</p><div class="list">' + r('nt-nearLimit', 'Near-limit alert', 'When about 15% of today’s budget is left') + r('nt-daily', 'Daily summary', 'A short recap at 9:00 pm') + '</div>' +
+        '<p class="section-label">Streak &amp; friends</p><div class="list">' + r('nt-milestones', 'Streak milestones', 'At 7, 30 and 100 days') + r('nt-friends', 'Friend activity', 'When a friend reaches a milestone') + '</div>' +
+        '<button class="btn btn-secondary btn-block" style="margin-top:20px" data-goto="lock">Preview near-limit alert</button>' +
+        '<p class="footnote">Savenow sends at most one budget alert a day, so a run of small purchases will not keep interrupting you.</p>';
+    },
+    init() {
+      document.querySelectorAll('[id^="nt-"]').forEach(function (el) {
+        el.onchange = function () { App.state.settings.notif[el.id.replace('nt-', '')] = el.checked; };
+      });
+    }
+  });
+
+  page('settings-help', {
+    title: 'Help & support', sub: 'How Savenow works',
+    html() {
+      var t = function (x, s, k) { return ui.row({ title: x, sub: s, id: k }); };
+      return '<p class="section-label" style="margin-top:0">The basics</p><div class="list">' +
+        t('How your daily limit works', 'Your $20 a day, and the 7-day and 30-day caps', 'h1') + t('How streaks are counted', 'A day over your limit ends the streak', 'h2') + t('How spending is tagged', 'Everyday, recurring and discretionary', 'h3') + '</div>' +
+        '<p class="section-label">Get in touch</p><div class="list">' + t('Contact support', 'We reply within one working day', 'h4') + t('Privacy and your data', 'What we store and what friends can see', 'h5') + '</div>' +
+        '<p class="footnote">Savenow reads transactions from the accounts you connect. It never moves money and never shares amounts with friends.</p>';
+    },
+    init() { document.querySelectorAll('#sp-settings-help [id^="h"]').forEach(function (b) { b.onclick = function () { App.showToast('Help articles are not part of this prototype'); }; }); }
+  });
+})();

@@ -1,0 +1,9 @@
+# Static site: no build step. Publish the repo root.
+[build]
+  publish = "."
+
+# Keep the prototype fresh for testers (no stale JS/CSS after a deploy)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "no-cache"

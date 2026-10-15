@@ -1,130 +1,68 @@
-/**
- * Screen: Setup Step 4 — Add Socials Module
- */
-
-window.App = window.App || {};
-
-window.App.registerScreen('setup-4', {
-  id: 'screen-setup-4',
-  title: 'ADD SOCIALS',
+/** Screen: Setup 4 — Add socials (Setup.png) */
+App.registerScreen('setup-4', {
+  title: 'Add socials',
 
   render() {
     return `
-      <section class="screen" id="screen-setup-4">
-        <header class="ios-nav-bar">
-          <button class="ios-nav-back" data-goto="screen-setup-3">
-            <svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 2L2 10L10 18"/>
-            </svg>
-            <span>Back</span>
-          </button>
-          <span class="ios-nav-title">Add Socials</span>
-          <span style="width: 48px;"></span>
-        </header>
-        <div class="screen-scrollable-body" style="padding-top: 0;">
-          <div class="step-stepper">
-            <div class="step-dot done"></div>
-            <div class="step-dot done"></div>
-            <div class="step-dot done"></div>
-            <div class="step-dot active"></div>
+      <div class="screen-body">
+        ${App.setupHead('Add socials', 'Contacts or users')}
+        <div class="soc-actions">
+          <button class="btn btn-secondary btn-block" id="soc-group">+ Join group</button>
+          <div class="pair">
+            <button class="btn btn-secondary" id="soc-contacts">+ Contacts</button>
+            <button class="btn btn-secondary" id="soc-user">+ Username</button>
           </div>
-
-          <div class="setup-header-group">
-            <div class="setup-eyebrow">SETUP · STEP 4 OF 4</div>
-            <h2 class="setup-title">ADD SOCIALS</h2>
-            <p class="setup-subtitle">CONTACTS OR USERS</p>
-          </div>
-
-          <div class="social-action-buttons">
-            <button class="social-action-btn" id="social-btn-group">+ JOIN GROUP</button>
-            <div class="social-split-row">
-              <button class="social-action-btn" id="social-btn-contacts">+ CONTACTS</button>
-              <button class="social-action-btn" id="social-btn-user">+ USERNAME</button>
-            </div>
-          </div>
-
-          <div class="form-section-title" style="margin-top: 24px;">CONNECTED BUDDIES &amp; GROUPS</div>
-          <div class="social-active-list" id="socials-list-container"></div>
         </div>
-
-        <footer class="screen-footer-actions">
-          <button class="btn btn-outline" data-goto="screen-setup-3">Back</button>
-          <button class="btn btn-emerald" data-goto="screen-home">Finish Setup &rarr;</button>
-        </footer>
-      </section>
-    `;
+        <div class="soc-added" id="soc-added"></div>
+      </div>
+      <div class="screen-footer">
+        <button class="btn btn-secondary btn-grow" data-back="setup-3">Back</button>
+        <button class="btn btn-primary btn-grow" id="soc-continue">Continue</button>
+      </div>
+      <div class="sheet" id="soc-sheet" role="dialog" aria-modal="true" aria-labelledby="soc-sheet-title">
+        <div class="grabber"></div>
+        <h2 class="sheet-title" id="soc-sheet-title">Add</h2>
+        <p class="sheet-sub" id="soc-sheet-sub"></p>
+        <div class="soc-sheet-field">${App.ui.field({ id: 'soc-input', label: 'Name' })}</div>
+        <button class="btn btn-primary btn-block" id="soc-save" style="margin-top:16px">Add</button>
+      </div>`;
   },
 
   init() {
-    const btnGroup = document.getElementById('social-btn-group');
-    const btnContacts = document.getElementById('social-btn-contacts');
-    const btnUser = document.getElementById('social-btn-user');
-
-    if (btnGroup) {
-      btnGroup.addEventListener('click', () => {
-        const groupName = prompt('Join a Community Group:', 'NUS Savers Club');
-        if (groupName) {
-          window.App.state.socials.push({
-            id: 'grp_' + Date.now(),
-            name: groupName,
-            type: 'group',
-            icon: groupName.substring(0, 2).toUpperCase()
-          });
-          this.renderList();
-          window.App.showToast(`Joined ${groupName}`);
-        }
-      });
+    var $ = function (id) { return document.getElementById(id); };
+    var mode = 'group';
+    var cfg = {
+      group: { t: 'Join a group', s: 'Enter a group code or name to join a saving circle.', l: 'Group' },
+      contacts: { t: 'Add from contacts', s: 'Savenow never messages anyone without your say-so.', l: 'Contact name' },
+      user: { t: 'Add by username', s: 'Friends only see shared streaks, never amounts.', l: '@username' }
+    };
+    function show(m) {
+      mode = m;
+      $('soc-sheet-title').textContent = cfg[m].t;
+      $('soc-sheet-sub').textContent = cfg[m].s;
+      $('soc-input').previousElementSibling.textContent = cfg[m].l;
+      $('soc-input').value = '';
+      App.overlay.open('soc-sheet');
     }
-
-    if (btnContacts) {
-      btnContacts.addEventListener('click', () => {
-        window.App.showToast('Synced 3 contacts from your phonebook!');
-        window.App.state.socials.push(
-          { id: 'c1', name: 'Samantha Lee', type: 'contact', icon: 'SL' },
-          { id: 'c2', name: 'Darren Tan', type: 'contact', icon: 'DT' }
-        );
-        this.renderList();
-      });
+    function renderAdded() {
+      var list = App.state.socials;
+      $('soc-added').innerHTML = list.length
+        ? '<p class="section-label" style="margin-top:0">Added</p><div class="list">' + list.map(function (s) {
+            return App.ui.row({ title: App.escapeHTML(s.name), sub: s.type, tile: { text: s.name.slice(0, 2).toUpperCase(), cls: 'emerald' } });
+          }).join('') + '</div>'
+        : '';
     }
-
-    if (btnUser) {
-      btnUser.addEventListener('click', () => {
-        const uname = prompt('Enter username to add accountability buddy:', '@charlie_k');
-        if (uname) {
-          window.App.state.socials.push({
-            id: 'u_' + Date.now(),
-            name: uname,
-            type: 'user',
-            icon: uname.substring(1, 3).toUpperCase()
-          });
-          this.renderList();
-          window.App.showToast(`Connected with ${uname}!`);
-        }
-      });
-    }
-
-    this.renderList();
-  },
-
-  renderList() {
-    const listEl = document.getElementById('socials-list-container');
-    if (!listEl) return;
-    listEl.innerHTML = '';
-
-    window.App.state.socials.forEach(s => {
-      const item = document.createElement('div');
-      item.className = 'social-member-chip';
-      item.innerHTML = `
-        <div class="member-left">
-          <div class="member-avatar">${s.icon}</div>
-          <div>
-            <div style="font-size: 13.5px; font-weight: 700; color: var(--sn-text-primary);">${window.App.escapeHTML(s.name)}</div>
-            <div style="font-size: 11px; color: var(--sn-text-secondary); text-transform: uppercase;">${s.type}</div>
-          </div>
-        </div>
-        <span style="font-size: 11px; font-weight: 700; color: var(--sn-emerald-600); background: var(--sn-emerald-50); padding: 3px 8px; border-radius: var(--radius-pill);">&#10003; Active</span>
-      `;
-      listEl.appendChild(item);
-    });
+    $('soc-group').onclick = function () { show('group'); };
+    $('soc-contacts').onclick = function () { show('contacts'); };
+    $('soc-user').onclick = function () { show('user'); };
+    $('soc-save').onclick = function () {
+      var v = $('soc-input').value.trim();
+      if (!v) { $('soc-input').focus(); return; }
+      App.state.socials.push({ name: v, type: mode === 'group' ? 'Group' : mode === 'user' ? 'Username' : 'Contact' });
+      App.overlay.close();
+      renderAdded();
+      App.showToast('Added ' + v);
+    };
+    $('soc-continue').onclick = function () { App.router.go('home', { root: true }); };
   }
 });

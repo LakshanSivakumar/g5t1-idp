@@ -1,228 +1,177 @@
-/**
- * Screen: Setup Step 3 — Recurring Expenses Module
- */
+/** Screen: Setup 3 — Add recurring expenses (+ shared list used by Settings) */
+(function () {
+  var CATS = ['MUSIC', 'RENT', 'TV & STREAMING', 'SUBSCRIPTIONS', 'UTILITIES', 'GYM', 'OTHER'];
+  var esc = App.escapeHTML;
 
-window.App = window.App || {};
+  function ordinal(n) {
+    var s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  App.ordinal = ordinal;
 
-window.App.registerScreen('setup-3', {
-  id: 'screen-setup-3',
-  title: 'ADD RECURRING EXPENSES',
-
-  render() {
-    return `
-      <section class="screen" id="screen-setup-3">
-        <header class="ios-nav-bar">
-          <button class="ios-nav-back" data-goto="screen-setup-2">
-            <svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 2L2 10L10 18"/>
-            </svg>
-            <span>Back</span>
-          </button>
-          <span class="ios-nav-title">Recurring Expenses</span>
-          <span style="width: 48px;"></span>
-        </header>
-        <div class="screen-scrollable-body" style="padding-top: 0;">
-          <div class="step-stepper">
-            <div class="step-dot done"></div>
-            <div class="step-dot done"></div>
-            <div class="step-dot active"></div>
-            <div class="step-dot"></div>
-          </div>
-
-          <div class="setup-header-group">
-            <div class="setup-eyebrow">SETUP · STEP 3 OF 4</div>
-            <h2 class="setup-title">ADD RECURRING EXPENSES</h2>
-            <p class="setup-subtitle">Rent, Subscriptions, regular expenses, etc.</p>
-          </div>
-
-          <div class="input-outline-box">
-            <span class="input-outline-label">PURPOSE/NAME</span>
-            <input type="text" class="input-outline-field" id="rec-name-input" placeholder="e.g. SPOTIFY, NETFLIX">
-          </div>
-
-          <div class="form-grid-2">
-            <div class="input-outline-box">
-              <span class="input-outline-label">AMOUNT</span>
-              <input type="text" class="input-outline-field" id="rec-amount-input" placeholder="$0.00">
-            </div>
-            <div class="input-outline-box" id="category-picker-trigger">
-              <span class="input-outline-label">CATEGORY</span>
-              <div class="category-dropdown-trigger">
-                <span class="category-dropdown-value" id="category-picker-value">MUSIC</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="recurring-day-calendar-row">
-            <div class="input-outline-box recurring-day-box">
-              <span class="input-outline-label">DAY</span>
-              <input type="number" class="input-outline-field" id="rec-day-input" value="17" min="1" max="31">
-            </div>
-            <span class="day-helper-text">th day of the</span>
-            <div class="input-outline-box recurring-cal-box">
-              <span class="input-outline-label">CALENDAR</span>
-              <input type="text" class="input-outline-field" value="MONTH" readonly>
-            </div>
-          </div>
-
-          <button class="btn btn-outline" id="add-recurring-btn" style="height: 42px; margin-bottom: 8px;">Add</button>
-
-          <!-- Expense List Container -->
-          <div class="expense-list-container">
-            <span class="expense-list-container-label">EXPENSE LIST</span>
-
-            <div id="recurring-items-container"></div>
-
-            <div class="empty-expense-state" id="empty-recurring-state" style="display: none;">
-              <div class="empty-expense-title">NO RECURRING EXPENSES YET</div>
-              <div class="empty-expense-subtitle">ADD ONE ABOVE WHEN YOU'RE READY</div>
-            </div>
-          </div>
-
-          <p class="swipe-hint-text" id="swipe-hint-text">SWIPE LEFT, OR USE EDIT / REMOVE</p>
-        </div>
-
-        <footer class="screen-footer-actions">
-          <button class="btn btn-outline" data-goto="screen-setup-2">Back</button>
-          <button class="btn btn-primary" data-goto="screen-setup-4">Continue</button>
-        </footer>
-      </section>
-    `;
-  },
-
-  init() {
-    const addBtn = document.getElementById('add-recurring-btn');
-    const catTrigger = document.getElementById('category-picker-trigger');
-    const catValueEl = document.getElementById('category-picker-value');
-    const catModal = document.getElementById('category-modal');
-    const nameInput = document.getElementById('rec-name-input');
-    const amountInput = document.getElementById('rec-amount-input');
-    const dayInput = document.getElementById('rec-day-input');
-
-    let selectedCategory = 'MUSIC';
-
-    if (catTrigger && catModal) {
-      catTrigger.addEventListener('click', () => {
-        catModal.classList.add('open');
-      });
-
-      document.querySelectorAll('.category-option-item').forEach(item => {
-        item.addEventListener('click', () => {
-          selectedCategory = item.getAttribute('data-cat');
-          if (catValueEl) catValueEl.textContent = selectedCategory;
-          catModal.classList.remove('open');
-        });
-      });
-
-      catModal.addEventListener('click', (e) => {
-        if (e.target === catModal) catModal.classList.remove('open');
-      });
-    }
-
-    if (addBtn) {
-      addBtn.addEventListener('click', () => {
-        const name = (nameInput && nameInput.value.trim()) || 'SUBSCRIPTION';
-        const amtStr = (amountInput && amountInput.value.replace(/[^0-9.]/g, '')) || '9.99';
-        const amt = parseFloat(amtStr) || 9.99;
-        const day = parseInt(dayInput && dayInput.value) || 1;
-
-        const newItem = {
-          id: 'rec_' + Date.now(),
-          name: name.toUpperCase(),
-          category: selectedCategory,
-          amount: amt,
-          day: day,
-          frequency: 'MONTH'
-        };
-
-        window.App.state.recurringExpenses.push(newItem);
-        this.renderList();
-
-        if (nameInput) nameInput.value = '';
-        if (amountInput) amountInput.value = '';
-        window.App.showToast(`Added ${newItem.name} ($${amt.toFixed(2)})`);
-      });
-    }
-
-    this.renderList();
-  },
-
-  renderList() {
-    const container = document.getElementById('recurring-items-container');
-    const emptyState = document.getElementById('empty-recurring-state');
-    const swipeHint = document.getElementById('swipe-hint-text');
-
-    if (!container) return;
-    container.innerHTML = '';
-
-    const list = window.App.state.recurringExpenses;
-
-    if (list.length === 0) {
-      if (emptyState) emptyState.style.display = 'flex';
-      if (swipeHint) swipeHint.style.display = 'none';
+  /** Renders the swipe-to-remove expense rows into `host`. */
+  App.renderRecurring = function (host, opts) {
+    opts = opts || {};
+    var list = App.state.recurringExpenses;
+    if (!list.length) {
+      host.innerHTML = '<div class="exp-empty"><div class="empty"><strong>No recurring expenses yet</strong><span>Add one above when you’re ready</span></div></div>';
       return;
     }
+    host.innerHTML = list.map(function (e) {
+      return '<div class="swipe" data-id="' + e.id + '">' +
+        '<div class="swipe-action" aria-hidden="true">Remove</div>' +
+        '<div class="swipe-front">' +
+        '<div class="swipe-top"><div><div class="swipe-name">' + esc(e.name) + '</div><div class="swipe-meta">' + esc(titleCase(e.category)) + '</div></div>' +
+        '<div><div class="swipe-amt">' + App.fmt.money(e.amount) + '</div><div class="swipe-meta" style="text-align:right">' + ordinal(e.day) + ' / ' + (e.cal || 'month').toLowerCase() + '</div></div></div>' +
+        '<div class="swipe-acts"><button class="link-btn" data-edit="' + e.id + '">Edit</button><button class="link-btn rm" data-remove="' + e.id + '">Remove</button></div>' +
+        '</div></div>';
+    }).join('');
+    bindSwipe(host);
+  };
 
-    if (emptyState) emptyState.style.display = 'none';
-    if (swipeHint) swipeHint.style.display = 'block';
+  function titleCase(s) { return s.charAt(0) + s.slice(1).toLowerCase().replace(/\b(tv)\b/, 'TV'); }
 
-    list.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'recurring-expense-card';
-      card.setAttribute('data-id', item.id);
-
-      card.innerHTML = `
-        <div class="recurring-main-row">
-          <div>
-            <div class="rec-title">${window.App.escapeHTML(item.name)}</div>
-            <div class="rec-cat">${window.App.escapeHTML(item.category)}</div>
-          </div>
-          <div>
-            <div class="rec-amount">$${item.amount.toFixed(2)}</div>
-            <div class="rec-freq">${item.day}th / ${item.frequency}</div>
-          </div>
-        </div>
-        <div class="rec-actions-row">
-          <button class="rec-action-link edit" onclick="window.App.screens['setup-3'].editItem('${item.id}')">Edit</button>
-          <button class="rec-action-link remove" onclick="window.App.screens['setup-3'].removeItem('${item.id}')">Remove</button>
-        </div>
-      `;
-
-      let startX = 0;
-      card.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-      }, { passive: true });
-
-      card.addEventListener('touchend', (e) => {
-        const diffX = e.changedTouches[0].clientX - startX;
-        if (diffX < -50) {
-          this.removeItem(item.id);
-        }
+  function bindSwipe(host) {
+    host.querySelectorAll('.swipe').forEach(function (row) {
+      var front = row.querySelector('.swipe-front'), startX = 0, dx = 0, drag = false;
+      row.querySelector('.swipe-action').addEventListener('click', function () { remove(row.dataset.id); });
+      front.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('button')) return;
+        drag = true; startX = e.clientX; dx = 0; front.classList.add('dragging');
+        front.setPointerCapture(e.pointerId);
       });
-
-      container.appendChild(card);
+      front.addEventListener('pointermove', function (e) {
+        if (!drag) return;
+        dx = Math.max(-96, Math.min(0, e.clientX - startX));
+        front.style.transform = 'translateX(' + dx + 'px)';
+      });
+      function end() {
+        if (!drag) return;
+        drag = false; front.classList.remove('dragging');
+        front.style.transform = dx < -48 ? 'translateX(-96px)' : '';
+      }
+      front.addEventListener('pointerup', end);
+      front.addEventListener('pointercancel', end);
     });
-  },
+  }
 
-  removeItem(id) {
-    const list = window.App.state.recurringExpenses;
-    const idx = list.findIndex(i => i.id === id);
-    if (idx !== -1) {
-      const removed = list.splice(idx, 1)[0];
-      this.renderList();
-      window.App.showToast(`Removed ${removed.name}`);
-    }
-  },
-
-  editItem(id) {
-    const list = window.App.state.recurringExpenses;
-    const item = list.find(i => i.id === id);
-    if (!item) return;
-    const newName = prompt('Edit expense name:', item.name);
-    if (newName) {
-      item.name = newName.toUpperCase();
-      this.renderList();
+  function remove(id) {
+    var list = App.state.recurringExpenses;
+    var i = list.findIndex(function (e) { return e.id === id; });
+    if (i > -1) {
+      var name = list[i].name;
+      list.splice(i, 1);
+      App.state.emit('recurring');
+      App.showToast(name + ' removed');
     }
   }
-});
+  App.removeRecurring = remove;
+
+  App.registerScreen('setup-3', {
+    title: 'Recurring expenses',
+    editing: null,
+    cat: null,
+
+    render() {
+      var ui = App.ui;
+      return `
+        <div class="screen-body">
+          ${App.setupHead('Add recurring expenses', 'Rent, subscriptions, regular expenses, etc.')}
+          <form class="rec-form" id="rec-form" novalidate>
+            ${ui.field({ id: 'rec-name', label: 'Purpose / name', placeholder: 'e.g. Spotify' })}
+            <div class="field-row">
+              ${ui.field({ id: 'rec-amt', label: 'Amount', prefix: '$', inputmode: 'decimal' })}
+              <div class="dd" id="rec-dd">
+                <label class="field" style="padding-top:22px">
+                  <span class="label">Category</span>
+                  <button type="button" class="dd-btn placeholder" id="rec-cat-btn" aria-haspopup="listbox" aria-expanded="false"><span>Select</span>${App.icon('chevron.down', 16)}</button>
+                </label>
+                <div class="dd-list" role="listbox" id="rec-cat-list">${CATS.map(function (c) { return '<button type="button" class="dd-opt" role="option" data-cat="' + c + '">' + esc(c) + '</button>'; }).join('')}</div>
+              </div>
+            </div>
+            <div class="rec-day">
+              ${ui.field({ id: 'rec-day', label: 'Day', inputmode: 'numeric', maxlength: 2 })}
+              <span class="of"><span id="rec-ord">th</span> day of the</span>
+              <label class="field"><span class="label">Calendar</span>
+                <select id="rec-cal" aria-label="Calendar"><option>Month</option><option>Year</option></select></label>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-block" id="rec-add">Add</button>
+          </form>
+          <p class="section-label">Expense list</p>
+          <div class="card exp-list" id="rec-list"></div>
+          <p class="footnote" style="text-align:center">Swipe left, or use Edit / Remove</p>
+        </div>
+        <div class="screen-footer">
+          <button class="btn btn-secondary btn-grow" data-back="setup-2">Back</button>
+          <button class="btn btn-primary btn-grow" data-goto="setup-4">Continue</button>
+        </div>`;
+    },
+
+    init() {
+      var self = this, $ = function (id) { return document.getElementById(id); };
+      var dd = $('rec-dd'), btn = $('rec-cat-btn');
+      var list = $('rec-list');
+
+      function setCat(c) {
+        self.cat = c;
+        btn.firstElementChild.textContent = c || 'Select';
+        btn.classList.toggle('placeholder', !c);
+      }
+      btn.addEventListener('click', function () {
+        var open = dd.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+      });
+      $('rec-cat-list').addEventListener('click', function (e) {
+        var o = e.target.closest('[data-cat]');
+        if (!o) return;
+        setCat(o.dataset.cat);
+        dd.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+      document.addEventListener('click', function (e) { if (!e.target.closest('#rec-dd')) dd.classList.remove('open'); });
+
+      $('rec-day').addEventListener('input', function (e) {
+        var n = parseInt(e.target.value.replace(/\D/g, ''), 10);
+        if (n > 31) n = 31;
+        e.target.value = n ? String(n) : '';
+        $('rec-ord').textContent = n ? ordinal(n).replace(/^\d+/, '') : 'th';
+      });
+
+      $('rec-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = $('rec-name').value.trim();
+        var amt = parseFloat($('rec-amt').value.replace(/[^0-9.]/g, ''));
+        var day = parseInt($('rec-day').value, 10);
+        if (!name || !amt || !self.cat || !day) {
+          App.showToast('Fill in every field to add an expense');
+          return;
+        }
+        App.state.recurringExpenses.push({ id: 'rec_' + Date.now(), name: name, category: self.cat, amount: amt, day: day, cal: $('rec-cal').value.toUpperCase() });
+        ['rec-name', 'rec-amt', 'rec-day'].forEach(function (id) { $(id).value = ''; });
+        setCat(null);
+        $('rec-ord').textContent = 'th';
+        $('rec-add').textContent = 'Add';
+        App.state.emit('recurring');
+      });
+
+      list.addEventListener('click', function (e) {
+        var rm = e.target.closest('[data-remove]');
+        var ed = e.target.closest('[data-edit]');
+        if (rm) remove(rm.dataset.remove);
+        if (ed) {
+          var item = App.state.recurringExpenses.filter(function (x) { return x.id === ed.dataset.edit; })[0];
+          if (!item) return;
+          $('rec-name').value = item.name; $('rec-amt').value = item.amount; $('rec-day').value = item.day;
+          $('rec-ord').textContent = ordinal(item.day).replace(/^\d+/, '');
+          setCat(item.category);
+          App.state.recurringExpenses = App.state.recurringExpenses.filter(function (x) { return x.id !== item.id; });
+          $('rec-add').textContent = 'Save';
+          App.state.emit('recurring');
+          $('rec-name').focus();
+        }
+      });
+      App.state.on('recurring', function () { App.renderRecurring(list); });
+      App.renderRecurring(list);
+    }
+  });
+})();

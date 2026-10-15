@@ -1,58 +1,12 @@
 /**
- * Savenow Design System — Variables & iOS Human Interface Tokens
- * Conforming strictly to Apple HIG (Human Interface Guidelines)
- * Sourced directly from Savenow-High-Fidelity-Color-Palette.html & iOS System Specs
+ * Savenow Design Tokens
+ * Single source of truth: Savenow-High-Fidelity-Color-Palette.html
+ * Light is the default; dark applies via [data-theme="dark"] (set by main.js,
+ * which follows the system preference until the user picks one in Settings).
  */
 
 :root {
-  /* ==============================================================
-     1. Apple iOS HIG System Colors (Light Mode)
-     ============================================================== */
-  --ios-system-blue: #007AFF;
-  --ios-system-green: #34C759;
-  --ios-system-indigo: #5856D6;
-  --ios-system-orange: #FF9500;
-  --ios-system-pink: #FF2D55;
-  --ios-system-purple: #AF52DE;
-  --ios-system-red: #FF3B30;
-  --ios-system-teal: #5AC8FA;
-  --ios-system-yellow: #FFCC00;
-  --ios-system-mint: #00C7BE;
-  --ios-system-cyan: #32ADE6;
-
-  /* iOS System Grays */
-  --ios-gray-1: #8E8E93;
-  --ios-gray-2: #AEAEB2;
-  --ios-gray-3: #C7C7CC;
-  --ios-gray-4: #D1D1D6;
-  --ios-gray-5: #E5E5EA;
-  --ios-gray-6: #F2F2F7;
-
-  /* iOS Grouped Background & Fill Colors */
-  --ios-bg-primary: #FFFFFF;
-  --ios-bg-secondary: #F2F2F7;
-  --ios-bg-tertiary: #FFFFFF;
-  --ios-grouped-bg: #F2F2F7;
-  --ios-secondary-grouped-bg: #FFFFFF;
-  --ios-tertiary-grouped-bg: #F2F2F7;
-
-  /* iOS Separators & Hairlines */
-  --ios-separator: rgba(60, 60, 67, 0.29);
-  --ios-opaque-separator: #C6C6C8;
-  --ios-fill: rgba(120, 120, 128, 0.2);
-  --ios-secondary-fill: rgba(120, 120, 128, 0.16);
-  --ios-tertiary-fill: rgba(118, 118, 128, 0.12);
-  --ios-quaternary-fill: rgba(116, 116, 128, 0.08);
-
-  /* iOS Label Hierarchy */
-  --ios-label: #000000;
-  --ios-secondary-label: #3C3C4399;
-  --ios-tertiary-label: #3C3C434D;
-  --ios-quaternary-label: #3C3C432E;
-
-  /* ==============================================================
-     2. Savenow Brand Palette (Mapped to iOS Tokens)
-     ============================================================== */
+  /* ---- 1. Brand & primary accents ---- */
   --sn-obsidian-950: #0B0F19;
   --sn-obsidian-900: #0F172A;
   --sn-obsidian-800: #1E293B;
@@ -63,139 +17,130 @@
   --sn-emerald-100: #D1FAE5;
   --sn-emerald-50:  #ECFDF5;
 
-  /* Surfaces & Neutrals */
-  --sn-bg-canvas: #F2F2F7;
-  --sn-bg-card: #FFFFFF;
-  --sn-bg-subtle: #F2F2F7;
-  --sn-border-hairline: rgba(60, 60, 67, 0.18);
-  --sn-border-strong: rgba(60, 60, 67, 0.29);
-  --sn-text-primary: #000000;
-  --sn-text-secondary: rgba(60, 60, 67, 0.70);
-  --sn-text-muted: rgba(60, 60, 67, 0.45);
-
-  /* Semantic Budget States */
+  /* ---- 2. Budget states ---- */
   --sn-amber-600: #D97706;
-  --sn-amber-500: #FF9500; /* iOS System Orange */
+  --sn-amber-500: #F59E0B;
   --sn-amber-100: #FEF3C7;
   --sn-amber-50:  #FFFBEB;
+  --sn-amber-text: #B45309;
+  --sn-amber-border: #FDE68A;
 
   --sn-rose-600: #E11D48;
-  --sn-rose-500: #FF3B30; /* iOS System Red */
+  --sn-rose-500: #F43F5E;
   --sn-rose-100: #FFE4E6;
   --sn-rose-50:  #FFF1F2;
+  --sn-rose-text: #BE123C;
+  --sn-rose-border: #FECDD3;
 
   --sn-indigo-600: #4F46E5;
-  --sn-indigo-500: #5856D6; /* iOS System Indigo */
+  --sn-indigo-500: #6366F1;
   --sn-indigo-100: #E0E7FF;
   --sn-indigo-50:  #EEF2FF;
 
-  /* Streak / Gamification */
+  --sn-emerald-text: #059669;
+  --sn-emerald-border: #A7F3D0;
+
+  /* ---- 3. Streak & categories ---- */
   --sn-streak-600: #EA580C;
-  --sn-streak-500: #FF9500;
+  --sn-streak-500: #F97316;
   --sn-streak-100: #FFEDD5;
   --sn-streak-50:  #FFF7ED;
+  --sn-streak-border: #FED7AA;
 
-  /* 5-Category Visualization Palette */
-  --sn-cat-food: #FF9500;
-  --sn-cat-transport: #007AFF;
-  --sn-cat-shopping: #AF52DE;
-  --sn-cat-bills: #34C759;
-  --sn-cat-other: #8E8E93;
+  --sn-cat-food: #F97316;
+  --sn-cat-transport: #0EA5E9;
+  --sn-cat-shopping: #8B5CF6;
+  --sn-cat-bills: #6366F1;
+  --sn-cat-other: #14B8A6;
+  --sn-cat-food-tint: #FFF7ED;
+  --sn-cat-transport-tint: #E0F2FE;
+  --sn-cat-shopping-tint: #EDE9FE;
+  --sn-cat-bills-tint: #E0E7FF;
+  --sn-cat-other-tint: #CCFBF1;
 
-  /* ==============================================================
-     3. iOS HIG Typography, Dimensions & Corner Curves
-     ============================================================== */
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Helvetica Neue", sans-serif;
-  --font-mono: "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* ---- 4. Surfaces, borders, text (light) ---- */
+  --sn-bg-canvas: #F8FAFC;
+  --sn-bg-card: #FFFFFF;
+  --sn-bg-subtle: #F1F5F9;
+  --sn-border-hairline: #E2E8F0;
+  --sn-border-strong: #CBD5E1;
+  --sn-text-primary: #0F172A;
+  --sn-text-secondary: #475569;
+  --sn-text-muted: #94A3B8;
 
-  /* iOS Corner Radius Hierarchy (Smooth continuous squircle curve) */
-  --ios-radius-sheet: 22px;
-  --ios-radius-card: 14px;
-  --ios-radius-cell: 10px;
-  --ios-radius-btn: 12px;
-  --ios-radius-capsule: 9999px;
-  --radius-xl: 22px;
-  --radius-lg: 14px;
-  --radius-md: 10px;
+  /* Role tokens (flip in dark mode) */
+  --sn-cta-bg: var(--sn-obsidian-900);
+  --sn-cta-fg: #FFFFFF;
+  --sn-accent: var(--sn-emerald-600);   /* accessible green text / active tab */
+  --sn-ring-track: #E2E8F0;
+  --sn-overlay: rgba(15, 23, 42, 0.45);
+  --sn-material: rgba(248, 250, 252, 0.86);
+  --sn-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --sn-shadow-md: 0 2px 6px rgba(15, 23, 42, 0.05);
+  --sn-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.18);
+
+  /* Nudge pills (light = tinted surface + dark text) */
+  --nudge-amber-bg: var(--sn-amber-50);   --nudge-amber-fg: var(--sn-amber-text);   --nudge-amber-bd: var(--sn-amber-border);
+  --nudge-rose-bg: var(--sn-rose-50);     --nudge-rose-fg: var(--sn-rose-text);     --nudge-rose-bd: var(--sn-rose-border);
+  --nudge-emerald-bg: var(--sn-emerald-50); --nudge-emerald-fg: var(--sn-emerald-600); --nudge-emerald-bd: var(--sn-emerald-border);
+
+  /* ---- 5. Type, shape, layout ---- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  --radius-sheet: 28px;
+  --radius-card: 18px;
+  --radius-field: 12px;
+  --radius-btn: 14px;
   --radius-pill: 9999px;
 
-  /* iOS Dimensions */
-  --ios-nav-height: 44px;
-  --ios-large-nav-height: 96px;
-  --ios-tab-bar-height: 49px;
-  --ios-safe-bottom: env(safe-area-inset-bottom, 34px);
-  --ios-safe-top: env(safe-area-inset-top, 47px);
-  --ios-cell-min-height: 44px;
+  --touch-min: 44px;
+  --nav-h: 44px;
+  --tab-h: 49px;
 
-  /* iOS Shadows & Frosted Glass */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
-  --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.18);
-  --ios-blur-material: blur(20px) saturate(180%);
+  /* Safe areas. main.js sets --sat-sim/--sab-sim when it is simulating a device
+     (desktop Chrome emulation); real standalone iOS uses env(). */
+  --sat: max(env(safe-area-inset-top, 0px), var(--sat-sim, 0px));
+  --sab: max(env(safe-area-inset-bottom, 0px), var(--sab-sim, 0px));
 }
 
-/* ==============================================================
-   4. iOS HIG Dark Mode Tokens
-   ============================================================== */
 [data-theme="dark"] {
-  --ios-system-blue: #0A84FF;
-  --ios-system-green: #30D158;
-  --ios-system-indigo: #5E5CE6;
-  --ios-system-orange: #FF9F0A;
-  --ios-system-pink: #FF375F;
-  --ios-system-purple: #BF5AF2;
-  --ios-system-red: #FF453A;
-  --ios-system-teal: #64D2FF;
-  --ios-system-yellow: #FFD60A;
-  --ios-system-mint: #66D4CF;
-  --ios-system-cyan: #64D2FF;
+  --sn-bg-canvas: #0B0F19;
+  --sn-bg-card: #111827;
+  --sn-bg-subtle: #1E293B;
+  --sn-border-hairline: #1F2937;
+  --sn-border-strong: #334155;
+  --sn-text-primary: #F8FAFC;
+  --sn-text-secondary: #94A3B8;
+  --sn-text-muted: #64748B;
 
-  --ios-gray-1: #8E8E93;
-  --ios-gray-2: #636366;
-  --ios-gray-3: #48484A;
-  --ios-gray-4: #3A3A3C;
-  --ios-gray-5: #2C2C2E;
-  --ios-gray-6: #1C1C1E;
+  --sn-emerald-50: rgba(16, 185, 129, 0.14);
+  --sn-emerald-100: rgba(16, 185, 129, 0.28);
+  --sn-amber-50: rgba(245, 158, 11, 0.14);
+  --sn-amber-100: rgba(245, 158, 11, 0.28);
+  --sn-rose-50: rgba(244, 63, 94, 0.15);
+  --sn-rose-100: rgba(244, 63, 94, 0.28);
+  --sn-indigo-50: rgba(99, 102, 241, 0.16);
+  --sn-indigo-100: rgba(99, 102, 241, 0.30);
+  --sn-streak-50: rgba(249, 115, 22, 0.16);
+  --sn-streak-100: rgba(249, 115, 22, 0.30);
+  --sn-streak-border: rgba(249, 115, 22, 0.35);
 
-  --ios-bg-primary: #000000;
-  --ios-bg-secondary: #1C1C1E;
-  --ios-bg-tertiary: #2C2C2E;
-  --ios-grouped-bg: #000000;
-  --ios-secondary-grouped-bg: #1C1C1E;
-  --ios-tertiary-grouped-bg: #2C2C2E;
+  --sn-cat-food-tint: rgba(249, 115, 22, 0.16);
+  --sn-cat-transport-tint: rgba(14, 165, 233, 0.16);
+  --sn-cat-shopping-tint: rgba(139, 92, 246, 0.18);
+  --sn-cat-bills-tint: rgba(99, 102, 241, 0.18);
+  --sn-cat-other-tint: rgba(20, 184, 166, 0.16);
 
-  --ios-separator: rgba(84, 84, 88, 0.65);
-  --ios-opaque-separator: #38383A;
-  --ios-fill: rgba(120, 120, 128, 0.36);
-  --ios-secondary-fill: rgba(120, 120, 128, 0.32);
-  --ios-tertiary-fill: rgba(118, 118, 128, 0.24);
-  --ios-quaternary-fill: rgba(118, 118, 128, 0.18);
+  --sn-cta-bg: var(--sn-emerald-500);
+  --sn-cta-fg: #0B0F19;
+  --sn-accent: var(--sn-emerald-400);
+  --sn-ring-track: #1F2937;
+  --sn-overlay: rgba(0, 0, 0, 0.6);
+  --sn-material: rgba(11, 15, 25, 0.82);
+  --sn-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --sn-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.5);
+  --sn-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
 
-  --ios-label: #FFFFFF;
-  --ios-secondary-label: #EBEBF599;
-  --ios-tertiary-label: #EBEBF54D;
-  --ios-quaternary-label: #EBEBF52E;
-
-  --sn-bg-canvas: #000000;
-  --sn-bg-card: #1C1C1E;
-  --sn-bg-subtle: #2C2C2E;
-  --sn-border-hairline: rgba(84, 84, 88, 0.40);
-  --sn-border-strong: rgba(84, 84, 88, 0.65);
-  --sn-text-primary: #FFFFFF;
-  --sn-text-secondary: rgba(235, 235, 245, 0.60);
-  --sn-text-muted: rgba(235, 235, 245, 0.35);
-
-  --sn-emerald-50: rgba(16, 185, 129, 0.15);
-  --sn-emerald-100: rgba(16, 185, 129, 0.30);
-  --sn-amber-50: rgba(255, 159, 10, 0.15);
-  --sn-amber-100: rgba(255, 159, 10, 0.30);
-  --sn-rose-50: rgba(255, 69, 58, 0.15);
-  --sn-rose-100: rgba(255, 69, 58, 0.30);
-  --sn-streak-50: rgba(255, 159, 10, 0.15);
-  --sn-streak-100: rgba(255, 159, 10, 0.30);
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.7);
+  --nudge-amber-bg: rgba(245, 158, 11, 0.14);  --nudge-amber-fg: #FBBF24;  --nudge-amber-bd: rgba(245, 158, 11, 0.35);
+  --nudge-rose-bg: rgba(244, 63, 94, 0.15);    --nudge-rose-fg: #FDA4AF;    --nudge-rose-bd: rgba(244, 63, 94, 0.35);
+  --nudge-emerald-bg: rgba(16, 185, 129, 0.14); --nudge-emerald-fg: #6EE7B7; --nudge-emerald-bd: rgba(16, 185, 129, 0.35);
 }

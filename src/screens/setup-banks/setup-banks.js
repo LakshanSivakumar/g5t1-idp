@@ -23,10 +23,22 @@
         <div class="screen-body">
           ${App.setupHead('Connect your bank account', 'Savenow only reads transactions. It can never move money.')}
           <div class="bank-list">${rows}</div>
+          <button class="btn btn-ghost btn-block" id="bank-skip">I don’t have a bank account / Skip for now</button>
         </div>
         <div class="screen-footer">
           <button class="btn btn-secondary btn-grow" data-back="register">Back</button>
-          <button class="btn btn-primary btn-grow" data-goto="setup-2">Continue</button>
+          <button class="btn btn-primary btn-grow" id="bank-continue">Continue</button>
+        </div>
+        <div class="alert-wrap" id="bank-skip-alert">
+          <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="bank-skip-title">
+            <h2 id="bank-skip-title">Continue without a bank?</h2>
+            <p>Without a linked account, Savenow can’t import your spending, so you’ll need to track every expense manually. You can connect a bank later in Settings.</p>
+            <div class="stack">
+              <button class="btn btn-primary" id="bank-skip-confirm">Track manually</button>
+              <button class="btn btn-secondary" data-close-overlay>Go back</button>
+            </div>
+          </div>
+        </div>
         </div>
         <div class="bank-splash" id="bank-splash" role="status" aria-live="polite">
           <div class="bank-banner"><div class="a">DBS</div><div class="b"><span>Live more,</span><span>Bank less</span></div></div>
@@ -36,6 +48,19 @@
     },
     init() {
       var splash = document.getElementById('bank-splash');
+
+      // Continue straight through if a bank is linked; otherwise confirm manual tracking first
+      var proceedOrPrompt = function () {
+        var linked = Object.keys(App.state.connectedBanks).some(function (k) { return App.state.connectedBanks[k]; });
+        if (linked) App.router.go('setup-2');
+        else App.overlay.open('bank-skip-alert');
+      };
+      document.getElementById('bank-continue').addEventListener('click', proceedOrPrompt);
+      document.getElementById('bank-skip').addEventListener('click', proceedOrPrompt);
+      document.getElementById('bank-skip-confirm').addEventListener('click', function () {
+        App.overlay.close();
+        App.router.go('setup-2');
+      });
       document.querySelectorAll('[data-bank]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var id = btn.getAttribute('data-bank');

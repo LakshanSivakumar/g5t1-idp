@@ -30,3 +30,5 @@
 .bank-splash p { font-size: 15px; color: var(--sn-text-secondary); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .bank-spinner { animation-duration: 2s; } }
+
+.bank-list + .btn-ghost { margin-top: 12px; }

@@ -175,3 +175,5 @@ All CSS tokens and color semantics are derived from `Savenow-High-Fidelity-Color
 - **Live State Simulator**: Tap `Within Limit`, `Warning`, or `Over Limit` pills in the simulator strip to observe ring animations and dynamic alert banners.
 - **Bottom Navigation Bar**: Fixed iOS bottom navigation (`Home`, `Insights`, `Add (+)`, `Social`, `Settings`).
 - **Center Add Button**: Tapping `+` opens a quick-log sheet to add a purchase and watch the $20 daily gauge update instantly.
+
+hi

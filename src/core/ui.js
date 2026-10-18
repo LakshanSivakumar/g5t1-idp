@@ -4,6 +4,11 @@
 
 window.App = window.App || {};
 
+/** "Bubble tea" → "BT", "Food" → "FO" */
+window.App.initialsOf = function (t) {
+  var w = t.trim().split(/\s+/);
+  return (w.length > 1 ? w[0][0] + w[1][0] : t.trim().slice(0, 2)).toUpperCase();
+};
 window.App.escapeHTML = function (str) {
   return String(str)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')

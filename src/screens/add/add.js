@@ -30,7 +30,10 @@
     var c = App.CATEGORIES.filter(function (x) { return x.id === cat; })[0];
     h.spentToday = Math.round((h.spentToday + amt) * 100) / 100;
     h.week[h.week.length - 1].v = h.spentToday;
-    h.latestExpenses.unshift({ id: 'exp_' + Date.now(), title: c.name, sub: 'Just now', initials: c.name.slice(0, 2).toUpperCase(), amount: amt, category: cat });
+    var descEl = document.getElementById('add-desc');
+    var title = descEl.value.trim() || c.name;
+    descEl.value = '';
+    h.latestExpenses.unshift({ id: 'exp_' + Date.now(), title: title, sub: c.name + ' · Just now', initials: App.initialsOf(title), amount: amt, category: cat });
     amount = '';
     show();
     App.overlay.close();
@@ -51,6 +54,8 @@
         '<div class="grabber"></div>' +
         '<div class="add-top"><span class="label">Category</span></div>' +
         '<div class="add-chips" id="add-chips" role="group" aria-label="Category">' + App.CATEGORIES.map(function (c) { return '<button class="chip" data-cat="' + c.id + '" aria-pressed="' + (c.id === cat) + '">' + c.name + '</button>'; }).join('') + '</div>' +
+        '<label class="field add-desc" for="add-desc"><span class="label">Description (optional)</span>' +
+        '<input id="add-desc" type="text" autocomplete="off" maxlength="40" enterkeyhint="done" placeholder="e.g. Bubble tea"></label>' +
         '<div class="add-top"><span class="label">Amount</span></div>' +
         '<div class="add-entry"><div class="add-amount" aria-live="polite"><span class="sym">$</span><span class="val empty" id="add-val">0.00</span><span class="caret"></span></div>' +
         '<button class="btn btn-primary is-disabled" id="add-submit">Add expense</button></div>' +
@@ -73,6 +78,7 @@
       document.getElementById('tab-add').addEventListener('click', function () { show(); App.overlay.open('add-sheet'); });
       document.addEventListener('keydown', function (e) {
         if (!sheet.classList.contains('open')) return;
+        if (e.target.id === 'add-desc') { if (e.key === 'Enter') e.target.blur(); return; } // typing a description, not the keypad
         if (/^[0-9.]$/.test(e.key)) press(e.key);
         else if (e.key === 'Backspace') press('del');
         else if (e.key === 'Enter') submit();

@@ -108,6 +108,8 @@
         var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
         var s = App.state, d = n('sg-daily');
         if (!d) { App.showToast('Enter a daily limit'); return; }
+        var err = App.budgetError(d, n('sg-weekly'), n('sg-monthly'));
+        if (err) { App.showToast(err); return; }
         s.goal.purpose = document.getElementById('sg-purpose').value.trim() || s.goal.purpose;
         s.goal.amount = n('sg-amount') || s.goal.amount;
         s.budget.daily = d; s.budget.weekly = n('sg-weekly') || d * 7; s.budget.monthly = n('sg-monthly') || d * 30;

@@ -13,6 +13,14 @@ window.App.fmt = {
   }
 };
 
+/** Limits must nest: daily <= weekly <= monthly. Blank weekly/monthly fall back to daily x 7 / x 30. Returns an error message or ''. */
+window.App.budgetError = function (daily, weekly, monthly) {
+  var w = weekly || daily * 7, m = monthly || daily * 30;
+  if (w < daily) return 'Your weekly limit can’t be lower than your daily limit';
+  if (m < w) return 'Your monthly limit can’t be lower than your weekly limit';
+  return '';
+};
+
 /* Categories (palette: Food 34 / Transport 22 / Shopping 20 / Bills 14 / Other 10) */
 window.App.CATEGORIES = [
   { id: 'food',      name: 'Food',      pct: 34, last: 198.56, color: 'var(--sn-cat-food)',      icon: 'cup.and.saucer' },

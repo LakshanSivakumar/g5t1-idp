@@ -16,3 +16,5 @@
 .val-field { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; min-height: 56px; }
 .val-field input { width: 110px; text-align: right; border: 0; outline: 0; background: transparent; font-weight: 600; font-size: 16px; }
 .val-field .t { flex: 1; }
+.val-edit { display: inline-flex; align-items: center; gap: 2px; }
+.edit-pen { display: inline-flex; margin-left: 6px; color: var(--sn-text-muted); }

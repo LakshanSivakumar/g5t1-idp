@@ -90,27 +90,104 @@
   });
 
   /* ---------- Sub-pages ---------- */
+  // Confirm sheet for saving goal & budget (mounted on #app so it centres over the screen, not the scrolling list)
+  App.overlays = App.overlays || [];
+  App.overlays.push({
+    mount(app) {
+      var el = document.createElement('div');
+      el.className = 'alert-wrap'; el.id = 'sg-confirm';
+      el.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="sg-confirm-title">' +
+        '<h2 id="sg-confirm-title">Save these changes?</h2><p>Your goal and spending limits will be updated. New limits apply from tomorrow.</p>' +
+        '<div class="stack"><button class="btn btn-primary" id="sg-confirm-ok">Save changes</button><button class="btn btn-secondary" data-close-overlay>Keep editing</button></div></div>';
+      app.appendChild(el);
+    }
+  });
+
+  /* Keypad sheet for amounts in Goal & budget (same keys as the Add sheet) */
+  var kp = { id: null, buf: '', fresh: true };
+  function kpShow() {
+    var v = document.getElementById('kp-val');
+    v.textContent = kp.buf || '0';
+    v.classList.toggle('empty', !kp.buf);
+  }
+  function kpPress(k) {
+    if (k === 'del') kp.buf = kp.buf.slice(0, -1);
+    else {
+      var cur = kp.fresh ? '' : kp.buf;
+      if (k === '.') { if (cur.indexOf('.') > -1) return; cur = (cur || '0') + '.'; }
+      else {
+        var next = (cur === '0' ? '' : cur) + k, p = next.split('.');
+        if ((p[1] && p[1].length > 2) || p[0].length > 6) return;
+        cur = next;
+      }
+      kp.buf = cur;
+    }
+    kp.fresh = false;
+    kpShow();
+  }
+  App.overlays.push({
+    mount(app) {
+      var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del'];
+      var sheet = document.createElement('div');
+      sheet.className = 'sheet add-sheet'; sheet.id = 'sg-keypad';
+      sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'Edit amount');
+      sheet.innerHTML = '<div class="grabber"></div><div class="add-top"><span class="label" id="kp-title"></span></div>' +
+        '<div class="add-entry"><div class="add-amount" aria-live="polite"><span class="sym">$</span><span class="val" id="kp-val">0</span><span class="caret"></span></div>' +
+        '<button class="btn btn-primary" id="kp-done">Done</button></div>' +
+        '<div class="keypad" role="group" aria-label="Amount keypad">' + keys.map(function (k) {
+          return '<button class="key" data-key="' + k + '" aria-label="' + (k === 'del' ? 'Delete' : k === '.' ? 'Decimal point' : k) + '">' + (k === 'del' ? App.icon('delete.left', 26) : k) + '</button>';
+        }).join('') + '</div>';
+      app.appendChild(sheet);
+      sheet.addEventListener('click', function (e) {
+        var k = e.target.closest('[data-key]');
+        if (k) kpPress(k.dataset.key);
+      });
+      document.getElementById('kp-done').addEventListener('click', function () {
+        if (kp.buf) document.getElementById(kp.id).value = String(parseFloat(kp.buf));
+        App.overlay.close();
+      });
+      // Open from a row or its pencil (delegated: pages are rendered once, rows never re-render)
+      document.addEventListener('click', function (e) {
+        var row = e.target.closest('#screen-settings-goal [data-keypad]');
+        if (!row) return;
+        e.preventDefault();
+        kp.id = row.dataset.keypad; kp.buf = document.getElementById(kp.id).value; kp.fresh = true;
+        document.getElementById('kp-title').textContent = row.dataset.title;
+        kpShow();
+        App.overlay.open('sg-keypad');
+      });
+    }
+  });
+
   page('settings-goal', {
     title: 'Goal & budget', sub: 'Your target and your limits',
     html() {
       var s = App.state;
-      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '"><span class="t">' + t + '</span><span>' + (pre || '') + '<input id="' + id + '" inputmode="decimal" value="' + v + '"></span></label>'; };
+      var pen = '<span class="edit-pen">' + App.icon('pencil', 14) + '</span>';
+      // Amounts are edited on the in-app keypad (tap the row or its pencil), so the input is read-only
+      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '" data-keypad="' + id + '" data-title="' + t + '"><span class="t">' + t + '</span><span class="val-edit">' + (pre || '') + '<input id="' + id + '" inputmode="decimal" readonly value="' + v + '">' + pen + '</span></label>'; };
       return '<p class="section-label" style="margin-top:0">Your goal</p><div class="list">' +
-        '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px"></label>' +
+        '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><span class="val-edit"><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px">' + pen + '</span></label>' +
         vf('sg-amount', 'Amount', s.goal.amount, '$') + '</div>' +
         '<p class="section-label">Your limits</p><div class="list">' +
         vf('sg-daily', 'Daily limit', s.budget.daily, '$') + vf('sg-weekly', 'Any 7 consecutive days', s.budget.weekly, '$') + vf('sg-monthly', 'Any 30 days', s.budget.monthly, '$') + '</div>' +
+        '<p class="section-label">Your income</p><div class="list">' + vf('sg-income', 'Monthly income', s.budget.incomeMonthly || '', '$') + '</div>' +
         '<button class="btn btn-secondary btn-block" id="sg-save" style="margin-top:20px">Save changes</button>' +
         '<p class="save-note">Changing your daily limit does not reset your streak. New limits apply from tomorrow.</p>';
     },
     init() {
+      var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
       document.getElementById('sg-save').onclick = function () {
-        var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
+        if (!n('sg-daily')) { App.showToast('Enter a daily limit'); return; }
+        App.overlay.open('sg-confirm');
+      };
+      document.getElementById('sg-confirm-ok').onclick = function () {
+        App.overlay.close();
         var s = App.state, d = n('sg-daily');
-        if (!d) { App.showToast('Enter a daily limit'); return; }
         s.goal.purpose = document.getElementById('sg-purpose').value.trim() || s.goal.purpose;
         s.goal.amount = n('sg-amount') || s.goal.amount;
         s.budget.daily = d; s.budget.weekly = n('sg-weekly') || d * 7; s.budget.monthly = n('sg-monthly') || d * 30;
+        s.budget.incomeMonthly = n('sg-income'); // optional: empty clears it
         s.home.dailyLimit = d; s.emit('budget');
         App.showToast('Changes saved'); App.router.back('settings');
       };
@@ -146,7 +223,7 @@
   page('settings-recurring', {
     title: 'Recurring expenses', sub: 'Bills and subscriptions',
     html() { return '<p class="section-label" style="margin-top:0">This month</p><div class="card exp-list" id="sr-list"></div>' +
-      '<div class="list" style="margin-top:12px">' + ui.row({ title: 'Add a recurring expense', sub: 'Rent, subscriptions, bills', goto: 'setup-3' }) + '</div>' +
+      '<div class="list" style="margin-top:12px">' + ui.row({ title: 'Add a recurring expense', sub: 'Rent, subscriptions, bills', goto: 'setup-3', param: 'settings' }) + '</div>' +
       '<p class="section-label">Total</p><div class="list" id="sr-total"></div>' +
       '<p class="footnote">Recurring expenses count towards your 30-day cap, not your $20 daily limit, so a bill day will not end your streak.</p>'; },
     init() { App.state.on('recurring', function () { App.screens['settings-recurring'].paint(); }); },
@@ -162,7 +239,7 @@
     var rm = e.target.closest('#sr-list [data-remove]');
     if (rm) App.removeRecurring(rm.dataset.remove);
     var ed = e.target.closest('#sr-list [data-edit]');
-    if (ed) { App.router.go('setup-3'); setTimeout(function () { var b = document.querySelector('#rec-list [data-edit="' + ed.dataset.edit + '"]'); if (b) b.click(); }, 50); }
+    if (ed) { App.router.go('setup-3', { param: 'settings' }); setTimeout(function () { var b = document.querySelector('#rec-list [data-edit="' + ed.dataset.edit + '"]'); if (b) b.click(); }, 50); }
   });
 
   page('settings-privacy', {

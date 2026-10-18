@@ -79,6 +79,15 @@ document.addEventListener('click', function (e) {
   b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
 });
 
+/* Amount fields (inputmode="decimal"): digits and one decimal point, max two decimals */
+document.addEventListener('input', function (e) {
+  var el = e.target;
+  if (!el.matches || !el.matches('input[inputmode="decimal"]')) return;
+  var p = el.value.replace(/[^0-9.]/g, '').split('.');
+  var v = p.length > 1 ? p[0] + '.' + p.slice(1).join('').slice(0, 2) : p[0];
+  if (v !== el.value) el.value = v;
+});
+
 /* Toast */
 (function () {
   var t = null;

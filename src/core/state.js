@@ -113,7 +113,12 @@ window.App.state = {
       { d: 'Sun', v: 19.4 }, { d: 'Mon', v: 14.1 }, { d: 'Tue', v: 17.2 }, { d: 'Today', v: 17.40 }
     ],
     latestExpenses: [
-      { id: 'exp_1', title: 'Bubble tea', sub: 'Grab · 6:40pm', initials: 'BT', amount: 3.40, category: 'food', time: '6:40 pm', where: 'Grab' }
+      { id: 'exp_1', title: 'Bubble tea', sub: 'Grab · 6:40pm', initials: 'BT', amount: 3.40, category: 'food', time: '6:40 pm', where: 'Grab' },
+      // Seeded so today's list adds up to spentToday; `seed` keeps them out of the week ledger, which already counts them
+      { id: 'exp_5', seed: true, title: 'Vending snacks', sub: 'Food · 3:20pm', initials: 'VS', amount: 2.50, category: 'food', time: '3:20 pm', where: '' },
+      { id: 'exp_2', seed: true, title: 'Lunch', sub: 'Food court · 12:35pm', initials: 'LU', amount: 4.90, category: 'food', time: '12:35 pm', where: 'Food court' },
+      { id: 'exp_3', seed: true, title: 'Mobile top-up', sub: 'Singtel · 11:00am', initials: 'MT', amount: 4.00, category: 'bills', time: '11:00 am', where: 'Singtel' },
+      { id: 'exp_4', seed: true, title: 'Bus', sub: 'Transport · 9:10am', initials: 'BU', amount: 2.60, category: 'transport', time: '9:10 am', where: '' }
     ]
   },
 

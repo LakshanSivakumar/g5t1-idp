@@ -111,7 +111,7 @@ window.App.state = {
     ]
   },
 
-  recovery: { applied: false },
+  recovery: { applied: false, days: null }, // days: null = use the recommended length
 
   settings: { friendRequests: true, shareFinancial: false,
     notif: { nearLimit: true, daily: true, milestones: true, friends: true } },

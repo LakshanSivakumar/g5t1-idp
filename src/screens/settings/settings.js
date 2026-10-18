@@ -103,12 +103,69 @@
     }
   });
 
+  /* Keypad sheet for amounts in Goal & budget (same keys as the Add sheet) */
+  var kp = { id: null, buf: '', fresh: true };
+  function kpShow() {
+    var v = document.getElementById('kp-val');
+    v.textContent = kp.buf || '0';
+    v.classList.toggle('empty', !kp.buf);
+  }
+  function kpPress(k) {
+    if (k === 'del') kp.buf = kp.buf.slice(0, -1);
+    else {
+      var cur = kp.fresh ? '' : kp.buf;
+      if (k === '.') { if (cur.indexOf('.') > -1) return; cur = (cur || '0') + '.'; }
+      else {
+        var next = (cur === '0' ? '' : cur) + k, p = next.split('.');
+        if ((p[1] && p[1].length > 2) || p[0].length > 6) return;
+        cur = next;
+      }
+      kp.buf = cur;
+    }
+    kp.fresh = false;
+    kpShow();
+  }
+  App.overlays.push({
+    mount(app) {
+      var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del'];
+      var sheet = document.createElement('div');
+      sheet.className = 'sheet add-sheet'; sheet.id = 'sg-keypad';
+      sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'Edit amount');
+      sheet.innerHTML = '<div class="grabber"></div><div class="add-top"><span class="label" id="kp-title"></span></div>' +
+        '<div class="add-entry"><div class="add-amount" aria-live="polite"><span class="sym">$</span><span class="val" id="kp-val">0</span><span class="caret"></span></div>' +
+        '<button class="btn btn-primary" id="kp-done">Done</button></div>' +
+        '<div class="keypad" role="group" aria-label="Amount keypad">' + keys.map(function (k) {
+          return '<button class="key" data-key="' + k + '" aria-label="' + (k === 'del' ? 'Delete' : k === '.' ? 'Decimal point' : k) + '">' + (k === 'del' ? App.icon('delete.left', 26) : k) + '</button>';
+        }).join('') + '</div>';
+      app.appendChild(sheet);
+      sheet.addEventListener('click', function (e) {
+        var k = e.target.closest('[data-key]');
+        if (k) kpPress(k.dataset.key);
+      });
+      document.getElementById('kp-done').addEventListener('click', function () {
+        if (kp.buf) document.getElementById(kp.id).value = String(parseFloat(kp.buf));
+        App.overlay.close();
+      });
+      // Open from a row or its pencil (delegated: pages are rendered once, rows never re-render)
+      document.addEventListener('click', function (e) {
+        var row = e.target.closest('#screen-settings-goal [data-keypad]');
+        if (!row) return;
+        e.preventDefault();
+        kp.id = row.dataset.keypad; kp.buf = document.getElementById(kp.id).value; kp.fresh = true;
+        document.getElementById('kp-title').textContent = row.dataset.title;
+        kpShow();
+        App.overlay.open('sg-keypad');
+      });
+    }
+  });
+
   page('settings-goal', {
     title: 'Goal & budget', sub: 'Your target and your limits',
     html() {
       var s = App.state;
       var pen = '<span class="edit-pen">' + App.icon('pencil', 14) + '</span>';
-      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '"><span class="t">' + t + '</span><span class="val-edit">' + (pre || '') + '<input id="' + id + '" inputmode="decimal" value="' + v + '">' + pen + '</span></label>'; };
+      // Amounts are edited on the in-app keypad (tap the row or its pencil), so the input is read-only
+      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '" data-keypad="' + id + '" data-title="' + t + '"><span class="t">' + t + '</span><span class="val-edit">' + (pre || '') + '<input id="' + id + '" inputmode="decimal" readonly value="' + v + '">' + pen + '</span></label>'; };
       return '<p class="section-label" style="margin-top:0">Your goal</p><div class="list">' +
         '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><span class="val-edit"><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px">' + pen + '</span></label>' +
         vf('sg-amount', 'Amount', s.goal.amount, '$') + '</div>' +

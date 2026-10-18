@@ -178,7 +178,10 @@
     init() {
       var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
       document.getElementById('sg-save').onclick = function () {
-        if (!n('sg-daily')) { App.showToast('Enter a daily limit'); return; }
+        var d = n('sg-daily');
+        if (!d) { App.showToast('Enter a daily limit'); return; }
+        var err = App.budgetError(d, n('sg-weekly'), n('sg-monthly'));
+        if (err) { App.showToast(err); return; }
         App.overlay.open('sg-confirm');
       };
       document.getElementById('sg-confirm-ok').onclick = function () {

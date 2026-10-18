@@ -90,13 +90,27 @@
   });
 
   /* ---------- Sub-pages ---------- */
+  // Confirm sheet for saving goal & budget (mounted on #app so it centres over the screen, not the scrolling list)
+  App.overlays = App.overlays || [];
+  App.overlays.push({
+    mount(app) {
+      var el = document.createElement('div');
+      el.className = 'alert-wrap'; el.id = 'sg-confirm';
+      el.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="sg-confirm-title">' +
+        '<h2 id="sg-confirm-title">Save these changes?</h2><p>Your goal and spending limits will be updated. New limits apply from tomorrow.</p>' +
+        '<div class="stack"><button class="btn btn-primary" id="sg-confirm-ok">Save changes</button><button class="btn btn-secondary" data-close-overlay>Keep editing</button></div></div>';
+      app.appendChild(el);
+    }
+  });
+
   page('settings-goal', {
     title: 'Goal & budget', sub: 'Your target and your limits',
     html() {
       var s = App.state;
-      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '"><span class="t">' + t + '</span><span>' + (pre || '') + '<input id="' + id + '" inputmode="decimal" value="' + v + '"></span></label>'; };
+      var pen = '<span class="edit-pen">' + App.icon('pencil', 14) + '</span>';
+      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '"><span class="t">' + t + '</span><span class="val-edit">' + (pre || '') + '<input id="' + id + '" inputmode="decimal" value="' + v + '">' + pen + '</span></label>'; };
       return '<p class="section-label" style="margin-top:0">Your goal</p><div class="list">' +
-        '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px"></label>' +
+        '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><span class="val-edit"><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px">' + pen + '</span></label>' +
         vf('sg-amount', 'Amount', s.goal.amount, '$') + '</div>' +
         '<p class="section-label">Your limits</p><div class="list">' +
         vf('sg-daily', 'Daily limit', s.budget.daily, '$') + vf('sg-weekly', 'Any 7 consecutive days', s.budget.weekly, '$') + vf('sg-monthly', 'Any 30 days', s.budget.monthly, '$') + '</div>' +
@@ -104,10 +118,14 @@
         '<p class="save-note">Changing your daily limit does not reset your streak. New limits apply from tomorrow.</p>';
     },
     init() {
+      var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
       document.getElementById('sg-save').onclick = function () {
-        var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
+        if (!n('sg-daily')) { App.showToast('Enter a daily limit'); return; }
+        App.overlay.open('sg-confirm');
+      };
+      document.getElementById('sg-confirm-ok').onclick = function () {
+        App.overlay.close();
         var s = App.state, d = n('sg-daily');
-        if (!d) { App.showToast('Enter a daily limit'); return; }
         s.goal.purpose = document.getElementById('sg-purpose').value.trim() || s.goal.purpose;
         s.goal.amount = n('sg-amount') || s.goal.amount;
         s.budget.daily = d; s.budget.weekly = n('sg-weekly') || d * 7; s.budget.monthly = n('sg-monthly') || d * 30;

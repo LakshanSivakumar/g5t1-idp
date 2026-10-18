@@ -28,7 +28,7 @@
             <div class="eyebrow">Saved · Month</div>
             <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack">${App.icon('arrow.up', 12)} on track</span></div>
           </button>
-          <p class="section-label">Latest expense</p>
+          <p class="section-label">Today’s expenses</p>
           <div id="home-latest"></div>
         </div>`;
     },
@@ -82,7 +82,7 @@
         : '<div class="nudge ' + t.tone + '">' + inner + '</div>';
 
       document.getElementById('home-saved').textContent = fmt(h.monthlySaved, 0);
-      document.getElementById('home-latest').innerHTML = !h.latestExpenses.length ? '<p class="footnote">No expenses yet. Tap + to add one.</p>' : h.latestExpenses.slice(0, 3).map(function (e, i) {
+      document.getElementById('home-latest').innerHTML = !h.latestExpenses.length ? '<p class="footnote">No expenses yet. Tap + to add one.</p>' : h.latestExpenses.map(function (e, i) {
         return '<div class="card latest-card ' + (i === 0 ? 'accent-edge' : '') + '"><button class="latest-item is-editable" data-edit-expense="' + App.escapeHTML(e.id) + '" aria-label="Edit or delete ' + App.escapeHTML(e.title) + ', ' + fmt(e.amount) + '">' +
           '<span class="tile ' + e.category + '">' + App.escapeHTML(e.initials) + '</span>' +
           '<span class="row-main"><span class="row-title" style="display:block">' + App.escapeHTML(e.title) + '</span><span class="row-sub" style="display:block">' + App.escapeHTML(e.sub) + ' · Tap to edit</span></span>' +

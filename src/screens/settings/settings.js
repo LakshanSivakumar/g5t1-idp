@@ -146,7 +146,7 @@
   page('settings-recurring', {
     title: 'Recurring expenses', sub: 'Bills and subscriptions',
     html() { return '<p class="section-label" style="margin-top:0">This month</p><div class="card exp-list" id="sr-list"></div>' +
-      '<div class="list" style="margin-top:12px">' + ui.row({ title: 'Add a recurring expense', sub: 'Rent, subscriptions, bills', goto: 'setup-3' }) + '</div>' +
+      '<div class="list" style="margin-top:12px">' + ui.row({ title: 'Add a recurring expense', sub: 'Rent, subscriptions, bills', goto: 'setup-3', param: 'settings' }) + '</div>' +
       '<p class="section-label">Total</p><div class="list" id="sr-total"></div>' +
       '<p class="footnote">Recurring expenses count towards your 30-day cap, not your $20 daily limit, so a bill day will not end your streak.</p>'; },
     init() { App.state.on('recurring', function () { App.screens['settings-recurring'].paint(); }); },
@@ -162,7 +162,7 @@
     var rm = e.target.closest('#sr-list [data-remove]');
     if (rm) App.removeRecurring(rm.dataset.remove);
     var ed = e.target.closest('#sr-list [data-edit]');
-    if (ed) { App.router.go('setup-3'); setTimeout(function () { var b = document.querySelector('#rec-list [data-edit="' + ed.dataset.edit + '"]'); if (b) b.click(); }, 50); }
+    if (ed) { App.router.go('setup-3', { param: 'settings' }); setTimeout(function () { var b = document.querySelector('#rec-list [data-edit="' + ed.dataset.edit + '"]'); if (b) b.click(); }, 50); }
   });
 
   page('settings-privacy', {

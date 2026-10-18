@@ -101,10 +101,20 @@
           <div class="card exp-list" id="rec-list"></div>
           <p class="footnote" style="text-align:center">Swipe left, or use Edit / Remove</p>
         </div>
-        <div class="screen-footer">
+        <div class="screen-footer" id="rec-footer-setup">
           <button class="btn btn-secondary btn-grow" data-back="setup-2">Back</button>
           <button class="btn btn-primary btn-grow" data-goto="setup-4">Continue</button>
+        </div>
+        <div class="screen-footer" id="rec-footer-settings" hidden>
+          <button class="btn btn-primary btn-grow" data-back="settings-recurring">Done</button>
         </div>`;
+    },
+
+    // Opened from Settings (param 'settings'): finish back to the list instead of continuing the setup flow
+    onEnter(param) {
+      var fromSettings = param === 'settings';
+      document.getElementById('rec-footer-setup').hidden = fromSettings;
+      document.getElementById('rec-footer-settings').hidden = !fromSettings;
     },
 
     init() {

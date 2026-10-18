@@ -56,6 +56,8 @@ App.registerScreen('setup-2', {
     cont.addEventListener('click', function () {
       var d = num(daily);
       if (!d) { daily.focus(); return; }
+      var err = App.budgetError(d, num(weekly), num(monthly));
+      if (err) { App.showToast(err); return; }
       var s = App.state;
       s.budget.daily = d;
       s.budget.weekly = num(weekly) || d * 7;

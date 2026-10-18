@@ -26,7 +26,7 @@
           <div class="home-nudge" id="home-nudge"></div>
           <button class="card saved-card" data-tab="insights" aria-label="Saved this month">
             <div class="eyebrow">Saved · Month</div>
-            <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack">${App.icon('arrow.up', 12)} on track</span></div>
+            <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack" id="home-saved-pill"></span></div>
           </button>
           <p class="section-label">Latest expense</p>
           <div id="home-latest"></div>
@@ -81,7 +81,12 @@
         ? '<button class="nudge ' + t.tone + '" data-nudge>' + inner + '</button>'
         : '<div class="nudge ' + t.tone + '">' + inner + '</div>';
 
-      document.getElementById('home-saved').textContent = fmt(h.monthlySaved, 0);
+      // Saved this month = earlier savings + today's headroom under the limit (negative when over)
+      var saved = h.savedBeforeToday + t.left;
+      document.getElementById('home-saved').textContent = (saved < 0 ? '−' : '') + fmt(Math.abs(saved), 0);
+      var pill = document.getElementById('home-saved-pill');
+      pill.className = 'pill pill-ontrack ' + t.tone;
+      pill.innerHTML = t.over ? App.icon('info.circle', 12) + ' over budget' : t.tone === 'amber' ? App.icon('info.circle', 12) + ' near limit' : App.icon('arrow.up', 12) + ' on track';
       document.getElementById('home-latest').innerHTML = !h.latestExpenses.length ? '<p class="footnote">No expenses yet. Tap + to add one.</p>' : h.latestExpenses.slice(0, 3).map(function (e, i) {
         return '<div class="card latest-card ' + (i === 0 ? 'accent-edge' : '') + '"><button class="latest-item is-editable" data-edit-expense="' + App.escapeHTML(e.id) + '" aria-label="Edit or delete ' + App.escapeHTML(e.title) + ', ' + fmt(e.amount) + '">' +
           '<span class="tile ' + e.category + '">' + App.escapeHTML(e.initials) + '</span>' +

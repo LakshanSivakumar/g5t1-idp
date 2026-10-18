@@ -99,7 +99,7 @@ window.App.state = {
     dailyLimit: 20,
     streakDays: 98,
     bestStreak: 98,
-    monthlySaved: 190,
+    savedBeforeToday: 187.40, // saved this month up to yesterday; today's headroom is added live
     week: [ // Thu → Today, spend per day
       { d: 'Thu', v: 15.8 }, { d: 'Fri', v: 18.9 }, { d: 'Sat', v: 11.2 },
       { d: 'Sun', v: 19.4 }, { d: 'Mon', v: 14.1 }, { d: 'Tue', v: 17.2 }, { d: 'Today', v: 17.40 }

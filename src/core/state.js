@@ -105,7 +105,7 @@ window.App.state = {
       { d: 'Sun', v: 19.4 }, { d: 'Mon', v: 14.1 }, { d: 'Tue', v: 17.2 }, { d: 'Today', v: 17.40 }
     ],
     latestExpenses: [
-      { id: 'exp_1', title: 'Bubble tea', sub: 'Grab · 6:40pm', initials: 'BT', amount: 3.40, category: 'food' }
+      { id: 'exp_1', title: 'Bubble tea', sub: 'Grab · 6:40pm', initials: 'BT', amount: 3.40, category: 'food', time: '6:40 pm', where: 'Grab' }
     ]
   },
 

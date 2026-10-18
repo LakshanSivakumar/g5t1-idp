@@ -75,8 +75,8 @@
 
           <button class="card ins-card" data-goto="goal-tradeoff">
             <div class="card-head"><span class="eyebrow">${App.icon('lightbulb', 14)} Goal trade-off</span><span class="go">Details ${App.icon('chevron.right', 7)}</span></div>
-            <div class="ins-big" style="color:var(--sn-indigo-500)">4.5%</div>
-            <div class="ins-cap">$90.00 of your $2,000 ${App.escapeHTML(App.state.goal.purpose)} goal · August</div>
+            <div class="ins-big" style="color:var(--sn-indigo-500)">${App.goalExtrasPct()}%</div>
+            <div class="ins-cap">${fmt(App.GOAL_EXTRAS.total)} of your ${fmt(App.state.goal.amount, 0)} ${App.escapeHTML(App.state.goal.purpose)} goal · August</div>
           </button>
         </div>`;
     }

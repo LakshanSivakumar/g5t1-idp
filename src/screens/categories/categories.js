@@ -105,15 +105,19 @@
     }
   });
 
+  /** August's discretionary extras, shared by the Insights card and the Goal trade-off page */
+  App.GOAL_EXTRAS = { items: [['Bubble tea & coffee', 16, 38.40], ['Vending drinks & snacks', 16, 30.60], ['Convenience-store snacks', 14, 21.00]], total: 90 };
+  /** Share of the current goal those extras would cover, e.g. "4.5" */
+  App.goalExtrasPct = function () { return (App.GOAL_EXTRAS.total / App.state.goal.amount * 100).toFixed(1); };
+
   App.registerScreen('goal-tradeoff', {
     tab: 'insights',
     title: 'Goal trade-off',
     render() { return '<div class="screen-body">' + App.ui.back('insights') + '<div id="gt-body"></div></div>'; },
     onEnter() {
       var s = App.state.goal;
-      var items = [['Bubble tea & coffee', 16, 38.40], ['Vending drinks & snacks', 16, 30.60], ['Convenience-store snacks', 14, 21.00]];
-      var tot = items.reduce(function (a, i) { return a + i[2]; }, 0);
-      var pct = (tot / s.amount * 100).toFixed(1);
+      var items = App.GOAL_EXTRAS.items, tot = App.GOAL_EXTRAS.total;
+      var pct = App.goalExtrasPct();
       document.getElementById('gt-body').innerHTML =
         App.ui.head('Goal trade-off', 'What last month’s extras cost your goal') +
         '<div class="card"><div class="card-head"><span class="eyebrow">' + App.icon('lightbulb', 14) + ' Discretionary</span><span class="muted" style="font-size:13px">August 2026</span></div>' +

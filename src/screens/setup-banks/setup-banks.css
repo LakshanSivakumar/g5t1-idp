@@ -32,3 +32,4 @@
 @media (prefers-reduced-motion: reduce) { .bank-spinner { animation-duration: 2s; } }
 
 .bank-list + .btn-ghost { margin-top: 12px; }
+.bank-banner .a.long { font-size: 17px; letter-spacing: -0.3px; text-align: center; padding: 0 8px; }

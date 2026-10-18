@@ -108,8 +108,9 @@
       }).join('');
       var sub = t.over ? fmt(h.spentToday - h.dailyLimit) + ' over your ' + fmt(h.dailyLimit, 0) + ' limit' : fmt(t.left) + ' under your ' + fmt(h.dailyLimit, 0) + ' limit';
       return '<div class="graph-head"><div class="eyebrow">Spent today</div><div><span class="amt">' + fmt(h.spentToday) + '</span><span class="sub">' + sub + '</span></div></div>' +
-        '<div class="graph-box"><div class="graph-limit" style="bottom:' + limitPct + '%"><span>' + fmt(h.dailyLimit, 0) + ' LIMIT</span></div><div class="bars">' + bars + '</div></div>' +
-        '<div class="graph-days">' + week.map(function (w) { return '<span>' + w.d + '</span>'; }).join('') + '</div>';
+        '<button class="graph-link" data-tab="insights" aria-label="Open Insights"><div class="graph-box"><div class="graph-limit" style="bottom:' + limitPct + '%"><span>' + fmt(h.dailyLimit, 0) + ' LIMIT</span></div><div class="bars">' + bars + '</div></div>' +
+        '<div class="graph-days">' + week.map(function (w) { return '<span>' + w.d + '</span>'; }).join('') + '</div></button>' +
+        '<p class="graph-hint">Tap the graph for insights</p>';
     }
   });
 

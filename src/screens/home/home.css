@@ -20,6 +20,8 @@
 /* Graph view */
 .graph-head .amt { font-size: 40px; font-weight: 800; letter-spacing: -1.4px; font-variant-numeric: tabular-nums; }
 .graph-head .sub { font-size: 14px; color: var(--sn-text-secondary); margin-left: 8px; }
+.graph-link { display: block; width: 100%; padding: 0; background: none; border: 0; text-align: inherit; color: inherit; font: inherit; cursor: pointer; }
+.graph-hint { margin: -10px 0 18px; text-align: center; font-size: 12px; color: var(--sn-text-muted); }
 .graph-box { position: relative; height: 190px; margin: 28px 0 8px; }
 .graph-limit { position: absolute; left: 0; right: 0; border-top: 1.5px dashed var(--sn-text-muted); z-index: 1; }
 .graph-limit span { position: absolute; top: -20px; left: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: var(--sn-text-muted); }

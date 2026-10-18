@@ -18,7 +18,7 @@
   /** The week's ledger plus today's expenses the user logged (newest first, shown under today). */
   App.weekExpenses = function () {
     var today = App.WEEK_EXPENSES[0].day;
-    return App.state.home.latestExpenses.map(function (e) {
+    return App.state.home.latestExpenses.filter(function (e) { return !e.seed; }).map(function (e) {
       return { id: e.id, day: today, time: e.time || 'Just now', title: e.title, where: e.where || '', amount: e.amount, cat: e.category };
     }).concat(App.WEEK_EXPENSES);
   };

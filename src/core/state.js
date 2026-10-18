@@ -89,9 +89,7 @@ window.App.state = {
   connectedBanks: { dbs: false, ocbc: false, uob: false, trust: false, sc: false },
   goal: { purpose: 'MacBook Pro', amount: 2000, date: 'December 2026' },
   budget: { daily: 20, weekly: 140, monthly: 800, incomeMonthly: 0 },
-  recurringExpenses: [
-    { id: 'rec_spotify', name: 'Spotify', category: 'MUSIC', amount: 6.48, day: 17 }
-  ],
+  recurringExpenses: [], // starts empty: users add their own during onboarding
   socials: [],
 
   /* Home */

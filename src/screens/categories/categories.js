@@ -105,10 +105,20 @@
     }
   });
 
-  /** August's discretionary extras, shared by the Insights card and the Goal trade-off page */
-  App.GOAL_EXTRAS = { items: [['Bubble tea & coffee', 16, 38.40], ['Vending drinks & snacks', 16, 30.60], ['Convenience-store snacks', 14, 21.00]], total: 90 };
+  /** August's discretionary extras plus anything the user has logged under Food or Shopping since (live) */
+  var AUGUST_EXTRAS = [['Bubble tea & coffee', 16, 38.40], ['Vending drinks & snacks', 16, 30.60], ['Convenience-store snacks', 14, 21.00]];
+  App.goalExtras = function () {
+    var items = AUGUST_EXTRAS.slice(), total = 90;
+    var logged = App.state.home.latestExpenses.filter(function (e) { return e.logged && (e.category === 'food' || e.category === 'shopping'); });
+    if (logged.length) {
+      var sum = logged.reduce(function (a, e) { return a + e.amount; }, 0);
+      items.push(['Logged since August', logged.length, sum, true]);
+      total += sum;
+    }
+    return { items: items, total: total };
+  };
   /** Share of the current goal those extras would cover, e.g. "4.5" */
-  App.goalExtrasPct = function () { return (App.GOAL_EXTRAS.total / App.state.goal.amount * 100).toFixed(1); };
+  App.goalExtrasPct = function () { return (App.goalExtras().total / App.state.goal.amount * 100).toFixed(1); };
 
   App.registerScreen('goal-tradeoff', {
     tab: 'insights',
@@ -116,17 +126,17 @@
     render() { return '<div class="screen-body">' + App.ui.back('insights') + '<div id="gt-body"></div></div>'; },
     onEnter() {
       var s = App.state.goal;
-      var items = App.GOAL_EXTRAS.items, tot = App.GOAL_EXTRAS.total;
+      var ex = App.goalExtras(), items = ex.items, tot = ex.total;
       var pct = App.goalExtrasPct();
       document.getElementById('gt-body').innerHTML =
         App.ui.head('Goal trade-off', 'What last month’s extras cost your goal') +
         '<div class="card"><div class="card-head"><span class="eyebrow">' + App.icon('lightbulb', 14) + ' Discretionary</span><span class="muted" style="font-size:13px">August 2026</span></div>' +
         '<div class="ins-big" style="color:var(--sn-indigo-500)">' + pct + '%</div>' +
-        '<div class="ins-cap">' + fmt(tot) + ' of your ' + fmt(s.amount, 0) + ' ' + esc(s.purpose) + ' goal. Put toward the goal instead, August’s extras would cover ' + pct + '% of it.</div></div>' +
+        '<div class="ins-cap">' + fmt(tot) + ' of your ' + fmt(s.amount, 0) + ' ' + esc(s.purpose) + ' goal. Put toward the goal instead, these extras would cover ' + pct + '% of it.</div></div>' +
         '<p class="section-label">What’s counted</p><div class="list">' + items.map(function (i) {
-          return App.ui.row({ title: i[0], sub: i[1] + ' purchases in August', value: fmt(i[2]) });
+          return App.ui.row({ title: i[0], sub: i[1] + (i[3] ? ' new purchase' + (i[1] === 1 ? '' : 's') : ' purchases in August'), value: fmt(i[2]) });
         }).join('') + App.ui.row({ title: 'Edit what counts', sub: 'Move anything back to everyday spending', goto: 'goal-tradeoff', action: 'edit-counts' }) + '</div>' +
-        '<p class="footnote">Meals, transport, bills and groceries are not counted here. Savenow tags these extras automatically and you can change any of them.</p>';
+        '<p class="footnote">Transport, bills and groceries are not counted here. Anything you log under Food or Shopping is. Savenow tags these extras automatically and you can change any of them.</p>';
       document.querySelector('#gt-body [data-action="edit-counts"]').onclick = function (e) { e.stopPropagation(); App.showToast('Editing tags is coming soon'); };
     }
   });

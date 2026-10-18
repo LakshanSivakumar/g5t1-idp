@@ -206,6 +206,11 @@ window.App.icons = {
   "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
   "inner": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.6 9.5a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8M12 16.8v.1\"/>"
  },
+ "pencil": {
+  "vb": "0 0 24 24",
+  "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+  "inner": "<path d=\"M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4\"/>"
+ },
  "hand.raised.fill": {
   "vb": "0 0 24 24",
   "attrs": "fill=\"currentColor\"",

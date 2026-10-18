@@ -47,7 +47,7 @@
     },
     onEnter(id) {
       var c = App.CATEGORIES.filter(function (x) { return x.id === id; })[0] || App.CATEGORIES[0];
-      var list = App.WEEK_EXPENSES.filter(function (e) { return e.cat === c.id; });
+      var list = App.weekExpenses().filter(function (e) { return e.cat === c.id; });
       var total = list.reduce(function (s, e) { return s + e.amount; }, 0);
       var item = function (e, withDay) {
         var sub = (withDay ? e.day + ' · ' : '') + e.time + (e.where && !withDay ? ' · ' + c.name : '') + (e.where && withDay ? ' · ' + e.where : '');

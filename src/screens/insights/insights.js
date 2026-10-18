@@ -15,9 +15,17 @@
     return '<svg class="pie ' + (cls || '') + '" viewBox="0 0 120 120" role="img" aria-label="Spending by category">' + out + '</svg>';
   };
 
+  /** The week's ledger plus today's expenses the user logged (newest first, shown under today). */
+  App.weekExpenses = function () {
+    var today = App.WEEK_EXPENSES[0].day;
+    return App.state.home.latestExpenses.map(function (e) {
+      return { id: e.id, day: today, time: e.time || 'Just now', title: e.title, where: e.where || '', amount: e.amount, cat: e.category };
+    }).concat(App.WEEK_EXPENSES);
+  };
+
   /** Week aggregates derived from the expense ledger. */
   App.weekStats = function () {
-    var all = App.WEEK_EXPENSES, small = all.filter(function (e) { return e.amount < 5; });
+    var all = App.weekExpenses(), small = all.filter(function (e) { return e.amount < 5; });
     var sum = function (a) { return a.reduce(function (s, e) { return s + e.amount; }, 0); };
     return { all: all, small: small, total: sum(all), smallTotal: sum(small), sum: sum };
   };
@@ -26,12 +34,18 @@
     tab: 'insights',
     title: 'Insights',
 
-    render() {
+    render: body,
+    onEnter() { document.getElementById('screen-insights').innerHTML = body(); } // repaint so new expenses show up
+  });
+
+  function body() {
+    {
       var cats = App.CATEGORIES;
       var w = App.weekStats();
       var pct = Math.round(w.smallTotal / w.total * 100);
-      var timeline = [38, 52, 30, 60, 44, 58, 70].map(function (v, i, a) {
-        return '<div class="bar ' + (i === a.length - 1 ? 'ink' : '') + '" style="height:' + v + '%"></div>';
+      var wk = App.state.home.week, top = Math.max.apply(null, wk.map(function (d) { return d.v; }).concat(App.state.home.dailyLimit));
+      var timeline = wk.map(function (d, i, a) {
+        return '<div class="bar ' + (i === a.length - 1 ? 'ink' : '') + '" style="height:' + Math.max(4, d.v / top * 100).toFixed(0) + '%"></div>';
       }).join('');
       return `
         <div class="screen-body">
@@ -66,5 +80,5 @@
           </button>
         </div>`;
     }
-  });
+  }
 })();

@@ -33,7 +33,7 @@
     var descEl = document.getElementById('add-desc');
     var title = descEl.value.trim() || c.name;
     descEl.value = '';
-    h.latestExpenses.unshift({ id: 'exp_' + Date.now(), title: title, sub: c.name + ' · Just now', initials: App.initialsOf(title), amount: amt, category: cat });
+    h.latestExpenses.unshift({ id: 'exp_' + Date.now(), title: title, sub: c.name + ' · Just now', initials: App.initialsOf(title), amount: amt, category: cat, time: 'Just now', where: '' });
     amount = '';
     show();
     App.overlay.close();

@@ -171,6 +171,7 @@
         vf('sg-amount', 'Amount', s.goal.amount, '$') + '</div>' +
         '<p class="section-label">Your limits</p><div class="list">' +
         vf('sg-daily', 'Daily limit', s.budget.daily, '$') + vf('sg-weekly', 'Any 7 consecutive days', s.budget.weekly, '$') + vf('sg-monthly', 'Any 30 days', s.budget.monthly, '$') + '</div>' +
+        '<p class="section-label">Your income</p><div class="list">' + vf('sg-income', 'Monthly income', s.budget.incomeMonthly || '', '$') + '</div>' +
         '<button class="btn btn-secondary btn-block" id="sg-save" style="margin-top:20px">Save changes</button>' +
         '<p class="save-note">Changing your daily limit does not reset your streak. New limits apply from tomorrow.</p>';
     },
@@ -186,6 +187,7 @@
         s.goal.purpose = document.getElementById('sg-purpose').value.trim() || s.goal.purpose;
         s.goal.amount = n('sg-amount') || s.goal.amount;
         s.budget.daily = d; s.budget.weekly = n('sg-weekly') || d * 7; s.budget.monthly = n('sg-monthly') || d * 30;
+        s.budget.incomeMonthly = n('sg-income'); // optional: empty clears it
         s.home.dailyLimit = d; s.emit('budget');
         App.showToast('Changes saved'); App.router.back('settings');
       };

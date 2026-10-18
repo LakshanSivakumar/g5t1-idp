@@ -61,7 +61,7 @@
             </div>
           </button>
 
-          <button class="card ins-card" data-goto="home" data-param="graph">
+          <button class="card ins-card" data-goto="timeline">
             <div class="card-head"><span class="eyebrow">${App.icon('chart.pie.fill', 14)} Timeline</span><span class="go" style="color:var(--sn-text-secondary)">7 days</span></div>
             <div class="ins-split"><div><div class="ins-big delta">−18%</div><div class="ins-cap">less than last week</div></div><div class="bars mini-bars" aria-hidden="true">${timeline}</div></div>
           </button>

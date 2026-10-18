@@ -9,8 +9,6 @@
     v.textContent = amount || '0.00';
     v.classList.toggle('empty', !amount);
     document.getElementById('add-submit').classList.toggle('is-disabled', !(parseFloat(amount) > 0));
-    var c = App.CATEGORIES.filter(function (x) { return x.id === cat; })[0];
-    document.getElementById('add-cat-label').textContent = 'Category: ' + c.name;
   }
 
   function press(k) {
@@ -51,11 +49,11 @@
       sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'Add transaction');
       sheet.innerHTML =
         '<div class="grabber"></div>' +
-        '<div class="add-top"><span class="label">Amount</span><button class="add-cat-btn" id="add-cat-btn" aria-expanded="false" aria-label="Choose category">' + App.icon('chevron.down', 20) + '</button></div>' +
-        '<div class="add-chips" id="add-chips">' + App.CATEGORIES.map(function (c) { return '<button class="chip" data-cat="' + c.id + '" aria-pressed="' + (c.id === cat) + '">' + c.name + '</button>'; }).join('') + '</div>' +
+        '<div class="add-top"><span class="label">Category</span></div>' +
+        '<div class="add-chips" id="add-chips" role="group" aria-label="Category">' + App.CATEGORIES.map(function (c) { return '<button class="chip" data-cat="' + c.id + '" aria-pressed="' + (c.id === cat) + '">' + c.name + '</button>'; }).join('') + '</div>' +
+        '<div class="add-top"><span class="label">Amount</span></div>' +
         '<div class="add-entry"><div class="add-amount" aria-live="polite"><span class="sym">$</span><span class="val empty" id="add-val">0.00</span><span class="caret"></span></div>' +
         '<button class="btn btn-primary is-disabled" id="add-submit">Add expense</button></div>' +
-        '<p class="add-cat-label" id="add-cat-label"></p>' +
         '<div class="keypad" role="group" aria-label="Amount keypad">' + keys.map(function (k) {
           return '<button class="key" data-key="' + k + '" aria-label="' + (k === 'del' ? 'Delete' : k === '.' ? 'Decimal point' : k) + '">' + (k === 'del' ? App.icon('delete.left', 26) : k) + '</button>';
         }).join('') + '</div>';
@@ -70,10 +68,6 @@
           sheet.querySelectorAll('.chip').forEach(function (b) { b.setAttribute('aria-pressed', b === c); });
           show();
         }
-      });
-      document.getElementById('add-cat-btn').addEventListener('click', function () {
-        var open = document.getElementById('add-chips').classList.toggle('open');
-        this.setAttribute('aria-expanded', open);
       });
       document.getElementById('add-submit').addEventListener('click', submit);
       document.getElementById('tab-add').addEventListener('click', function () { show(); App.overlay.open('add-sheet'); });

@@ -69,8 +69,11 @@
 
   App.registerScreen('setup-3', {
     title: 'Recurring expenses',
-    editing: null,
+    editingId: null, // expense being edited; it stays in the list until the edit is saved
     cat: null,
+
+    // An abandoned edit must not leak into the next visit
+    onEnter() { if (this.resetForm) this.resetForm(); },
 
     render() {
       var ui = App.ui;
@@ -122,6 +125,14 @@
       var dd = $('rec-dd'), btn = $('rec-cat-btn');
       var list = $('rec-list');
 
+      self.resetForm = function () {
+        self.editingId = null;
+        ['rec-name', 'rec-amt', 'rec-day'].forEach(function (id) { $(id).value = ''; });
+        setCat(null);
+        $('rec-ord').textContent = 'th';
+        $('rec-add').textContent = 'Add';
+      };
+
       function setCat(c) {
         self.cat = c;
         btn.firstElementChild.textContent = c || 'Select';
@@ -156,11 +167,10 @@
           App.showToast('Fill in every field to add an expense');
           return;
         }
-        App.state.recurringExpenses.push({ id: 'rec_' + Date.now(), name: name, category: self.cat, amount: amt, day: day, cal: $('rec-cal').value.toUpperCase() });
-        ['rec-name', 'rec-amt', 'rec-day'].forEach(function (id) { $(id).value = ''; });
-        setCat(null);
-        $('rec-ord').textContent = 'th';
-        $('rec-add').textContent = 'Add';
+        var all = App.state.recurringExpenses, i = all.findIndex(function (x) { return x.id === self.editingId; });
+        var item = { id: i > -1 ? self.editingId : 'rec_' + Date.now(), name: name, category: self.cat, amount: amt, day: day, cal: $('rec-cal').value.toUpperCase() };
+        if (i > -1) all[i] = item; else all.push(item); // an edit replaces in place, only once saved
+        self.resetForm();
         App.state.emit('recurring');
       });
 
@@ -174,9 +184,9 @@
           $('rec-name').value = item.name; $('rec-amt').value = item.amount; $('rec-day').value = item.day;
           $('rec-ord').textContent = ordinal(item.day).replace(/^\d+/, '');
           setCat(item.category);
-          App.state.recurringExpenses = App.state.recurringExpenses.filter(function (x) { return x.id !== item.id; });
+          self.editingId = item.id;
+          $('rec-cal').value = item.cal === 'YEAR' ? 'Year' : 'Month';
           $('rec-add').textContent = 'Save';
-          App.state.emit('recurring');
           $('rec-name').focus();
         }
       });

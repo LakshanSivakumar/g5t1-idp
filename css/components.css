@@ -196,6 +196,8 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
 [data-theme="dark"] .pill-streak { color: #FB923C; }
 .pill-ontrack { background: var(--sn-emerald-50); color: var(--sn-emerald-600); border-color: var(--sn-emerald-border); font-size: 12px; font-weight: 700; min-height: 28px; }
 [data-theme="dark"] .pill-ontrack { color: var(--nudge-emerald-fg); border-color: var(--nudge-emerald-bd); }
+.pill-ontrack.amber { background: var(--nudge-amber-bg); color: var(--nudge-amber-fg); border-color: var(--nudge-amber-bd); }
+.pill-ontrack.rose { background: var(--nudge-rose-bg); color: var(--nudge-rose-fg); border-color: var(--nudge-rose-bd); }
 .pill-shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping); border-color: transparent; }
 
 /* Nudge banner (full-width capsule) */

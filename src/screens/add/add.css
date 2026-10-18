@@ -17,3 +17,4 @@
 @keyframes blink { 50% { opacity: 0; } }
 .add-entry .btn { min-height: 56px; padding: 0 18px; }
 @media (prefers-reduced-motion: reduce) { .add-amount .caret { animation: none; } }
+.add-desc { margin: 4px 0 8px; }

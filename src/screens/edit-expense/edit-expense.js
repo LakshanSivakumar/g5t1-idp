@@ -26,8 +26,9 @@
     editing = e;
     cat = e.category;
     document.getElementById('edit-amount').value = e.amount.toFixed(2);
+    document.getElementById('edit-desc').value = e.title === catOf(e.category).name ? '' : e.title;
     document.querySelectorAll('#edit-chips .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.cat === cat); });
-    document.getElementById('edit-sub').textContent = e.title + ' · ' + e.sub;
+    document.getElementById('edit-sub').textContent = e.sub;
     validate();
     App.overlay.open('edit-sheet');
   }
@@ -35,9 +36,10 @@
   function save() {
     var amt = amountValue();
     if (!editing || !(amt > 0)) return;
-    var old = catOf(editing.category), next = catOf(cat);
+    var next = catOf(cat);
     var delta = Math.round((amt - editing.amount) * 100) / 100;
-    if (editing.title === old.name) { editing.title = next.name; editing.initials = next.name.slice(0, 2).toUpperCase(); }
+    editing.title = document.getElementById('edit-desc').value.trim() || next.name;
+    editing.initials = App.initialsOf(editing.title);
     editing.amount = Math.round(amt * 100) / 100;
     editing.category = cat;
     editing = null;
@@ -68,6 +70,8 @@
         '<h2 class="sheet-title">Edit expense</h2><p class="sheet-sub" id="edit-sub"></p>' +
         '<label class="field prefix" for="edit-amount"><span class="label">Amount</span><span class="sym">$</span>' +
         '<input id="edit-amount" type="text" inputmode="decimal" autocomplete="off" maxlength="8"></label>' +
+        '<label class="field" for="edit-desc"><span class="label">Description (optional)</span>' +
+        '<input id="edit-desc" type="text" autocomplete="off" maxlength="40" placeholder="e.g. Bubble tea"></label>' +
         '<div class="edit-chips" id="edit-chips">' + App.CATEGORIES.map(function (c) {
           return '<button class="chip" data-cat="' + c.id + '" aria-pressed="false">' + c.name + '</button>';
         }).join('') + '</div>' +

@@ -47,11 +47,19 @@ App.registerScreen('setup-4', {
     function renderAdded() {
       var list = App.state.socials;
       $('soc-added').innerHTML = list.length
-        ? '<p class="section-label" style="margin-top:0">Added</p><div class="list">' + list.map(function (s) {
-            return App.ui.row({ title: App.escapeHTML(s.name), sub: s.type, tile: { text: s.name.slice(0, 2).toUpperCase(), cls: 'emerald' } });
+        ? '<p class="section-label" style="margin-top:0">Added</p><div class="list">' + list.map(function (s, i) {
+            return App.ui.row({ title: App.escapeHTML(s.name), sub: s.type, tile: { text: s.name.slice(0, 2).toUpperCase(), cls: 'emerald' },
+              toggle: '<button class="soc-remove" data-remove="' + i + '" aria-label="Remove ' + App.escapeHTML(s.name) + '">Remove</button>' });
           }).join('') + '</div>'
         : '';
     }
+    $('soc-added').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-remove]');
+      if (!b) return;
+      var gone = App.state.socials.splice(+b.dataset.remove, 1)[0];
+      renderAdded();
+      App.showToast('Removed ' + gone.name);
+    });
     $('soc-group').onclick = function () { show('group'); };
     $('soc-contacts').onclick = function () { show('contacts'); };
     $('soc-user').onclick = function () { show('user'); };

@@ -2,3 +2,4 @@
 .soc-actions .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .soc-added { margin-top: 24px; }
 .soc-sheet-field { margin-top: 12px; }
+.soc-remove { min-height: var(--touch-min); min-width: 64px; font-size: 15px; font-weight: 600; color: var(--sn-rose-text); }

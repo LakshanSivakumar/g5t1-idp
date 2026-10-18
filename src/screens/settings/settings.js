@@ -90,6 +90,18 @@
   });
 
   /* ---------- Sub-pages ---------- */
+  App.overlays = App.overlays || [];
+  App.overlays.push({
+    mount(app) {
+      var el = document.createElement('div');
+      el.className = 'alert-wrap'; el.id = 'sg-discard';
+      el.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="sg-discard-title">' +
+        '<h2 id="sg-discard-title">You haven’t saved your changes</h2><p>If you leave now, your goal and budget edits will be lost.</p>' +
+        '<div class="stack"><button class="btn btn-primary" data-close-overlay>Keep editing</button><button class="btn btn-secondary" id="sg-discard-ok">Discard changes</button></div></div>';
+      app.appendChild(el);
+    }
+  });
+
   page('settings-goal', {
     title: 'Goal & budget', sub: 'Your target and your limits',
     html() {
@@ -103,7 +115,30 @@
         '<button class="btn btn-secondary btn-block" id="sg-save" style="margin-top:20px">Save changes</button>' +
         '<p class="save-note">Changing your daily limit does not reset your streak. New limits apply from tomorrow.</p>';
     },
+    // Saved values, keyed by input id
+    saved() {
+      var s = App.state;
+      return { 'sg-purpose': s.goal.purpose, 'sg-amount': s.goal.amount, 'sg-daily': s.budget.daily, 'sg-weekly': s.budget.weekly, 'sg-monthly': s.budget.monthly };
+    },
+    reset() {
+      var v = this.saved();
+      Object.keys(v).forEach(function (id) { document.getElementById(id).value = v[id]; });
+    },
+    dirty() {
+      var v = this.saved();
+      return Object.keys(v).some(function (id) { return document.getElementById(id).value.trim() !== String(v[id]); });
+    },
+    onEnter() { this.reset(); }, // never show edits that were not saved
+
     init() {
+      var self = this;
+      // Leaving with unsaved edits asks first
+      document.querySelector('#screen-settings-goal .nav-back').addEventListener('click', function (e) {
+        if (!self.dirty()) return;
+        e.stopPropagation(); e.preventDefault();
+        App.overlay.open('sg-discard');
+      });
+      document.getElementById('sg-discard-ok').onclick = function () { App.overlay.close(); App.router.back('settings'); };
       document.getElementById('sg-save').onclick = function () {
         var n = function (id) { return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0; };
         var s = App.state, d = n('sg-daily');

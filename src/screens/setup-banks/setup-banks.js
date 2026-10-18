@@ -8,6 +8,8 @@
     { id: 'sc', name: 'Standard Chartered', mark: '<span class="bank-mark sc"><small>standard</small><small>chartered</small></span>' }
   ];
 
+  App.BANKS = BANKS;
+
   App.setupHead = function (title, sub) {
     return '<header class="setup-head"><p class="eyebrow">Setup</p><h1>' + title + '</h1>' + (sub ? '<p>' + sub + '</p>' : '') + '</header>';
   };
@@ -45,6 +47,14 @@
           <div class="bank-spinner"></div>
           <p id="bank-splash-text">Connecting…</p>
         </div>`;
+    },
+    // Reflect banks already linked (e.g. when arriving from Settings → Add an account)
+    onEnter() {
+      document.querySelectorAll('[data-bank]').forEach(function (btn) {
+        var on = !!App.state.connectedBanks[btn.getAttribute('data-bank')];
+        btn.textContent = on ? 'Connected' : 'Connect';
+        btn.classList.toggle('connected', on);
+      });
     },
     init() {
       var splash = document.getElementById('bank-splash');

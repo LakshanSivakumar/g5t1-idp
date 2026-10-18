@@ -10,6 +10,11 @@
     App.registerScreen(name, mod);
   }
 
+  /** Banks the user has linked, in setup order. */
+  function connectedBanks() {
+    return App.BANKS.filter(function (b) { return App.state.connectedBanks[b.id]; });
+  }
+
   function section(label, rows) { return '<p class="section-label">' + label + '</p><div class="list">' + rows.join('') + '</div>'; }
 
   /* ---------- Settings root ---------- */
@@ -68,11 +73,11 @@
     onEnter() { this.paint(); },
 
     paint() {
-      var s = App.state, banks = Object.keys(s.connectedBanks).filter(function (k) { return s.connectedBanks[k]; });
+      var s = App.state, banks = connectedBanks();
       var rec = s.recurringExpenses, recTot = rec.reduce(function (a, e) { return a + e.amount; }, 0);
       document.getElementById('settings-money').innerHTML = section('Your money', [
         ui.row({ title: 'Goal &amp; budget', sub: esc(s.goal.purpose) + ' · ' + fmt(s.budget.daily, 0) + ' daily limit', goto: 'settings-goal' }),
-        ui.row({ title: 'Connected accounts', sub: banks.length ? banks.map(function (b) { return b.toUpperCase(); }).join(', ') + ' connected' : 'DBS connected', goto: 'settings-accounts' }),
+        ui.row({ title: 'Connected accounts', sub: banks.length ? banks.map(function (b) { return b.name; }).join(', ') + ' connected' : 'No accounts connected', goto: 'settings-accounts' }),
         ui.row({ title: 'Recurring expenses', sub: rec.length + ' expense' + (rec.length === 1 ? '' : 's') + ' · ' + fmt(recTot) + ' / month', goto: 'settings-recurring' })
       ]);
       document.querySelectorAll('[data-theme-pref]').forEach(function (b) { b.classList.toggle('active', b.dataset.themePref === s.themePref); b.setAttribute('aria-checked', b.dataset.themePref === s.themePref); });
@@ -114,12 +119,28 @@
 
   page('settings-accounts', {
     title: 'Connected accounts', sub: 'Where your spending is read from',
-    html() {
-      return section('Connected', [ui.row({ title: 'DBS', sub: 'Connected 12 Aug · updates daily', toggle: ui.switchEl('acc-dbs', true) })]).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">') +
+    html() { return '<div id="acc-connected"></div>' +
         section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
         '<p class="footnote">Savenow can read transactions so it can track spending for you. It can never move money or make payments.</p>';
     },
-    init() { document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); }; }
+    init() { document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); }; },
+    onEnter() { this.paint(); },
+    paint() {
+      var banks = connectedBanks();
+      var rows = banks.length
+        ? banks.map(function (b) { return ui.row({ title: b.name, sub: 'Connected · updates daily', toggle: ui.switchEl('acc-' + b.id, true) }); })
+        : [ui.row({ title: 'No accounts connected', sub: 'Add one below, or enter expenses manually' })];
+      var el = document.getElementById('acc-connected');
+      el.innerHTML = section('Connected', rows).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">');
+      banks.forEach(function (b) {
+        document.getElementById('acc-' + b.id).addEventListener('change', function (e) {
+          if (e.target.checked) return;
+          App.state.connectedBanks[b.id] = false;
+          App.showToast(b.name + ' disconnected');
+          App.screens['settings-accounts'].paint();
+        });
+      });
+    }
   });
 
   page('settings-recurring', {

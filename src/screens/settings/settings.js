@@ -234,7 +234,7 @@
   page('settings-accounts', {
     title: 'Connected accounts', sub: 'Where your spending is read from',
     html() { return '<div id="acc-connected"></div>' +
-        section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
+        section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1', param: 'settings' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
         '<p class="footnote">Savenow can read transactions so it can track spending for you. It can never move money or make payments.</p>';
     },
     init() { document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); }; },

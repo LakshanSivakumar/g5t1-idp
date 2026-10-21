@@ -42,6 +42,7 @@
     editing.initials = App.initialsOf(editing.title);
     editing.amount = Math.round(amt * 100) / 100;
     editing.category = cat;
+    editing.sub = next.name + (editing.where ? ' · ' + editing.where : '') + ' · ' + (editing.time || 'Just now');
     editing = null;
     App.overlay.close();
     applyDelta(delta);

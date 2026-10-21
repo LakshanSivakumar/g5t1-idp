@@ -26,7 +26,6 @@
       var u = App.state.user;
       return `
         <div class="screen-body">
-          <div class="ins-top"><span class="brand" style="font-size:15px;font-weight:600;color:var(--sn-text-secondary)">Savenow</span></div>
           ${ui.head('Settings', 'Your account and preferences')}
           <div class="card profile-card"><span class="avatar">BT</span><div><div class="profile-name">${esc(u.name)}</div><div class="profile-sub">@${esc(u.handle)} · ${u.currency} · ${u.country}</div></div></div>
           <div id="settings-money"></div>

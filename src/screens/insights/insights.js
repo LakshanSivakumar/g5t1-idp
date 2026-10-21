@@ -49,7 +49,6 @@
       }).join('');
       return `
         <div class="screen-body">
-          <div class="ins-top"><span class="brand">Savenow</span><span class="pill">Sep 2026</span></div>
           ${App.ui.head('Insights', 'Learn more about how you spend')}
 
           <button class="card ins-card" data-goto="categories">

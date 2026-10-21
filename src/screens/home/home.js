@@ -75,7 +75,7 @@
       if (t.over) msg = fmt(h.spentToday - h.dailyLimit) + ' over today. ' + (h.view === 'graph' ? 'Start fresh tomorrow.' : 'See a catch-up plan');
       else if (t.tone === 'amber') msg = fmt(t.left) + ' left today. Plan your dinner';
       else msg = fmt(t.left) + ' left today. You’re on pace';
-      if (h.view === 'graph' && t.over) link = false;
+      if (t.tone === 'emerald' || (h.view === 'graph' && t.over)) link = false; // healthy budget: nothing to open yet
       var inner = '<span class="nudge-text">' + App.icon(ico, 18) + msg + '</span>' + (link ? App.icon('chevron.right', 8) : '');
       n.innerHTML = link
         ? '<button class="nudge ' + t.tone + '" data-nudge>' + inner + '</button>'

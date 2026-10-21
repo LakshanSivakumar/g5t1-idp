@@ -15,3 +15,4 @@
 .where-row + .where-row { border-top: 1px solid var(--sn-border-hairline); }
 .where-row .t { font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; }
 .where-row .s { font-size: 13px; color: var(--sn-text-secondary); margin-top: 2px; }
+.cat-range { margin-bottom: 12px; }

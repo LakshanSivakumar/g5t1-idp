@@ -6,90 +6,92 @@
  */
 
 :root {
-  /* ---- 1. Brand & primary accents ---- */
-  --sn-obsidian-950: #0B0F19;
-  --sn-obsidian-900: #0F172A;
-  --sn-obsidian-800: #1E293B;
-  --sn-obsidian-700: #334155;
-  --sn-emerald-600: #059669;
-  --sn-emerald-500: #10B981;
-  --sn-emerald-400: #34D399;
-  --sn-emerald-100: #D1FAE5;
-  --sn-emerald-50:  #ECFDF5;
+  /* Apple system colors (light). Names kept from the old palette so screens need no edits:
+     emerald = systemGreen (status only), amber = systemYellow, rose = systemRed,
+     indigo = systemIndigo, obsidian = system grays/black. Interactive tint is --sn-accent (systemBlue). */
+  --sn-obsidian-950: #000000;
+  --sn-obsidian-900: #1C1C1E;
+  --sn-obsidian-800: #2C2C2E;
+  --sn-obsidian-700: #3A3A3C;
+  --sn-blue: #0062D6;   /* systemBlue darkened to 5.1:1 on the grouped canvas (systemBlue is 3.6:1) */
+  --sn-emerald-600: #34C759;
+  --sn-emerald-500: #34C759;
+  --sn-emerald-400: #30D158;
+  --sn-emerald-100: rgba(52, 199, 89, 0.24);
+  --sn-emerald-50:  rgba(52, 199, 89, 0.14);
 
-  /* ---- 2. Budget states ---- */
-  --sn-amber-600: #D97706;
-  --sn-amber-500: #F59E0B;
-  --sn-amber-100: #FEF3C7;
-  --sn-amber-50:  #FFFBEB;
-  --sn-amber-text: #B45309;
-  --sn-amber-border: #FDE68A;
+  --sn-amber-600: #FFB000;
+  --sn-amber-500: #FFCC00;
+  --sn-amber-100: rgba(255, 204, 0, 0.26);
+  --sn-amber-50:  rgba(255, 204, 0, 0.16);
+  --sn-amber-text: #8F6B00;
+  --sn-amber-border: transparent;
 
-  --sn-rose-600: #E11D48;
-  --sn-rose-500: #F43F5E;
-  --sn-rose-100: #FFE4E6;
-  --sn-rose-50:  #FFF1F2;
-  --sn-rose-text: #BE123C;
-  --sn-rose-border: #FECDD3;
+  --sn-rose-600: #FF3B30;
+  --sn-rose-500: #FF3B30;
+  --sn-rose-100: rgba(255, 59, 48, 0.22);
+  --sn-rose-50:  rgba(255, 59, 48, 0.12);
+  --sn-rose-text: #D70015;
+  --sn-rose-border: transparent;
 
-  --sn-indigo-600: #4F46E5;
-  --sn-indigo-500: #6366F1;
-  --sn-indigo-100: #E0E7FF;
-  --sn-indigo-50:  #EEF2FF;
+  --sn-indigo-600: #5856D6;
+  --sn-indigo-500: #5856D6;
+  --sn-indigo-100: rgba(88, 86, 214, 0.22);
+  --sn-indigo-50:  rgba(88, 86, 214, 0.12);
 
-  --sn-emerald-text: #059669;
-  --sn-emerald-border: #A7F3D0;
+  --sn-emerald-text: #1B7A31;
+  --sn-emerald-border: transparent;
 
-  /* ---- 3. Streak & categories ---- */
-  --sn-streak-600: #EA580C;
-  --sn-streak-500: #F97316;
-  --sn-streak-100: #FFEDD5;
-  --sn-streak-50:  #FFF7ED;
-  --sn-streak-border: #FED7AA;
+  --sn-streak-600: #C93400;
+  --sn-streak-500: #FF9500;
+  --sn-streak-100: rgba(255, 149, 0, 0.24);
+  --sn-streak-50:  rgba(255, 149, 0, 0.14);
+  --sn-streak-border: transparent;
 
-  --sn-cat-food: #F97316;
-  --sn-cat-transport: #0EA5E9;
-  --sn-cat-shopping: #8B5CF6;
-  --sn-cat-bills: #6366F1;
-  --sn-cat-other: #14B8A6;
-  --sn-cat-food-tint: #FFF7ED;
-  --sn-cat-transport-tint: #E0F2FE;
-  --sn-cat-shopping-tint: #EDE9FE;
-  --sn-cat-bills-tint: #E0E7FF;
-  --sn-cat-other-tint: #CCFBF1;
+  --sn-cat-food: #FF9500;
+  --sn-cat-transport: #32ADE6;
+  --sn-cat-shopping: #AF52DE;
+  --sn-cat-bills: #5856D6;
+  --sn-cat-other: #30B0C7;
+  --sn-cat-food-tint: rgba(255, 149, 0, 0.15);
+  --sn-cat-transport-tint: rgba(50, 173, 230, 0.15);
+  --sn-cat-shopping-tint: rgba(175, 82, 222, 0.15);
+  --sn-cat-bills-tint: rgba(88, 86, 214, 0.15);
+  --sn-cat-other-tint: rgba(48, 176, 199, 0.15);
 
-  /* ---- 4. Surfaces, borders, text (light) ---- */
-  --sn-bg-canvas: #F8FAFC;
+  /* Surfaces (grouped background / secondary grouped background), separators, labels */
+  --sn-bg-canvas: #F2F2F7;
   --sn-bg-card: #FFFFFF;
-  --sn-bg-subtle: #F1F5F9;
-  --sn-border-hairline: #E2E8F0;
-  --sn-border-strong: #CBD5E1;
-  --sn-text-primary: #0F172A;
-  --sn-text-secondary: #475569;
-  --sn-text-muted: #94A3B8;
+  --sn-bg-subtle: rgba(120, 120, 128, 0.12);   /* systemFill */
+  --sn-border-hairline: rgba(60, 60, 67, 0.18); /* separator */
+  --sn-border-strong: rgba(60, 60, 67, 0.29);   /* opaque-ish separator */
+  --sn-text-primary: #000000;
+  --sn-text-secondary: #5F5F63;
+  --sn-text-muted: #6C6C70;
 
   /* Role tokens (flip in dark mode) */
-  --sn-cta-bg: var(--sn-obsidian-900);
+  --sn-cta-bg: var(--sn-blue);
   --sn-cta-fg: #FFFFFF;
-  --sn-accent: var(--sn-emerald-600);   /* accessible green text / active tab */
-  --sn-ring-track: #E2E8F0;
-  --sn-overlay: rgba(15, 23, 42, 0.45);
-  --sn-material: rgba(248, 250, 252, 0.86);
-  --sn-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --sn-shadow-md: 0 2px 6px rgba(15, 23, 42, 0.05);
-  --sn-shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.18);
+  --sn-accent: var(--sn-blue);
+  --sn-accent-tint: rgba(0, 98, 214, 0.12);
+  --sn-ring-track: rgba(120, 120, 128, 0.16);
+  --sn-overlay: rgba(0, 0, 0, 0.4);
+  --sn-material: rgba(249, 249, 249, 0.78);
+  --sn-shadow-sm: none;
+  --sn-shadow-md: none;
+  --sn-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.18);
 
-  /* Nudge pills (light = tinted surface + dark text) */
-  --nudge-amber-bg: var(--sn-amber-50);   --nudge-amber-fg: var(--sn-amber-text);   --nudge-amber-bd: var(--sn-amber-border);
-  --nudge-rose-bg: var(--sn-rose-50);     --nudge-rose-fg: var(--sn-rose-text);     --nudge-rose-bd: var(--sn-rose-border);
-  --nudge-emerald-bg: var(--sn-emerald-50); --nudge-emerald-fg: var(--sn-emerald-600); --nudge-emerald-bd: var(--sn-emerald-border);
+  /* Nudge pills: tinted fill, no stroke */
+  --nudge-amber-bg: var(--sn-amber-50);   --nudge-amber-fg: var(--sn-amber-text);   --nudge-amber-bd: transparent;
+  --nudge-rose-bg: var(--sn-rose-50);     --nudge-rose-fg: var(--sn-rose-text);     --nudge-rose-bd: transparent;
+  --nudge-emerald-bg: var(--sn-emerald-50); --nudge-emerald-fg: var(--sn-emerald-text); --nudge-emerald-bd: transparent;
 
   /* ---- 5. Type, shape, layout ---- */
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
-  --radius-sheet: 28px;
-  --radius-card: 18px;
+  --radius-sheet: 34px;
+  --radius-card: 20px;
   --radius-field: 12px;
-  --radius-btn: 14px;
+  --radius-btn: 9999px;
   --radius-pill: 9999px;
 
   --touch-min: 44px;
@@ -103,44 +105,54 @@
 }
 
 [data-theme="dark"] {
-  --sn-bg-canvas: #0B0F19;
-  --sn-bg-card: #111827;
-  --sn-bg-subtle: #1E293B;
-  --sn-border-hairline: #1F2937;
-  --sn-border-strong: #334155;
-  --sn-text-primary: #F8FAFC;
-  --sn-text-secondary: #94A3B8;
-  --sn-text-muted: #64748B;
+  --sn-blue: #0A84FF;
+  --sn-emerald-600: #30D158;
+  --sn-emerald-500: #30D158;
+  --sn-emerald-400: #30D158;
+  --sn-emerald-100: rgba(48, 209, 88, 0.28);
+  --sn-emerald-50:  rgba(48, 209, 88, 0.16);
+  --sn-amber-500: #FFD60A;
+  --sn-amber-100: rgba(255, 214, 10, 0.28);
+  --sn-amber-50:  rgba(255, 214, 10, 0.16);
+  --sn-amber-text: #FFD60A;
+  --sn-rose-500: #FF453A;
+  --sn-rose-600: #FF453A;
+  --sn-rose-100: rgba(255, 69, 58, 0.28);
+  --sn-rose-50:  rgba(255, 69, 58, 0.16);
+  --sn-rose-text: #FF6961;
+  --sn-indigo-500: #5E5CE6;
+  --sn-indigo-600: #5E5CE6;
+  --sn-indigo-100: rgba(94, 92, 230, 0.32);
+  --sn-indigo-50:  rgba(94, 92, 230, 0.18);
+  --sn-emerald-text: #30D158;
+  --sn-streak-600: #FF9F0A;
+  --sn-streak-500: #FF9F0A;
+  --sn-streak-100: rgba(255, 159, 10, 0.3);
+  --sn-streak-50:  rgba(255, 159, 10, 0.16);
 
-  --sn-emerald-50: rgba(16, 185, 129, 0.14);
-  --sn-emerald-100: rgba(16, 185, 129, 0.28);
-  --sn-amber-50: rgba(245, 158, 11, 0.14);
-  --sn-amber-100: rgba(245, 158, 11, 0.28);
-  --sn-rose-50: rgba(244, 63, 94, 0.15);
-  --sn-rose-100: rgba(244, 63, 94, 0.28);
-  --sn-indigo-50: rgba(99, 102, 241, 0.16);
-  --sn-indigo-100: rgba(99, 102, 241, 0.30);
-  --sn-streak-50: rgba(249, 115, 22, 0.16);
-  --sn-streak-100: rgba(249, 115, 22, 0.30);
-  --sn-streak-border: rgba(249, 115, 22, 0.35);
+  --sn-cat-food: #FF9F0A;
+  --sn-cat-transport: #64D2FF;
+  --sn-cat-shopping: #BF5AF2;
+  --sn-cat-bills: #7D7AFF;
+  --sn-cat-other: #40C8E0;
+  --sn-cat-food-tint: rgba(255, 159, 10, 0.2);
+  --sn-cat-transport-tint: rgba(100, 210, 255, 0.2);
+  --sn-cat-shopping-tint: rgba(191, 90, 242, 0.22);
+  --sn-cat-bills-tint: rgba(125, 122, 255, 0.22);
+  --sn-cat-other-tint: rgba(64, 200, 224, 0.2);
 
-  --sn-cat-food-tint: rgba(249, 115, 22, 0.16);
-  --sn-cat-transport-tint: rgba(14, 165, 233, 0.16);
-  --sn-cat-shopping-tint: rgba(139, 92, 246, 0.18);
-  --sn-cat-bills-tint: rgba(99, 102, 241, 0.18);
-  --sn-cat-other-tint: rgba(20, 184, 166, 0.16);
+  --sn-bg-canvas: #000000;
+  --sn-bg-card: #1C1C1E;
+  --sn-bg-subtle: rgba(120, 120, 128, 0.24);
+  --sn-border-hairline: rgba(84, 84, 88, 0.55);
+  --sn-border-strong: rgba(84, 84, 88, 0.75);
+  --sn-text-primary: #FFFFFF;
+  --sn-text-secondary: #AEAEB2;
+  --sn-text-muted: #8E8E93;
 
-  --sn-cta-bg: var(--sn-emerald-500);
-  --sn-cta-fg: #0B0F19;
-  --sn-accent: var(--sn-emerald-400);
-  --sn-ring-track: #1F2937;
-  --sn-overlay: rgba(0, 0, 0, 0.6);
-  --sn-material: rgba(11, 15, 25, 0.82);
-  --sn-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --sn-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.5);
-  --sn-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
-
-  --nudge-amber-bg: rgba(245, 158, 11, 0.14);  --nudge-amber-fg: #FBBF24;  --nudge-amber-bd: rgba(245, 158, 11, 0.35);
-  --nudge-rose-bg: rgba(244, 63, 94, 0.15);    --nudge-rose-fg: #FDA4AF;    --nudge-rose-bd: rgba(244, 63, 94, 0.35);
-  --nudge-emerald-bg: rgba(16, 185, 129, 0.14); --nudge-emerald-fg: #6EE7B7; --nudge-emerald-bd: rgba(16, 185, 129, 0.35);
+  --sn-accent-tint: rgba(10, 132, 255, 0.2);
+  --sn-ring-track: rgba(120, 120, 128, 0.32);
+  --sn-overlay: rgba(0, 0, 0, 0.55);
+  --sn-material: rgba(29, 29, 31, 0.72);
+  --sn-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
 }

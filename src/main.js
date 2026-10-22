@@ -27,26 +27,19 @@ window.App = window.App || {};
 /* ---------- Theme ---------- */
 App.theme = {
   mq: window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null,
-  apply(pref) {
+  // Follows the system appearance only; HIG discourages an app-specific light/dark setting.
+  apply() {
     var s = App.state;
-    s.themePref = pref || s.themePref;
-    var dark = s.themePref === 'dark' || (s.themePref === 'system' && this.mq && this.mq.matches);
+    var dark = !!(this.mq && this.mq.matches);
     s.theme = dark ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', s.theme);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#0B0F19' : '#F8FAFC');
+    if (meta) meta.setAttribute('content', dark ? '#000000' : '#F2F2F7');
     s.emit('theme', s.theme);
   },
   init() {
-    var saved = null;
-    try { saved = localStorage.getItem('savenow_theme'); } catch (e) { /* private mode */ }
-    if (saved) App.state.themePref = saved;
     this.apply();
     if (this.mq && this.mq.addEventListener) this.mq.addEventListener('change', function () { App.theme.apply(); });
-  },
-  set(pref) {
-    try { localStorage.setItem('savenow_theme', pref); } catch (e) { /* private mode */ }
-    this.apply(pref);
   }
 };
 

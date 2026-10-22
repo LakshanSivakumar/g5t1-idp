@@ -34,10 +34,6 @@
             ui.row({ title: 'Notifications', sub: 'Near-limit alerts on', goto: 'settings-notifications' }),
             ui.row({ title: 'Help &amp; support', sub: 'How Savenow works', goto: 'settings-help' })
           ])}
-          <p class="section-label">Appearance</p>
-          <div class="list seg-pad"><div class="segmented" id="theme-seg" role="radiogroup" aria-label="Appearance">
-            <button role="radio" data-theme-pref="system">System</button><button role="radio" data-theme-pref="light">Light</button><button role="radio" data-theme-pref="dark">Dark</button></div></div>
-
           <p class="section-label proto">Prototype tools</p>
           <div class="list proto-grid">
             <div class="eyebrow">Budget state today</div>
@@ -56,9 +52,6 @@
     },
 
     init() {
-      document.getElementById('theme-seg').addEventListener('click', function (e) {
-        var b = e.target.closest('[data-theme-pref]'); if (b) { App.theme.set(b.dataset.themePref); App.screens.settings.paint(); }
-      });
       document.getElementById('state-seg').addEventListener('click', function (e) {
         var b = e.target.closest('[data-state]'); if (!b) return;
         var h = App.state.home; h.spentToday = parseFloat(b.dataset.state); h.week[h.week.length - 1].v = h.spentToday;
@@ -79,7 +72,6 @@
         ui.row({ title: 'Connected accounts', sub: banks.length ? banks.map(function (b) { return b.name; }).join(', ') + ' connected' : 'No accounts connected', goto: 'settings-accounts' }),
         ui.row({ title: 'Recurring expenses', sub: rec.length + ' expense' + (rec.length === 1 ? '' : 's') + ' · ' + fmt(recTot) + ' / month', goto: 'settings-recurring' })
       ]);
-      document.querySelectorAll('[data-theme-pref]').forEach(function (b) { b.classList.toggle('active', b.dataset.themePref === s.themePref); b.setAttribute('aria-checked', b.dataset.themePref === s.themePref); });
       var pct = s.home.spentToday;
       document.querySelectorAll('[data-state]').forEach(function (b) {
         var on = Math.abs(parseFloat(b.dataset.state) - pct) < 0.005;
@@ -164,7 +156,7 @@
       el.className = 'alert-wrap'; el.id = 'sg-discard';
       el.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="sg-discard-title">' +
         '<h2 id="sg-discard-title">You haven’t saved your changes</h2><p>If you leave now, your goal and budget edits will be lost.</p>' +
-        '<div class="stack"><button class="btn btn-primary" data-close-overlay>Keep editing</button><button class="btn btn-secondary" id="sg-discard-ok">Discard changes</button></div></div>';
+        '<div class="stack"><button class="btn btn-primary" data-close-overlay>Keep editing</button><button class="btn btn-secondary btn-destructive" id="sg-discard-ok">Discard changes</button></div></div>';
       app.appendChild(el);
     }
   });

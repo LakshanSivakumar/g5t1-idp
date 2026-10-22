@@ -4,8 +4,8 @@
 .select-field { margin-top: 8px; }
 .select-field select { font-weight: 600; }
 .select-field .chev { position: absolute; right: 14px; bottom: 16px; pointer-events: none; color: var(--sn-text-secondary); }
-.cat-select { display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 14px; width: 100%; border: 1px solid var(--sn-border-strong); border-radius: var(--radius-field); background: var(--sn-bg-card); position: relative; }
-.cat-select span { font-weight: 600; font-size: 16px; }
+.cat-select { display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 14px; width: 100%; border-radius: var(--radius-field); background: var(--sn-bg-card); position: relative; }
+.cat-select span { font-weight: 400; font-size: 17px; }
 .cat-select small { font-size: 14px; color: var(--sn-accent); font-weight: 600; margin-right: 22px; }
 .cat-select select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; }
 .cat-select .chev { position: absolute; right: 14px; top: 50%; margin-top: -8px; color: var(--sn-text-secondary); pointer-events: none; }
@@ -13,6 +13,6 @@
 .stat-big { font-size: 44px; font-weight: 800; letter-spacing: -1.4px; font-variant-numeric: tabular-nums; margin: 4px 0; }
 .where-row { padding: 14px 16px; }
 .where-row + .where-row { border-top: 1px solid var(--sn-border-hairline); }
-.where-row .t { font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; }
-.where-row .s { font-size: 13px; color: var(--sn-text-secondary); margin-top: 2px; }
+.where-row .t { font-size: 17px; font-weight: 400; display: flex; justify-content: space-between; }
+.where-row .s { font-size: 15px; color: var(--sn-text-secondary); margin-top: 2px; }
 .cat-range { margin-bottom: 12px; }

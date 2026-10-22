@@ -62,7 +62,7 @@
   var PEOPLE = [
     { h: 'mayatan', n: 'Maya Tan', s: '2 mutual friends', friend: true },
     { h: 'jonlim', n: 'Jon Lim', s: '1 mutual friend', friend: true },
-    { h: 'bobsaves', n: 'Bob Tan', s: 'That’s you', me: true }
+    { h: 'testuser', n: 'Test User', s: '3 mutual friends' }
   ];
 
   App.registerScreen('find-friends', {
@@ -96,8 +96,7 @@
       var term = document.getElementById('ff-q').value.replace(/^@/, '').trim().toLowerCase();
       var res = PEOPLE.filter(function (p) { return !term || p.h.indexOf(term) > -1 || p.n.toLowerCase().indexOf(term) > -1; });
       document.getElementById('ff-results').innerHTML = res.length ? res.map(function (p) {
-        var act = p.me ? '<span class="muted" style="padding:0 8px">—</span>' :
-          '<button class="add-btn" data-add="' + p.h + '"' + (p.added || p.friend ? ' disabled' : '') + '>' + (p.friend ? 'Friends' : p.added ? 'Added' : 'Add') + '</button>';
+        var act = '<button class="add-btn" data-add="' + p.h + '"' + (p.added || p.friend ? ' disabled' : '') + '>' + (p.friend ? 'Friends' : p.added ? 'Added' : 'Add') + '</button>';
         return App.ui.row({ tile: { text: p.n.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: '@' + p.h, sub: p.s, toggle: act });
       }).join('') : '<div class="empty"><strong>No one found</strong><span>Check the username and try again</span></div>';
     }

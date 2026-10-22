@@ -1,27 +1,33 @@
 .tl-range { margin-bottom: 12px; }
-.tl-card { padding-bottom: 12px; }
+.tl-card { padding-bottom: 12px; overflow: hidden; }
 .tl-card .ins-big { margin-top: 2px; }
 .tl-delta.down { color: var(--sn-emerald-text); font-weight: 600; }
 .tl-delta.up { color: var(--sn-rose-text); font-weight: 600; }
-.tl-chart { margin-top: 20px; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 
-.tl-plot { position: relative; height: 200px; margin-right: 38px; }
-.tl-grid { position: absolute; left: 0; right: -38px; height: 0; border-top: 1px solid var(--sn-border-hairline); }
-.tl-grid span { position: absolute; right: 0; top: -9px; font-size: 11px; color: var(--sn-text-secondary); font-variant-numeric: tabular-nums; background: var(--sn-bg-card); padding-left: 4px; }
-.tl-grid:last-of-type { border-top-color: var(--sn-border-strong); }
-.tl-limit { position: absolute; left: 0; right: 0; height: 0; border-top: 1.5px dashed var(--sn-text-secondary); z-index: 2; pointer-events: none; opacity: 0.7; }
+/* Chart: a fixed axis (dotted gridlines + $ labels) behind a horizontally paged scroller of bars */
+.tl-chart { position: relative; margin-top: 22px; --plot: 200px; --gutter: 40px; }
+.tl-axis { position: absolute; left: 0; right: 0; top: 0; height: var(--plot); pointer-events: none; }
+.tl-grid { position: absolute; left: 0; right: 0; height: 0; border-top: 1.5px dotted var(--sn-border-strong); }
+.tl-grid.base { border-top: 1px solid var(--sn-border-strong); }
+.tl-grid span { position: absolute; right: 0; top: -9px; width: calc(var(--gutter) - 6px); text-align: right; font-size: 11px; color: var(--sn-text-secondary); font-variant-numeric: tabular-nums; background: var(--sn-bg-card); }
+.tl-limit { position: absolute; left: 0; right: var(--gutter); height: 0; border-top: 1.5px dashed var(--sn-text-secondary); z-index: 2; opacity: 0.7; }
 .tl-limit span { position: absolute; left: 0; top: -17px; font-size: 11px; font-weight: 600; color: var(--sn-text-secondary); }
 
-.tl-bars { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 6px; z-index: 1; }
-.tl-bars.ndense { gap: 2px; }
-.tl-bar { flex: 1; min-width: 0; background: var(--sn-accent); border-radius: 4px 4px 1px 1px; transition: opacity 0.15s ease, height 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
-.tl-bars.ndense .tl-bar { border-radius: 2px 2px 0 0; }
+.tl-scroll { position: relative; z-index: 1; margin-right: var(--gutter); display: flex; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; outline-offset: 4px; }
+.tl-scroll::-webkit-scrollbar { display: none; }
+.tl-page { flex: 0 0 100%; padding: 0 2px; scroll-snap-align: end; scroll-snap-stop: always; }
+.tl-page:has(.dense) { padding: 0 18px; } /* room for the first/last date label */
+
+.tl-slots { display: flex; height: var(--plot); }
+.tl-slot { position: relative; flex: 1; min-width: 0; display: flex; align-items: flex-end; padding: 0 8px; }   /* 16px between bars */
+.tl-slots.mid .tl-slot { padding: 0 4px; }
+.tl-slots.dense .tl-slot { padding: 0 2px; }
+.tl-slot.tick::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1.5px dotted var(--sn-border-strong); }  /* vertical dotted axis ticks */
+.tl-bar { position: relative; width: 100%; background: var(--sn-accent); border-radius: 5px 5px 2px 2px; transition: opacity 0.15s ease; }
+.tl-slots.dense .tl-bar { border-radius: 3px 3px 1px 1px; }
 .tl-bar.over { background: var(--sn-rose-500); }
 .tl-bar.partial { opacity: 0.55; }
-.tl-bar.dim { opacity: 0.35; }
-.tl-bar.picked { opacity: 1; }
+.tl-page.has-pick .tl-bar:not(.picked) { opacity: 0.35; }
 
-.tl-labels { display: flex; gap: 6px; margin: 8px 38px 0 0; }
-.tl-labels.dense { gap: 2px; }
-.tl-labels span { flex: 1; min-width: 0; text-align: center; font-size: 11px; color: var(--sn-text-secondary); white-space: nowrap; overflow: visible; }
-.tl-labels.dense span { text-align: left; }
+.tl-labels { display: flex; margin-top: 8px; }
+.tl-labels span { flex: 1; min-width: 0; display: flex; justify-content: center; font-size: 11px; color: var(--sn-text-secondary); white-space: nowrap; }

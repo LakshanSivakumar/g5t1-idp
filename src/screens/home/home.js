@@ -1,4 +1,4 @@
-/** Screen: Home — daily budget ring / graph (Within Limit, Over Limit, Graph) + warning alert */
+/** Screen: Home — daily budget ring (Within Limit, Over Limit) + warning alert */
 (function () {
   var fmt = App.fmt.money;
   var C = 2 * Math.PI * 100; // ring circumference for r=100
@@ -15,12 +15,6 @@
           <header class="home-top">
             <button class="pill pill-streak" data-tab="social" id="home-streak"></button>
           </header>
-          <div class="home-toggle">
-            <div class="segmented" role="tablist" aria-label="Home view">
-              <button role="tab" class="active" data-view="ring">Today</button>
-              <button role="tab" data-view="graph">7 days</button>
-            </div>
-          </div>
           <div id="home-hero"></div>
           <div class="home-nudge" id="home-nudge"></div>
           <button class="card saved-card" data-tab="insights" aria-label="Saved this month">
@@ -34,9 +28,6 @@
 
     init() {
       var self = this;
-      document.querySelectorAll('[data-view]').forEach(function (b) {
-        b.addEventListener('click', function () { App.state.home.view = b.dataset.view; self.paint(); });
-      });
       document.getElementById('home-nudge').addEventListener('click', function (e) {
         var b = e.target.closest('[data-nudge]');
         if (!b) return;
@@ -47,34 +38,23 @@
       App.state.on('budget', function () { self.paint(); });
     },
 
-    onEnter(param) {
-      if (param === 'graph' || param === 'ring') App.state.home.view = param;
-      this.paint();
-    },
+    onEnter() { this.paint(); },
 
     paint() {
       var h = App.state.home, t = tone();
-      document.querySelectorAll('[data-view]').forEach(function (b) {
-        var on = b.dataset.view === h.view;
-        b.classList.toggle('active', on);
-        b.setAttribute('aria-selected', on);
-      });
-
       var streak = document.getElementById('home-streak');
       streak.innerHTML = App.icon('flame.fill', 14) + (t.over ? h.bestStreak + '-day best' : h.streakDays + '-day streak');
 
-      document.getElementById('home-hero').innerHTML = h.view === 'ring' ? this.ring(h, t) : this.graph(h, t);
-      if (h.view === 'ring') {
-        var f = document.getElementById('ring-fill');
-        requestAnimationFrame(function () { f.style.strokeDashoffset = C * (1 - Math.min(t.pct, 1)); });
-      }
+      document.getElementById('home-hero').innerHTML = this.ring(h, t);
+      var f = document.getElementById('ring-fill');
+      requestAnimationFrame(function () { f.style.strokeDashoffset = C * (1 - Math.min(t.pct, 1)); });
 
       var n = document.getElementById('home-nudge');
       var msg, link = true, ico = t.tone === 'emerald' ? 'checkmark.circle.fill' : 'info.circle';
-      if (t.over) msg = fmt(h.spentToday - h.dailyLimit) + ' over today. ' + (h.view === 'graph' ? 'Start fresh tomorrow.' : 'See a catch-up plan');
+      if (t.over) msg = fmt(h.spentToday - h.dailyLimit) + ' over today. ' + 'See a catch-up plan';
       else if (t.tone === 'amber') msg = fmt(t.left) + ' left today. Plan your dinner';
       else msg = fmt(t.left) + ' left today. You’re on pace';
-      if (t.tone === 'emerald' || (h.view === 'graph' && t.over)) link = false; // healthy budget: nothing to open yet
+      if (t.tone === 'emerald') link = false; // healthy budget: nothing to open yet
       var inner = '<span class="nudge-text">' + App.icon(ico, 18) + msg + '</span>' + (link ? App.icon('chevron.right', 8) : '');
       n.innerHTML = link
         ? '<button class="nudge ' + t.tone + '" data-nudge>' + inner + '</button>'
@@ -100,21 +80,6 @@
         '<svg viewBox="0 0 220 220"><circle class="ring-track" cx="110" cy="110" r="100"/>' +
         '<circle class="ring-fill ' + t.tone + '" id="ring-fill" cx="110" cy="110" r="100" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
         '<div class="ring-center"><div class="eyebrow">Spent today</div><div class="ring-amount">' + fmt(h.spentToday) + '</div><div class="ring-sub">' + sub + '</div></div></div>';
-    },
-
-    graph(h, t) {
-      var week = h.week.slice(0, 6).concat([{ d: 'Today', v: h.spentToday }]);
-      var max = Math.max.apply(null, week.map(function (w) { return w.v; }).concat([h.dailyLimit * 1.15]));
-      var limitPct = (h.dailyLimit / max) * 100;
-      var bars = week.map(function (w, i) {
-        var cls = i === week.length - 1 ? t.tone === 'emerald' ? 'accent' : t.tone : (w.v > h.dailyLimit ? 'rose' : '');
-        return '<div class="bar ' + cls + '" style="height:' + (w.v / max * 100) + '%" title="' + w.d + ' ' + fmt(w.v) + '"></div>';
-      }).join('');
-      var sub = t.over ? fmt(h.spentToday - h.dailyLimit) + ' over your ' + fmt(h.dailyLimit, 0) + ' limit' : fmt(t.left) + ' under your ' + fmt(h.dailyLimit, 0) + ' limit';
-      return '<div class="graph-head"><div class="eyebrow">Spent today</div><div><span class="amt">' + fmt(h.spentToday) + '</span><span class="sub">' + sub + '</span></div></div>' +
-        '<button class="graph-link" data-tab="insights" aria-label="Open Insights"><div class="graph-box"><div class="graph-limit" style="bottom:' + limitPct + '%"><span>' + fmt(h.dailyLimit, 0) + ' LIMIT</span></div><div class="bars">' + bars + '</div></div>' +
-        '<div class="graph-days">' + week.map(function (w) { return '<span>' + w.d + '</span>'; }).join('') + '</div></button>' +
-        '<p class="graph-hint">Tap the graph for insights</p>';
     }
   });
 
@@ -138,7 +103,7 @@
       var open = App.overlay.open.bind(App.overlay);
       App.overlay.open = function (id) { if (id === 'alert-warning') refresh(); open(id); };
       document.getElementById('aw-view').addEventListener('click', function () {
-        App.overlay.close(); App.router.go('home', { root: true, param: 'graph' });
+        App.overlay.close(); App.router.go('home', { root: true });
       });
     }
   });

@@ -101,7 +101,6 @@ window.App.state = {
 
   /* Home */
   home: {
-    view: 'ring',          // 'ring' | 'graph'
     spentToday: 17.40,
     dailyLimit: 20,
     streakDays: 98,

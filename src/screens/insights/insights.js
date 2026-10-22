@@ -43,10 +43,11 @@
       var cats = App.CATEGORIES;
       var w = App.weekStats();
       var pct = Math.round(w.smallTotal / w.total * 100);
-      var wk = App.state.home.week, top = Math.max.apply(null, wk.map(function (d) { return d.v; }).concat(App.state.home.dailyLimit));
-      var timeline = wk.map(function (d, i, a) {
+      var tl = App.timeline.stats(), top = Math.max.apply(null, tl.bars.map(function (d) { return d.v; }).concat(App.state.home.dailyLimit));
+      var timeline = tl.bars.map(function (d, i, a) {
         return '<div class="bar ' + (i === a.length - 1 ? 'ink' : '') + '" style="height:' + Math.max(4, d.v / top * 100).toFixed(0) + '%"></div>';
       }).join('');
+      var dpct = Math.round(Math.abs(tl.delta) * 100);
       return `
         <div class="screen-body">
           ${App.ui.head('Insights', 'Learn more about how you spend')}
@@ -60,9 +61,9 @@
             </div>
           </button>
 
-          <button class="card ins-card" data-goto="home" data-param="graph">
-            <div class="card-head"><span class="eyebrow">${App.icon('chart.pie.fill', 14)} Timeline</span><span class="go" style="color:var(--sn-text-secondary)">7 days</span></div>
-            <div class="ins-split"><div><div class="ins-big delta">−18%</div><div class="ins-cap">less than last week</div></div><div class="bars mini-bars" aria-hidden="true">${timeline}</div></div>
+          <button class="card ins-card" data-goto="timeline">
+            <div class="card-head"><span class="eyebrow">${App.icon('chart.pie.fill', 14)} Timeline</span><span class="go">View all ${App.icon('chevron.right', 7)}</span></div>
+            <div class="ins-split"><div><div class="ins-big delta ${tl.delta > 0 ? 'up' : ''}">${tl.delta > 0 ? '+' : '−'}${dpct}%</div><div class="ins-cap">${tl.delta > 0 ? 'more' : 'less'} than last week</div></div><div class="bars mini-bars" aria-hidden="true">${timeline}</div></div>
           </button>
 
           <button class="card ins-card" data-goto="small-purchases">

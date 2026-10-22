@@ -12,7 +12,8 @@
 .legend .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 .legend div { display: flex; align-items: center; gap: 8px; }
 .legend b { font-weight: 600; }
-.delta { color: var(--sn-accent); }
+.delta { color: var(--sn-emerald-text); }
+.delta.up { color: var(--sn-rose-text); }
 .prog-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
 .prog-row .progress { flex: 1; }
 .prog-row b { font-size: 15px; font-variant-numeric: tabular-nums; }

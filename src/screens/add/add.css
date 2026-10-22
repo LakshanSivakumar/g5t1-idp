@@ -6,15 +6,8 @@
 .chip { flex-shrink: 0; min-height: var(--touch-min); padding: 0 16px; border-radius: var(--radius-pill); font-size: 15px; font-weight: 500; background: var(--sn-bg-subtle); }
 .chip[aria-pressed="true"] { background: var(--sn-cta-bg); color: var(--sn-cta-fg); border-color: transparent; }
 .add-entry { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
-.add-amount {
-  flex: 1; min-height: 56px; display: flex; align-items: center; gap: 8px;
-  padding: 0 14px; background: var(--sn-bg-subtle); border-radius: var(--radius-field);
-  font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; overflow: hidden;
-}
-.add-amount .sym { color: var(--sn-text-secondary); }
-.add-amount .val.empty { color: var(--sn-text-muted); }
-.add-amount .caret { width: 2px; height: 28px; background: var(--sn-accent); animation: blink 1s steps(2) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
+.add-entry .add-amount { flex: 1; }
+.add-amount input { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; min-height: 34px; }
+.add-amount .sym { font-size: 28px; }
 .add-entry .btn { min-height: 56px; padding: 0 18px; }
-@media (prefers-reduced-motion: reduce) { .add-amount .caret { animation: none; } }
 .add-desc { margin: 4px 0 8px; }

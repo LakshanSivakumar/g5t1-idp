@@ -8,7 +8,7 @@ App.registerScreen('lock', {
         <span style="margin-top:6px">${App.icon('lock.fill', 18)}</span>
         <div class="date">Monday 7 September</div>
         <div class="time">5:45</div>
-        <button class="lock-notif" data-goto="home" data-param="graph" aria-label="Open Savenow">
+        <button class="lock-notif" data-goto="home" aria-label="Open Savenow">
           <div class="top"><span class="app-ico">S</span>Savenow <span class="ts">Time Sensitive</span><span class="now">now</span></div>
           <h2 id="lock-title"></h2>
           <p id="lock-text"></p>

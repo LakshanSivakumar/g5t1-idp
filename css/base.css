@@ -57,11 +57,12 @@ svg { display: block; flex-shrink: 0; }
 
 /* ---------- App shell ---------- */
 #app {
-  position: relative;
+  /* Anchored to the viewport edges instead of 100vh/100dvh: in an iOS Home Screen app those units can come out
+     shorter than the screen, which left the tab bar floating high with blank space under it */
+  position: fixed;
+  top: 0; bottom: 0; left: 0; right: 0;
   width: 100%;
   max-width: 430px;
-  height: 100vh;
-  height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
   overflow: clip; /* unlike hidden, cannot be scrolled programmatically (iOS scrolls it to reveal a focused field) */

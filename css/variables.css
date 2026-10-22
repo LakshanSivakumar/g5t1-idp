@@ -13,7 +13,7 @@
   --sn-obsidian-900: #1C1C1E;
   --sn-obsidian-800: #2C2C2E;
   --sn-obsidian-700: #3A3A3C;
-  --sn-blue: #007AFF;
+  --sn-blue: #0062D6;   /* systemBlue darkened to 5.1:1 on the grouped canvas (systemBlue is 3.6:1) */
   --sn-emerald-600: #34C759;
   --sn-emerald-500: #34C759;
   --sn-emerald-400: #30D158;
@@ -39,7 +39,7 @@
   --sn-indigo-100: rgba(88, 86, 214, 0.22);
   --sn-indigo-50:  rgba(88, 86, 214, 0.12);
 
-  --sn-emerald-text: #248A3D;
+  --sn-emerald-text: #1B7A31;
   --sn-emerald-border: transparent;
 
   --sn-streak-600: #C93400;
@@ -66,14 +66,14 @@
   --sn-border-hairline: rgba(60, 60, 67, 0.18); /* separator */
   --sn-border-strong: rgba(60, 60, 67, 0.29);   /* opaque-ish separator */
   --sn-text-primary: #000000;
-  --sn-text-secondary: #6C6C70;
-  --sn-text-muted: #8E8E93;
+  --sn-text-secondary: #5F5F63;
+  --sn-text-muted: #6C6C70;
 
   /* Role tokens (flip in dark mode) */
   --sn-cta-bg: var(--sn-blue);
   --sn-cta-fg: #FFFFFF;
   --sn-accent: var(--sn-blue);
-  --sn-accent-tint: rgba(0, 122, 255, 0.12);
+  --sn-accent-tint: rgba(0, 98, 214, 0.12);
   --sn-ring-track: rgba(120, 120, 128, 0.16);
   --sn-overlay: rgba(0, 0, 0, 0.4);
   --sn-material: rgba(249, 249, 249, 0.78);

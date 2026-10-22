@@ -29,6 +29,7 @@
   color: var(--sn-accent);
 }
 .btn-tint { background: var(--sn-accent-tint); color: var(--sn-accent); }
+.btn-destructive { color: var(--sn-rose-text); }
 .btn-ghost { color: var(--sn-accent); min-height: var(--touch-min); }
 
 /* Text link-style control with a guaranteed 44pt hit area */
@@ -162,6 +163,7 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
 .field.invalid { border-color: var(--sn-rose-500); }
 .field-error { font-size: 13px; color: var(--sn-rose-text); margin: 6px 4px 0; }
 [data-theme="dark"] .field-error { color: var(--nudge-rose-fg); }
+.sheet .field { background: var(--sn-bg-subtle); }
 .field-stack { display: flex; flex-direction: column; gap: 12px; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .field-hint {
@@ -357,9 +359,18 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
 .bar.ink { background: var(--sn-text-primary); }
 
 /* ---------- Empty state ---------- */
-.empty { text-align: center; padding: 28px 16px; color: var(--sn-text-muted); }
-.empty strong { display: block; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sn-text-secondary); margin-bottom: 4px; }
-.empty span { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+.empty { text-align: center; padding: 28px 16px; color: var(--sn-text-secondary); }
+.empty strong { display: block; font-size: 17px; font-weight: 600; color: var(--sn-text-primary); margin-bottom: 4px; }
+.empty span { font-size: 15px; }
 
 .stack-12 { display: flex; flex-direction: column; gap: 12px; }
 .spacer { flex: 1; }
+
+/* ---------- Accessibility settings ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  .tabbar, .statusbar-sim, .toast { background: var(--sn-bg-card); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  :root { --sn-border-hairline: rgba(60, 60, 67, 0.5); --sn-border-strong: rgba(60, 60, 67, 0.7); --sn-text-muted: var(--sn-text-secondary); }
+  [data-theme="dark"] { --sn-border-hairline: rgba(235, 235, 245, 0.45); --sn-border-strong: rgba(235, 235, 245, 0.65); }
+}

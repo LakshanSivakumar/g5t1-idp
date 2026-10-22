@@ -164,7 +164,7 @@
       el.className = 'alert-wrap'; el.id = 'sg-discard';
       el.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="sg-discard-title">' +
         '<h2 id="sg-discard-title">You haven’t saved your changes</h2><p>If you leave now, your goal and budget edits will be lost.</p>' +
-        '<div class="stack"><button class="btn btn-primary" data-close-overlay>Keep editing</button><button class="btn btn-secondary" id="sg-discard-ok">Discard changes</button></div></div>';
+        '<div class="stack"><button class="btn btn-primary" data-close-overlay>Keep editing</button><button class="btn btn-secondary btn-destructive" id="sg-discard-ok">Discard changes</button></div></div>';
       app.appendChild(el);
     }
   });

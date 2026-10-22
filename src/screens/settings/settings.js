@@ -171,23 +171,38 @@
         section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1', param: 'settings' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
         '<p class="footnote">Savenow can read transactions so it can track spending for you. It can never move money or make payments.</p>';
     },
-    init() { document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); }; },
+    init() {
+      document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); };
+      // Disconnect asks first; one alert is reused for whichever bank was tapped
+      var pending = null;
+      var alert = document.createElement('div');
+      alert.className = 'alert-wrap'; alert.id = 'alert-disconnect';
+      alert.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="dc-title">' +
+        '<h2 id="dc-title"></h2><p>Savenow will stop importing your spending from this account. You can reconnect any time, or add expenses manually.</p>' +
+        '<div class="stack"><button class="btn btn-danger" id="dc-confirm">Disconnect</button><button class="btn btn-secondary" data-close-overlay>Cancel</button></div></div>';
+      document.getElementById('app').appendChild(alert);
+      document.getElementById('acc-connected').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-disconnect]'); if (!b) return;
+        pending = App.BANKS.filter(function (x) { return x.id === b.dataset.disconnect; })[0];
+        document.getElementById('dc-title').textContent = 'Disconnect ' + pending.name + '?';
+        App.overlay.open('alert-disconnect');
+      });
+      document.getElementById('dc-confirm').onclick = function () {
+        if (!pending) return;
+        App.state.connectedBanks[pending.id] = false;
+        App.overlay.close();
+        App.showToast(pending.name + ' disconnected');
+        pending = null;
+        App.screens['settings-accounts'].paint();
+      };
+    },
     onEnter() { this.paint(); },
     paint() {
       var banks = connectedBanks();
       var rows = banks.length
-        ? banks.map(function (b) { return ui.row({ title: b.name, sub: 'Connected · updates daily', toggle: ui.switchEl('acc-' + b.id, true) }); })
+        ? banks.map(function (b) { return ui.row({ title: b.name, sub: 'Connected · updates daily', toggle: '<button class="btn btn-danger-tint" data-disconnect="' + b.id + '" aria-label="Disconnect ' + b.name + '">Disconnect</button>' }); })
         : [ui.row({ title: 'No accounts connected', sub: 'Add one below, or enter expenses manually' })];
-      var el = document.getElementById('acc-connected');
-      el.innerHTML = section('Connected', rows).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">');
-      banks.forEach(function (b) {
-        document.getElementById('acc-' + b.id).addEventListener('change', function (e) {
-          if (e.target.checked) return;
-          App.state.connectedBanks[b.id] = false;
-          App.showToast(b.name + ' disconnected');
-          App.screens['settings-accounts'].paint();
-        });
-      });
+      document.getElementById('acc-connected').innerHTML = section('Connected', rows).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">');
     }
   });
 

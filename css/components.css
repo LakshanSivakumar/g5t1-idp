@@ -29,6 +29,8 @@
   color: var(--sn-accent);
 }
 .btn-tint { background: var(--sn-accent-tint); color: var(--sn-accent); }
+.btn-danger { background: var(--sn-rose-600); color: #fff; }
+.btn-danger-tint { min-height: var(--touch-min); padding: 0 16px; font-size: 15px; background: var(--sn-rose-50); color: var(--sn-rose-text); }
 .btn-destructive { color: var(--sn-rose-text); }
 .btn-ghost { color: var(--sn-accent); min-height: var(--touch-min); }
 

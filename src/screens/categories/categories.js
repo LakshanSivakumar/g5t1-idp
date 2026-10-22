@@ -1,37 +1,66 @@
 /** Screens: Categories, Category detail, Small purchases, Goal trade-off */
 (function () {
   var fmt = App.fmt.money, esc = App.escapeHTML;
-  var WEEK = 'This week · 31 Aug – 6 Sep';
+  var WEEK = 'Recent purchases';
 
   function catOptions(sel) {
     return App.CATEGORIES.map(function (c) { return '<option value="' + c.id + '"' + (c.id === sel ? ' selected' : '') + '>' + c.name + '</option>'; }).join('');
   }
 
+  // Spend per category, in App.CATEGORIES order. Week is live; month and year are prototype data.
+  var range = 'month';
+  var RANGES = {
+    week: { tab: 'Week', label: 'This week · 31 Aug – 6 Sep', data: function () {
+      var amounts = App.CATEGORIES.map(function (c) {
+        return App.weekExpenses().filter(function (e) { return e.cat === c.id; }).reduce(function (a, e) { return a + e.amount; }, 0);
+      });
+      return { amounts: amounts, total: amounts.reduce(function (a, v) { return a + v; }, 0) };
+    } },
+    month: { tab: 'Month', label: 'Last month · August 2026', data: function () {
+      return { amounts: App.CATEGORIES.map(function (c) { return c.last; }), total: 584 };
+    } },
+    year: { tab: 'Year', label: 'Year to date · 2026', data: function () {
+      return { amounts: [1696.32, 942.40, 848.16, 753.92, 471.20], total: 4712 };
+    } }
+  };
+
   App.registerScreen('categories', {
     tab: 'insights',
     title: 'Categories',
     render() {
-      var cats = App.CATEGORIES;
       return `
         <div class="screen-body">
           ${App.ui.back('insights')}
           ${App.ui.head('Categories', 'Your spending, broken down')}
-          <div class="card cat-card">
-            <div class="eyebrow">Last month · August 2026</div>
-            <div class="ins-big">$584.00</div>
-            <div class="ins-split">
-              ${App.pie(cats.map(function (c) { return { pct: c.pct, color: c.color }; }), 'lg')}
-              <div class="legend cat-legend">${cats.map(function (c) {
-                return '<div><span class="dot" style="background:' + c.color + '"></span><span><b>' + c.name + '</b> · ' + c.pct + '%<br><span class="muted">' + fmt(c.last) + '</span></span></div>';
-              }).join('')}</div>
-            </div>
+          <div class="segmented cat-range" id="cat-range" role="tablist" aria-label="Time period">
+            ${Object.keys(RANGES).map(function (k) { return '<button role="tab" data-range="' + k + '">' + RANGES[k].tab + '</button>'; }).join('')}
           </div>
-          <p class="section-label">This week · 31 Aug – 6 Sep</p>
+          <div class="card cat-card" id="cat-card"></div>
+          <p class="section-label">Recent purchases</p>
           <label class="cat-select"><span>Choose a category</span><select id="cat-choose" aria-label="Choose a category"><option value="" disabled selected>Choose a category</option>${catOptions()}</select>${App.icon('chevron.down', 16, 'chev')}</label>
-          <p class="footnote">Pick a category above to see every expense counted in it between 31 Aug and 6 Sep.</p>
+          <p class="footnote">Pick a category above to see your recent purchases in it.</p>
         </div>`;
     },
+    onEnter() { this.paint(); },
+    paint() {
+      var r = RANGES[range], d = r.data(), cats = App.CATEGORIES;
+      document.querySelectorAll('#cat-range [data-range]').forEach(function (b) {
+        var on = b.dataset.range === range;
+        b.classList.toggle('active', on); b.setAttribute('aria-selected', on);
+      });
+      document.getElementById('cat-card').innerHTML =
+        '<div class="eyebrow">' + r.label + '</div><div class="ins-big">' + fmt(d.total) + '</div>' +
+        '<div class="ins-split">' + App.pie(cats.map(function (c, i) { return { pct: d.amounts[i], color: c.color }; }), 'lg') +
+        '<div class="legend cat-legend">' + cats.map(function (c, i) {
+          return '<div><span class="dot" style="background:' + c.color + '"></span><span><b>' + c.name + '</b> · ' + Math.round(d.amounts[i] / d.total * 100) + '%<br><span class="muted">' + fmt(d.amounts[i]) + '</span></span></div>';
+        }).join('') + '</div></div>';
+    },
     init() {
+      var self = this;
+      document.getElementById('cat-range').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-range]');
+        if (b) { range = b.dataset.range; self.paint(); }
+      });
       document.getElementById('cat-choose').addEventListener('change', function (e) {
         App.router.go('category', { param: e.target.value });
         e.target.selectedIndex = 0;

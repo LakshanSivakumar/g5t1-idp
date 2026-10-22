@@ -143,7 +143,6 @@
             <div id="tl-readout" aria-live="polite"></div>
             <div id="tl-chart" class="tl-chart"></div>
           </div>
-          <p class="footnote">Swipe the chart sideways to move through time. Tap a bar for details. Red bars went over your limit.</p>
         </div>`;
     },
     onEnter() { period = '7D'; this.paint(); }, // always opens on the past 7 days

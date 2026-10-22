@@ -47,7 +47,15 @@ App.theme = {
 if (window.visualViewport) {
   var vv = window.visualViewport;
   var lift = function () { document.documentElement.style.setProperty('--kb', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px'); };
-  vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift);
+  // iOS can leave the page scrolled after the keyboard closes, which strands the tab bar above the bottom edge
+  var settle = function () {
+    lift();
+    window.scrollTo(0, 0);
+    var app = document.getElementById('app'); if (app) app.scrollTop = 0;
+  };
+  vv.addEventListener('resize', function () { lift(); if (vv.height >= window.innerHeight - 1) settle(); });
+  vv.addEventListener('scroll', lift);
+  document.addEventListener('focusout', function () { setTimeout(settle, 120); });
 }
 
 /* ---------- Boot ---------- */

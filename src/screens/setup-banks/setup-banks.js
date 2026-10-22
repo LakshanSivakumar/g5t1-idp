@@ -1,12 +1,15 @@
 /** Screen: Setup 1 — Connect your bank account (Setup-1.png, Setup-4.jpg) */
 (function () {
+  // Logos are the banks' own SVGs (icons/banks/); each sits on a white chip so navy/black marks stay legible in dark mode
+  function logo(id, name) { return '<span class="bank-logo ' + id + '"><img src="icons/banks/' + id + '.svg" alt="' + name + '"></span>'; }
   var BANKS = [
-    { id: 'dbs', name: 'DBS', banner: { a: 'DBS', bg: '#000000', side: '#7a7a7a', lines: ['Live more,', 'Bank less'] }, mark: '<span class="bank-mark dbs">DBS</span>' },
-    { id: 'ocbc', name: 'OCBC', banner: { a: 'OCBC', bg: '#D6001C', side: '#9E0015', lines: ['Secure', 'connection'] }, mark: '<span class="bank-mark ocbc">OCBC</span>' },
-    { id: 'uob', name: 'UOB', banner: { a: 'UOB', bg: '#0B2A6F', side: '#071B49', lines: ['Secure', 'connection'] }, mark: '<span class="bank-mark uob">UOB</span>' },
-    { id: 'trust', name: 'Trust', banner: { a: 'trust', bg: '#0A8FD8', side: '#0870A9', lines: ['Secure', 'connection'] }, mark: '<span class="bank-mark trust">trust</span>' },
-    { id: 'sc', name: 'Standard Chartered', banner: { a: 'Standard Chartered', bg: '#0072AA', side: '#005A87', lines: ['Secure', 'connection'] }, mark: '<span class="bank-mark sc"><small>standard</small><small>chartered</small></span>' }
+    { id: 'dbs', name: 'DBS' },
+    { id: 'ocbc', name: 'OCBC' },
+    { id: 'uob', name: 'UOB' },
+    { id: 'trust', name: 'Trust' },
+    { id: 'sc', name: 'Standard Chartered' }
   ];
+  BANKS.forEach(function (b) { b.mark = logo(b.id, b.name); });
 
   App.BANKS = BANKS;
 
@@ -46,7 +49,7 @@
         </div>
         </div>
         <div class="bank-splash" id="bank-splash" role="status" aria-live="polite">
-          <div class="bank-banner"><div class="a" id="bank-banner-a"></div><div class="b" id="bank-banner-b"></div></div>
+          <div id="bank-splash-logo"></div>
           <div class="bank-spinner"></div>
           <p id="bank-splash-text">Connecting…</p>
         </div>`;
@@ -89,11 +92,7 @@
             btn.textContent = 'Connect'; btn.classList.remove('connected');
             return;
           }
-          var bn = bank.banner;
-          var a = document.getElementById('bank-banner-a'), b = document.getElementById('bank-banner-b');
-          a.textContent = bn.a; a.style.background = bn.bg;
-          b.innerHTML = bn.lines.map(function (l) { return '<span>' + l + '</span>'; }).join(''); b.style.background = bn.side;
-          a.classList.toggle('long', bn.a.length > 6);
+          document.getElementById('bank-splash-logo').innerHTML = bank.mark.replace('bank-logo', 'bank-logo big');
           document.getElementById('bank-splash-text').textContent = 'Connecting to ' + bank.name + '…';
           splash.classList.add('open');
           setTimeout(function () {

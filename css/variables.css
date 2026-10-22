@@ -77,6 +77,10 @@
   --sn-ring-track: rgba(120, 120, 128, 0.16);
   --sn-overlay: rgba(0, 0, 0, 0.4);
   --sn-material: rgba(249, 249, 249, 0.78);
+  --glass-fill: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.6);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-selected: rgba(120, 120, 128, 0.16);
   --sn-shadow-sm: none;
   --sn-shadow-md: none;
   --sn-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.18);
@@ -96,7 +100,7 @@
 
   --touch-min: 44px;
   --nav-h: 44px;
-  --tab-h: 49px;
+  --tab-h: 64px;
 
   /* Safe areas. main.js sets --sat-sim/--sab-sim when it is simulating a device
      (desktop Chrome emulation); real standalone iOS uses env(). */
@@ -154,5 +158,9 @@
   --sn-ring-track: rgba(120, 120, 128, 0.32);
   --sn-overlay: rgba(0, 0, 0, 0.55);
   --sn-material: rgba(29, 29, 31, 0.72);
+  --glass-fill: rgba(44, 44, 46, 0.5);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.22);
+  --glass-selected: rgba(255, 255, 255, 0.14);
   --sn-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
 }

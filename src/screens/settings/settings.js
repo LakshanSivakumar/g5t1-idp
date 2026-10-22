@@ -94,62 +94,6 @@
     }
   });
 
-  /* Keypad sheet for amounts in Goal & budget (same keys as the Add sheet) */
-  var kp = { id: null, buf: '', fresh: true };
-  function kpShow() {
-    var v = document.getElementById('kp-val');
-    v.textContent = kp.buf || '0';
-    v.classList.toggle('empty', !kp.buf);
-  }
-  function kpPress(k) {
-    if (k === 'del') kp.buf = kp.buf.slice(0, -1);
-    else {
-      var cur = kp.fresh ? '' : kp.buf;
-      if (k === '.') { if (cur.indexOf('.') > -1) return; cur = (cur || '0') + '.'; }
-      else {
-        var next = (cur === '0' ? '' : cur) + k, p = next.split('.');
-        if ((p[1] && p[1].length > 2) || p[0].length > 6) return;
-        cur = next;
-      }
-      kp.buf = cur;
-    }
-    kp.fresh = false;
-    kpShow();
-  }
-  App.overlays.push({
-    mount(app) {
-      var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del'];
-      var sheet = document.createElement('div');
-      sheet.className = 'sheet add-sheet'; sheet.id = 'sg-keypad';
-      sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'Edit amount');
-      sheet.innerHTML = '<div class="grabber"></div><div class="add-top"><span class="label" id="kp-title"></span></div>' +
-        '<div class="add-entry"><div class="add-amount" aria-live="polite"><span class="sym">$</span><span class="val" id="kp-val">0</span><span class="caret"></span></div>' +
-        '<button class="btn btn-primary" id="kp-done">Done</button></div>' +
-        '<div class="keypad" role="group" aria-label="Amount keypad">' + keys.map(function (k) {
-          return '<button class="key" data-key="' + k + '" aria-label="' + (k === 'del' ? 'Delete' : k === '.' ? 'Decimal point' : k) + '">' + (k === 'del' ? App.icon('delete.left', 26) : k) + '</button>';
-        }).join('') + '</div>';
-      app.appendChild(sheet);
-      sheet.addEventListener('click', function (e) {
-        var k = e.target.closest('[data-key]');
-        if (k) kpPress(k.dataset.key);
-      });
-      document.getElementById('kp-done').addEventListener('click', function () {
-        if (kp.buf) document.getElementById(kp.id).value = String(parseFloat(kp.buf));
-        App.overlay.close();
-      });
-      // Open from a row or its pencil (delegated: pages are rendered once, rows never re-render)
-      document.addEventListener('click', function (e) {
-        var row = e.target.closest('#screen-settings-goal [data-keypad]');
-        if (!row) return;
-        e.preventDefault();
-        kp.id = row.dataset.keypad; kp.buf = document.getElementById(kp.id).value; kp.fresh = true;
-        document.getElementById('kp-title').textContent = row.dataset.title;
-        kpShow();
-        App.overlay.open('sg-keypad');
-      });
-    }
-  });
-
   App.overlays.push({
     mount(app) {
       var el = document.createElement('div');
@@ -166,8 +110,7 @@
     html() {
       var s = App.state;
       var pen = '<span class="edit-pen">' + App.icon('pencil', 14) + '</span>';
-      // Amounts are edited on the in-app keypad (tap the row or its pencil), so the input is read-only
-      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '" data-keypad="' + id + '" data-title="' + t + '"><span class="t">' + t + '</span><span class="val-edit">' + (pre || '') + '<input id="' + id + '" inputmode="decimal" readonly value="' + v + '">' + pen + '</span></label>'; };
+      var vf = function (id, t, v, pre) { return '<label class="val-field" for="' + id + '"><span class="t">' + t + '</span><span class="val-edit">' + (pre || '') + '<input id="' + id + '" inputmode="decimal" enterkeyhint="done" value="' + v + '">' + pen + '</span></label>'; };
       return '<p class="section-label" style="margin-top:0">Your goal</p><div class="list">' +
         '<label class="val-field" for="sg-purpose"><span class="t">Goal</span><span class="val-edit"><input id="sg-purpose" value="' + esc(s.goal.purpose) + '" style="width:150px">' + pen + '</span></label>' +
         vf('sg-amount', 'Amount', s.goal.amount, '$') + '</div>' +
@@ -228,23 +171,38 @@
         section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1', param: 'settings' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
         '<p class="footnote">Savenow can read transactions so it can track spending for you. It can never move money or make payments.</p>';
     },
-    init() { document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); }; },
+    init() {
+      document.getElementById('acc-manual').onclick = function () { App.overlay.open('add-sheet'); };
+      // Disconnect asks first; one alert is reused for whichever bank was tapped
+      var pending = null;
+      var alert = document.createElement('div');
+      alert.className = 'alert-wrap'; alert.id = 'alert-disconnect';
+      alert.innerHTML = '<div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="dc-title">' +
+        '<h2 id="dc-title"></h2><p>Savenow will stop importing your spending from this account. You can reconnect any time, or add expenses manually.</p>' +
+        '<div class="stack"><button class="btn btn-danger" id="dc-confirm">Disconnect</button><button class="btn btn-secondary" data-close-overlay>Cancel</button></div></div>';
+      document.getElementById('app').appendChild(alert);
+      document.getElementById('acc-connected').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-disconnect]'); if (!b) return;
+        pending = App.BANKS.filter(function (x) { return x.id === b.dataset.disconnect; })[0];
+        document.getElementById('dc-title').textContent = 'Disconnect ' + pending.name + '?';
+        App.overlay.open('alert-disconnect');
+      });
+      document.getElementById('dc-confirm').onclick = function () {
+        if (!pending) return;
+        App.state.connectedBanks[pending.id] = false;
+        App.overlay.close();
+        App.showToast(pending.name + ' disconnected');
+        pending = null;
+        App.screens['settings-accounts'].paint();
+      };
+    },
     onEnter() { this.paint(); },
     paint() {
       var banks = connectedBanks();
       var rows = banks.length
-        ? banks.map(function (b) { return ui.row({ title: b.name, sub: 'Connected · updates daily', toggle: ui.switchEl('acc-' + b.id, true) }); })
+        ? banks.map(function (b) { return ui.row({ title: b.name, sub: 'Connected · updates daily', toggle: '<button class="btn btn-danger-tint" data-disconnect="' + b.id + '" aria-label="Disconnect ' + b.name + '">Disconnect</button>' }); })
         : [ui.row({ title: 'No accounts connected', sub: 'Add one below, or enter expenses manually' })];
-      var el = document.getElementById('acc-connected');
-      el.innerHTML = section('Connected', rows).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">');
-      banks.forEach(function (b) {
-        document.getElementById('acc-' + b.id).addEventListener('change', function (e) {
-          if (e.target.checked) return;
-          App.state.connectedBanks[b.id] = false;
-          App.showToast(b.name + ' disconnected');
-          App.screens['settings-accounts'].paint();
-        });
-      });
+      document.getElementById('acc-connected').innerHTML = section('Connected', rows).replace('<p class="section-label">', '<p class="section-label" style="margin-top:0">');
     }
   });
 

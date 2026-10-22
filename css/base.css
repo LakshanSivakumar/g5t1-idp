@@ -149,7 +149,14 @@ html.sim-device .home-indicator-sim { display: block; }
 .screen-body > * { flex-shrink: 0; }
 /* Screens that show the tab bar leave room for it */
 .screen.has-tabbar .screen-body {
-  padding-bottom: calc(var(--tab-h) + var(--sab) + 24px);
+  padding-bottom: calc(var(--tab-h) + var(--sab) + 40px);
+}
+/* Scroll edge: content fades out under the floating bar instead of colliding with it */
+.screen.has-tabbar::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+  height: calc(var(--tab-h) + var(--sab) + 28px);
+  background: linear-gradient(to bottom, transparent, var(--sn-bg-canvas) 85%);
+  opacity: 0.85; pointer-events: none;
 }
 /* Pinned action row (Back / Continue) */
 .screen-footer {

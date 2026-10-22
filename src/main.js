@@ -43,6 +43,13 @@ App.theme = {
   }
 };
 
+/* Lift sheets above the iOS keyboard (the layout viewport does not shrink when it opens) */
+if (window.visualViewport) {
+  var vv = window.visualViewport;
+  var lift = function () { document.documentElement.style.setProperty('--kb', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px'); };
+  vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift);
+}
+
 /* ---------- Boot ---------- */
 document.addEventListener('DOMContentLoaded', function () {
   App.theme.init();

@@ -27,9 +27,12 @@
           <div class="bank-list">${rows}</div>
           <button class="btn btn-ghost btn-block" id="bank-skip">I don’t have a bank account / Skip for now</button>
         </div>
-        <div class="screen-footer">
+        <div class="screen-footer" id="bank-footer-setup">
           <button class="btn btn-secondary btn-grow" data-back="register">Back</button>
           <button class="btn btn-primary btn-grow" id="bank-continue">Continue</button>
+        </div>
+        <div class="screen-footer" id="bank-footer-settings" hidden>
+          <button class="btn btn-primary btn-grow" data-back="settings-accounts">Save changes</button>
         </div>
         <div class="alert-wrap" id="bank-skip-alert">
           <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="bank-skip-title">
@@ -49,7 +52,12 @@
         </div>`;
     },
     // Reflect banks already linked (e.g. when arriving from Settings → Add an account)
-    onEnter() {
+    // Opened from Settings (param 'settings'): save back to Connected accounts instead of continuing the setup flow
+    onEnter(param) {
+      var fromSettings = param === 'settings';
+      document.getElementById('bank-footer-setup').hidden = fromSettings;
+      document.getElementById('bank-footer-settings').hidden = !fromSettings;
+      document.getElementById('bank-skip').hidden = fromSettings;
       document.querySelectorAll('[data-bank]').forEach(function (btn) {
         var on = !!App.state.connectedBanks[btn.getAttribute('data-bank')];
         btn.textContent = on ? 'Connected' : 'Connect';

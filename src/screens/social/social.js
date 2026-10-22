@@ -12,7 +12,6 @@
     render() {
       return `
         <div class="screen-body">
-          <div class="ins-top"><span class="brand" style="font-size:15px;font-weight:600;color:var(--sn-text-secondary)">Savenow</span></div>
           ${App.ui.head('Social', '<span id="soc-sub"></span>')}
           <div class="card streak-card">
             <div class="eyebrow">${App.icon('flame.fill', 14)} Current streak</div>

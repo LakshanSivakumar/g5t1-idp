@@ -1,5 +1,4 @@
-.home-top { display: flex; align-items: center; justify-content: space-between; min-height: var(--touch-min); margin-bottom: 8px; }
-.home-brand { font-size: 24px; font-weight: 700; letter-spacing: -0.6px; }
+.home-top { display: flex; align-items: center; justify-content: flex-end; min-height: var(--touch-min); margin-bottom: 8px; }
 .home-top .pill-streak { min-height: var(--touch-min); }
 .home-toggle { margin-bottom: 8px; }
 .home-toggle .segmented { max-width: 200px; margin-left: auto; }

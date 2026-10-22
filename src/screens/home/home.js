@@ -13,7 +13,6 @@
       return `
         <div class="screen-body">
           <header class="home-top">
-            <h1 class="home-brand">Savenow</h1>
             <button class="pill pill-streak" data-tab="social" id="home-streak"></button>
           </header>
           <div class="home-toggle">

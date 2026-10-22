@@ -19,6 +19,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   height: 100%;
+  /* Fixed so iOS cannot scroll the document when the keyboard opens and leave the bars offset after it closes */
+  position: fixed; inset: 0; width: 100%; overflow: hidden;
   background: var(--sn-bg-canvas);
   color-scheme: light;
 }
@@ -26,6 +28,7 @@ html {
 html[data-theme="dark"] { color-scheme: dark; }
 
 body {
+  position: fixed; inset: 0; width: 100%;
   height: 100%;
   font-family: var(--font-sans);
   font-size: 17px;
@@ -61,6 +64,7 @@ svg { display: block; flex-shrink: 0; }
   height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
+  overflow: clip; /* unlike hidden, cannot be scrolled programmatically (iOS scrolls it to reveal a focused field) */
   background: var(--sn-bg-canvas);
   isolation: isolate;
 }
@@ -119,6 +123,7 @@ html.sim-device .home-indicator-sim { display: block; }
   display: flex;
   flex-direction: column;
   background: var(--sn-bg-canvas);
+  overflow: clip;
   visibility: hidden;
   pointer-events: none;
   opacity: 0;

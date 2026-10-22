@@ -88,7 +88,6 @@ window.App.CATEGORIES = [
 window.App.state = {
   currentScreen: 'screen-onboarding',
   theme: 'light',
-  themePref: 'system', // 'system' | 'light' | 'dark'
   mazeVariant: 'A',
 
   user: { name: 'Bob Tan', handle: 'bobsaves', currency: 'SGD', country: 'Singapore', email: 'bob@savenow.app' },

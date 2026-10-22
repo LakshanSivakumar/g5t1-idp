@@ -13,7 +13,7 @@
 }
 .add-amount .sym { color: var(--sn-text-secondary); }
 .add-amount .val.empty { color: var(--sn-text-muted); }
-.add-amount .caret { width: 2px; height: 28px; background: var(--sn-emerald-500); animation: blink 1s steps(2) infinite; }
+.add-amount .caret { width: 2px; height: 28px; background: var(--sn-accent); animation: blink 1s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .add-entry .btn { min-height: 56px; padding: 0 18px; }
 @media (prefers-reduced-motion: reduce) { .add-amount .caret { animation: none; } }

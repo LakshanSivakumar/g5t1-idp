@@ -3,7 +3,6 @@
 .streak-num.broken { color: var(--sn-text-muted); }
 .streak-sub { text-align: center; font-size: 14px; color: var(--sn-text-secondary); margin-bottom: 16px; }
 .cheer { min-height: var(--touch-min); min-width: var(--touch-min); padding: 0 14px; border-radius: var(--radius-pill); background: var(--sn-streak-50); color: var(--sn-streak-600); border: 1px solid var(--sn-streak-border); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
-[data-theme="dark"] .cheer { color: #FB923C; }
 .cheer.done { background: var(--sn-bg-subtle); color: var(--sn-text-muted); border-color: var(--sn-border-hairline); }
 .find-result { display: flex; align-items: center; gap: 12px; }
 .add-btn { min-height: var(--touch-min); min-width: 64px; font-size: 15px; font-weight: 700; color: var(--sn-accent); }

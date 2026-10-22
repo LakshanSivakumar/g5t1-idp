@@ -34,7 +34,7 @@ App.theme = {
     s.theme = dark ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', s.theme);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#0B0F19' : '#F8FAFC');
+    if (meta) meta.setAttribute('content', dark ? '#000000' : '#F2F2F7');
     s.emit('theme', s.theme);
   },
   init() {

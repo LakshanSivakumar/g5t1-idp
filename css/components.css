@@ -99,11 +99,11 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
   background: var(--sn-bg-subtle);
   color: var(--sn-text-secondary);
 }
-.tile.food { background: var(--sn-cat-food-tint); color: var(--sn-cat-food); }
-.tile.transport { background: var(--sn-cat-transport-tint); color: var(--sn-cat-transport); }
-.tile.shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping); }
-.tile.bills { background: var(--sn-cat-bills-tint); color: var(--sn-cat-bills); }
-.tile.other { background: var(--sn-cat-other-tint); color: var(--sn-cat-other); }
+.tile.food { background: var(--sn-cat-food-tint); color: var(--sn-cat-food-ink); }
+.tile.transport { background: var(--sn-cat-transport-tint); color: var(--sn-cat-transport-ink); }
+.tile.shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping-ink); }
+.tile.bills { background: var(--sn-cat-bills-tint); color: var(--sn-cat-bills-ink); }
+.tile.other { background: var(--sn-cat-other-tint); color: var(--sn-cat-other-ink); }
 .tile.emerald { background: var(--sn-accent-tint); color: var(--sn-accent); }
 
 /* Flat ledger rows (category lists) */
@@ -192,7 +192,7 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
 .pill-ontrack { background: var(--sn-emerald-50); color: var(--sn-emerald-text); border-color: transparent; font-size: 12px; font-weight: 700; min-height: 28px; }
 .pill-ontrack.amber { background: var(--nudge-amber-bg); color: var(--nudge-amber-fg); border-color: var(--nudge-amber-bd); }
 .pill-ontrack.rose { background: var(--nudge-rose-bg); color: var(--nudge-rose-fg); border-color: var(--nudge-rose-bd); }
-.pill-shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping); border-color: transparent; }
+.pill-shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping-ink); border-color: transparent; }
 
 /* Nudge banner (full-width capsule) */
 .nudge {
@@ -254,7 +254,7 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
 
 /* ---------- Progress ---------- */
 .progress { height: 8px; border-radius: 4px; background: var(--sn-bg-subtle); overflow: hidden; }
-.progress > i { display: block; height: 100%; border-radius: 4px; background: var(--sn-amber-500); transition: width 0.5s ease; }
+.progress > i { display: block; height: 100%; border-radius: 4px; background: var(--sn-emerald-500); transition: width 0.5s ease; }
 
 /* ---------- Tab bar (Liquid Glass approximation: floating, blurred, lensed edge) ---------- */
 .tabbar {

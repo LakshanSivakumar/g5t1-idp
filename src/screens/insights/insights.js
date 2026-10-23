@@ -45,7 +45,7 @@
       var pct = Math.round(w.smallTotal / w.total * 100);
       var tl = App.timeline.stats(), top = Math.max.apply(null, tl.bars.map(function (d) { return d.v; }).concat(App.state.home.dailyLimit));
       var timeline = tl.bars.map(function (d, i, a) {
-        return '<div class="bar ' + (i === a.length - 1 ? 'ink' : '') + '" style="height:' + Math.max(4, d.v / top * 100).toFixed(0) + '%"></div>';
+        return '<div class="bar ' + (i === a.length - 1 ? 'accent' : '') + '" style="height:' + Math.max(4, d.v / top * 100).toFixed(0) + '%"></div>';
       }).join('');
       var dpct = Math.round(Math.abs(tl.delta) * 100);
       return `
@@ -75,7 +75,7 @@
 
           <button class="card ins-card" data-goto="goal-tradeoff">
             <div class="card-head"><span class="eyebrow">${App.icon('lightbulb', 14)} Goal trade-off</span><span class="go">Details ${App.icon('chevron.right', 7)}</span></div>
-            <div class="ins-big" style="color:var(--sn-indigo-500)">${App.goalExtrasPct()}%</div>
+            <div class="ins-big">${App.goalExtrasPct()}%</div>
             <div class="ins-cap">${fmt(App.goalExtras().total)} of your ${fmt(App.state.goal.amount, 0)} ${App.escapeHTML(App.state.goal.purpose)} goal · August + new</div>
           </button>
         </div>`;

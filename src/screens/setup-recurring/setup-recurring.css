@@ -23,7 +23,7 @@
 .swipe + .swipe { border-top: 1px solid var(--sn-border-hairline); }
 .swipe-action {
   position: absolute; top: 0; right: 0; bottom: 0; width: 96px;
-  background: var(--sn-rose-500); color: #fff; font-weight: 700; font-size: 15px;
+  background: var(--sn-rose-600); color: #fff; font-weight: 700; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
 }
 .swipe-front { position: relative; background: var(--sn-bg-card); padding: 12px 16px 4px; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); touch-action: pan-y; }

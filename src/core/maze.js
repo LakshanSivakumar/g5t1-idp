@@ -13,6 +13,7 @@ window.App.maze = {
   loadSnippet(key) {
     if (!key || key === 'YOUR_MAZE_API_KEY' || window.mazeUniversalSnippetApiKey) return;
     (function (m, a, z, e) {
+      try { if (!m.sessionStorage.getItem('maze-us')) m.sessionStorage.setItem('maze-us', new Date().getTime()); } catch (err) { /* private mode */ } // same session marker Maze's own snippet sets
       var s = a.createElement('script');
       s.src = z + '?apiKey=' + e;
       s.async = true;

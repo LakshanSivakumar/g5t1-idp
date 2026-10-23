@@ -63,13 +63,14 @@
           if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { cur = null; return; } // vertical scroll wins
           if (Math.abs(dx) < 8) return;
           cur.drag = true; try { cur.card.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+          if (App.study) App.study.note('swipe');
         }
         cur.dx = dx; setX(cur.card, Math.max(-W - 24, Math.min(0, cur.base + dx)), false);
       });
       var end = function (e) {
         if (!cur || e.pointerId !== cur.id) return;
         var c = cur; cur = null;
-        if (!c.drag) { if (c.card.classList.contains('open')) close(c.card); return; } // a tap closes an open card
+        if (!c.drag) { if (c.card.classList.contains('open')) close(c.card); else if (App.study) App.study.note('deadTap'); return; } // a tap closes an open card; on a closed one it does nothing (counted for the study)
         (c.base + c.dx < -W / 2 ? open : close)(c.card);
         c.card.dataset.dragged = '1'; setTimeout(function () { delete c.card.dataset.dragged; }, 0);
       };

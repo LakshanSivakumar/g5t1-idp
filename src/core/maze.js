@@ -32,7 +32,7 @@ window.App.maze = {
 
     if (urlKey) { try { localStorage.setItem('savenow_maze_api_key', urlKey); } catch (e) { /* private mode */ } }
     window.__MAZE_API_KEY__ = mazeKey;
-    this.loadSnippet(mazeKey);
+    if (window.App.config && window.App.config.USE_MAZE) this.loadSnippet(mazeKey);
 
     // Tag the session so Maze recordings / filters can tell the versions apart
     document.documentElement.setAttribute('data-variant', window.App.state.mazeVariant);
@@ -41,6 +41,7 @@ window.App.maze = {
 
   /** Record a step in the URL (?step=edit-open). No-op if unchanged. */
   track(step) {
+    if (window.App.study) window.App.study.step(step);
     try {
       const u = new URL(window.location.href);
       if (step) u.searchParams.set('step', step); else u.searchParams.delete('step');

@@ -160,7 +160,7 @@
       document.getElementById('gt-body').innerHTML =
         App.ui.head('Goal trade-off', 'What last month’s extras cost your goal') +
         '<div class="card"><div class="card-head"><span class="eyebrow">' + App.icon('lightbulb', 14) + ' Discretionary</span><span class="muted" style="font-size:13px">August 2026</span></div>' +
-        '<div class="ins-big" style="color:var(--sn-indigo-500)">' + pct + '%</div>' +
+        '<div class="ins-big">' + pct + '%</div>' +
         '<div class="ins-cap">' + fmt(tot) + ' of your ' + fmt(s.amount, 0) + ' ' + esc(s.purpose) + ' goal. Put toward the goal instead, these extras would cover ' + pct + '% of it.</div></div>' +
         '<p class="section-label">What’s counted</p><div class="list">' + items.map(function (i) {
           return App.ui.row({ title: i[0], sub: i[1] + (i[3] ? ' new purchase' + (i[1] === 1 ? '' : 's') : ' purchases in August'), value: fmt(i[2]) });

@@ -164,3 +164,126 @@
   --glass-selected: rgba(255, 255, 255, 0.14);
   --sn-shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
 }
+
+/* ===== SaveNow palette v2 · Calm Mint ===== */
+:root {
+  /* New primary ramp */
+  --sn-mint-50:  #EBFBF3;
+  --sn-mint-100: #D0F5E4;
+  --sn-mint-300: #7FE6BB;   /* pastel fill: main buttons, dark-mode accent */
+  --sn-mint-500: #57CE9C;   /* within-limit ring, switches, chart highlight */
+  --sn-mint-700: #157459;   /* text and links on light (5.7:1 on white) */
+  --sn-mint-900: #043A2A;   /* text on mint fills (8.5:1 on mint-300) */
+
+  /* Interactive: mint replaces systemBlue */
+  --sn-accent: var(--sn-mint-700);
+  --sn-accent-tint: rgba(87, 206, 156, 0.16);
+  --sn-cta-bg: var(--sn-mint-300);
+  --sn-cta-fg: var(--sn-mint-900);
+  --sn-blue: #2A61B1;       /* recovery only now */
+
+  /* Within limit / positive */
+  --sn-emerald-600: var(--sn-mint-700);
+  --sn-emerald-500: var(--sn-mint-500);
+  --sn-emerald-400: var(--sn-mint-300);
+  --sn-emerald-100: rgba(87, 206, 156, 0.28);
+  --sn-emerald-50:  rgba(87, 206, 156, 0.16);
+  --sn-emerald-text: var(--sn-mint-700);
+
+  /* Nearing limit: butter yellow as a fill only, never darkened into text */
+  --sn-amber-600: #F5C632;
+  --sn-amber-500: #F5C632;
+  --sn-amber-100: rgba(245, 198, 50, 0.32);
+  --sn-amber-50:  rgba(245, 198, 50, 0.20);
+  --sn-amber-text: #403321;  /* umber, 11:1 on the butter tint */
+
+  /* Over limit: same hue, less neon */
+  --sn-rose-600: #C13234;   /* delete buttons with white text (5.6:1) */
+  --sn-rose-500: #F25855;   /* ring */
+  --sn-rose-100: rgba(242, 88, 85, 0.22);
+  --sn-rose-50:  rgba(242, 88, 85, 0.12);
+  --sn-rose-text: #C13234;
+
+  /* Recovery: true blue (hue 258), replaces violet-leaning indigo */
+  --sn-indigo-600: #2A61B1;
+  --sn-indigo-500: #2A61B1;
+  --sn-indigo-100: rgba(42, 97, 177, 0.20);
+  --sn-indigo-50:  rgba(42, 97, 177, 0.10);
+
+  /* Streak uses the brand colour; the fire icon keeps the warmth */
+  --sn-streak-600: var(--sn-mint-700);
+  --sn-streak-500: var(--sn-mint-500);
+  --sn-streak-100: rgba(87, 206, 156, 0.28);
+  --sn-streak-50:  rgba(87, 206, 156, 0.16);
+
+  /* Categories: muted, for the donut, legend and tiles only */
+  --sn-cat-food:      #EEAE76;
+  --sn-cat-transport: #79BFC3;
+  --sn-cat-shopping:  #B29EF1;
+  --sn-cat-bills:     #6795CA;
+  --sn-cat-other:     #D1D1D6;
+  --sn-cat-food-tint:      rgba(238, 174, 118, 0.22);
+  --sn-cat-transport-tint: rgba(121, 191, 195, 0.22);
+  --sn-cat-shopping-tint:  rgba(178, 158, 241, 0.22);
+  --sn-cat-bills-tint:     rgba(103, 149, 202, 0.22);
+  --sn-cat-other-tint:     rgba(209, 209, 214, 0.35);
+  /* New: icon colour on category tiles (5.4 to 6.5:1 on their tint) */
+  --sn-cat-food-ink:      #89552A;
+  --sn-cat-transport-ink: #20696D;
+  --sn-cat-shopping-ink:  #634B9F;
+  --sn-cat-bills-ink:     #2B5A8E;
+  --sn-cat-other-ink:     #54595E;
+}
+
+[data-theme="dark"] {
+  --sn-accent: var(--sn-mint-300);
+  --sn-accent-tint: rgba(127, 230, 187, 0.16);
+  --sn-cta-bg: var(--sn-mint-300);
+  --sn-cta-fg: var(--sn-mint-900);
+  --sn-blue: #98C0F7;
+
+  --sn-emerald-600: var(--sn-mint-300);
+  --sn-emerald-500: var(--sn-mint-300);
+  --sn-emerald-400: var(--sn-mint-300);
+  --sn-emerald-100: rgba(127, 230, 187, 0.28);
+  --sn-emerald-50:  rgba(127, 230, 187, 0.16);
+  --sn-emerald-text: var(--sn-mint-300);
+
+  --sn-amber-600: #F7D85C;
+  --sn-amber-500: #F7D85C;
+  --sn-amber-100: rgba(247, 216, 92, 0.28);
+  --sn-amber-50:  rgba(247, 216, 92, 0.16);
+  --sn-amber-text: #F7D85C;
+
+  --sn-rose-600: #C13234;
+  --sn-rose-500: #F25855;
+  --sn-rose-100: rgba(242, 88, 85, 0.28);
+  --sn-rose-50:  rgba(242, 88, 85, 0.16);
+  --sn-rose-text: #F98E8B;
+
+  --sn-indigo-600: #98C0F7;   /* text on dark */
+  --sn-indigo-500: #3E71BC;   /* button fill, white text 4.9:1 */
+  --sn-indigo-100: rgba(152, 192, 247, 0.30);
+  --sn-indigo-50:  rgba(152, 192, 247, 0.16);
+
+  --sn-streak-600: var(--sn-mint-300);
+  --sn-streak-500: var(--sn-mint-300);
+  --sn-streak-100: rgba(127, 230, 187, 0.28);
+  --sn-streak-50:  rgba(127, 230, 187, 0.16);
+
+  --sn-cat-food:      #EEAE76;
+  --sn-cat-transport: #79BFC3;
+  --sn-cat-shopping:  #B29EF1;
+  --sn-cat-bills:     #6795CA;
+  --sn-cat-other:     #8E8E93;
+  --sn-cat-food-tint:      rgba(238, 174, 118, 0.22);
+  --sn-cat-transport-tint: rgba(121, 191, 195, 0.22);
+  --sn-cat-shopping-tint:  rgba(178, 158, 241, 0.22);
+  --sn-cat-bills-tint:     rgba(103, 149, 202, 0.22);
+  --sn-cat-other-tint:     rgba(142, 142, 147, 0.22);
+  --sn-cat-food-ink:      #EEAE76;
+  --sn-cat-transport-ink: #79BFC3;
+  --sn-cat-shopping-ink:  #B29EF1;
+  --sn-cat-bills-ink:     #6795CA;
+  --sn-cat-other-ink:     #C7C7CC;
+}

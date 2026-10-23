@@ -23,7 +23,7 @@
 .tl-slots.mid .tl-slot { padding: 0 4px; }
 .tl-slots.dense .tl-slot { padding: 0 2px; }
 .tl-slot.tick::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1.5px dotted var(--sn-border-strong); }  /* vertical dotted axis ticks */
-.tl-bar { position: relative; width: 100%; background: var(--sn-accent); border-radius: 5px 5px 2px 2px; transition: opacity 0.15s ease; }
+.tl-bar { position: relative; width: 100%; background: var(--sn-emerald-500); border-radius: 5px 5px 2px 2px; transition: opacity 0.15s ease; }
 .tl-slots.dense .tl-bar { border-radius: 3px 3px 1px 1px; }
 .tl-bar.over { background: var(--sn-rose-500); }
 .tl-bar.partial { opacity: 0.55; }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Savenow study</title>
+<!--
+  One link for every tester. Each visitor is assigned A or B at random (50/50) and sent to the matching Maze study.
+  The assignment is remembered on that device, so reopening the link always lands on the same version.
+
+  Fill in the two Maze study links below (Maze → study → Share → copy the link), then send testers:
+      https://<your-site>/ab.html
+  Tools for the team:  ab.html?force=A   ab.html?force=B   ab.html?reset=1
+-->
+<script>
+  var STUDY = {
+    A: 'PASTE_MAZE_STUDY_LINK_FOR_VERSION_A',
+    B: 'PASTE_MAZE_STUDY_LINK_FOR_VERSION_B'
+  };
+  (function () {
+    var q = new URLSearchParams(location.search), key = 'savenow_ab_variant', v = null;
+    try {
+      if (q.get('reset') === '1') localStorage.removeItem(key);
+      v = localStorage.getItem(key);
+    } catch (e) { /* private mode: assign fresh every time */ }
+    var forced = q.get('force');
+    if (forced === 'A' || forced === 'B') v = forced;
+    if (v !== 'A' && v !== 'B') {
+      var a = new Uint8Array(1); (window.crypto || window.msCrypto).getRandomValues(a);
+      v = a[0] % 2 ? 'B' : 'A';
+    }
+    try { if (!forced) localStorage.setItem(key, v); } catch (e) { /* ignore */ }
+    var url = STUDY[v];
+    if (!/^https?:\/\//.test(url)) {
+      document.addEventListener('DOMContentLoaded', function () {
+        document.body.textContent = 'ab.html is not configured yet: paste the two Maze study links into the STUDY object at the top of this file.';
+      });
+      return;
+    }
+    location.replace(url);
+  })();
+</script>
+</head>
+<body style="font: 16px -apple-system, system-ui, sans-serif; padding: 24px">Loading your study…</body>
+</html>

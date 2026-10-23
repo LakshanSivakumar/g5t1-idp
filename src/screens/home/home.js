@@ -22,7 +22,7 @@
             <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack" id="home-saved-pill"></span></div>
           </button>
           <p class="section-label">Today’s expenses</p>
-          <div id="home-latest"></div>
+          <div id="home-latest" data-maze-unmask="True"></div>
         </div>`;
     },
 

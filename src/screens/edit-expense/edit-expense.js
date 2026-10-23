@@ -2,6 +2,8 @@
 (function () {
   var fmt = App.fmt.money;
   var editing = null; // the expense object being edited
+  var viaSwipe = false; // delete confirm was opened from a swipe action (variant B), so Cancel returns to Home
+  var track = function (step) { if (App.maze) App.maze.track(step); };
   var cat = 'food';
 
   function catOf(id) { return App.CATEGORIES.filter(function (x) { return x.id === id; })[0] || App.CATEGORIES[0]; }
@@ -23,14 +25,24 @@
   function open(id) {
     var e = App.state.home.latestExpenses.filter(function (x) { return x.id === id; })[0];
     if (!e) return;
-    editing = e;
+    editing = e; viaSwipe = false;
     cat = e.category;
     document.getElementById('edit-amount').value = e.amount.toFixed(2);
     document.getElementById('edit-desc').value = e.title === catOf(e.category).name ? '' : e.title;
     document.querySelectorAll('#edit-chips .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.cat === cat); });
     document.getElementById('edit-sub').textContent = e.sub;
     validate();
+    track('edit-open');
     App.overlay.open('edit-sheet');
+  }
+
+  /** Variant B: swipe action → Delete. Asks first; Cancel just closes. */
+  function askDelete(id) {
+    var e = App.state.home.latestExpenses.filter(function (x) { return x.id === id; })[0];
+    if (!e) return;
+    editing = e; viaSwipe = true;
+    track('delete-confirm');
+    App.overlay.open('alert-delete-expense');
   }
 
   function save() {
@@ -44,6 +56,7 @@
     editing.category = cat;
     editing.sub = next.name + (editing.where ? ' · ' + editing.where : '') + ' · ' + (editing.time || 'Just now');
     editing = null;
+    track('edit-saved');
     App.overlay.close();
     applyDelta(delta);
     App.showToast('Expense updated');
@@ -53,18 +66,21 @@
     var h = App.state.home;
     if (!editing) return;
     var gone = editing;
-    editing = null;
+    editing = null; viaSwipe = false;
+    track('deleted');
     h.latestExpenses = h.latestExpenses.filter(function (x) { return x !== gone; });
     App.overlay.close();
     applyDelta(-gone.amount);
     App.showToast('Deleted ' + fmt(gone.amount) + ' · ' + catOf(gone.category).name);
   }
 
+  App.expense = { edit: open, askDelete: askDelete };
+
   App.overlays = App.overlays || [];
   App.overlays.push({
     mount(app) {
       var sheet = document.createElement('div');
-      sheet.className = 'sheet edit-sheet'; sheet.id = 'edit-sheet';
+      sheet.className = 'sheet edit-sheet'; sheet.id = 'edit-sheet'; sheet.setAttribute('data-maze-unmask', 'True'); // demo data, safe to show in recordings
       sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'Edit expense');
       sheet.innerHTML =
         '<div class="grabber"></div>' +
@@ -104,9 +120,12 @@
         document.querySelectorAll('#edit-chips .chip').forEach(function (b) { b.setAttribute('aria-pressed', b === c); });
       });
       document.getElementById('edit-save').addEventListener('click', save);
-      document.getElementById('edit-delete').addEventListener('click', function () { App.overlay.open('alert-delete-expense'); });
+      document.getElementById('edit-delete').addEventListener('click', function () { viaSwipe = false; track('delete-confirm'); App.overlay.open('alert-delete-expense'); });
       document.getElementById('de-confirm').addEventListener('click', remove);
-      document.getElementById('de-cancel').addEventListener('click', function () { App.overlay.open('edit-sheet'); });
+      document.getElementById('de-cancel').addEventListener('click', function () {
+        track('delete-cancelled');
+        if (viaSwipe) { viaSwipe = false; editing = null; App.overlay.close(); } else App.overlay.open('edit-sheet');
+      });
 
       // Home "Latest expense" cards (delegated: they are re-rendered on every repaint)
       document.addEventListener('click', function (e) {

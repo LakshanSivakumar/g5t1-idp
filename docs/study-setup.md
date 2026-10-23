@@ -16,6 +16,6 @@ Testers open one link, get version A or B at random, do two tasks, and every res
 Send `https://<site>.netlify.app/ab.html`. Assignment is random and remembered per device.
 
 ## What you get
-`tasks` tab, one row per task per tester: `variant, task (edit|delete), outcome (success|gave_up|abandoned), ms, taps, misses, deadTaps, swipes, rating (1-7), steps`.
+`tasks` tab, one row per task per tester: `variant, task (edit|delete), outcome (success|gave_up|abandoned), ms, taps, misses, deadTaps, swipes, rating (1-10), steps`.
 `events` tab: every step with its timestamp, for drill-downs.
 Compare A vs B on success rate, median `ms`, `taps`, `misses`, `deadTaps`, `swipes`, and `rating`.

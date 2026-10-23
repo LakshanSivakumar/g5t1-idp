@@ -1,0 +1,148 @@
+/**
+ * Savenow Core — in-app usability study ("study mode"). Replaces Maze for the edit/delete A/B test.
+ *
+ * Turn on with ?study=1 (the ab.html link does this). A tester sees a short intro, then two tasks. For each task we record
+ * time to finish, taps, misses (taps on nothing interactive), dead taps and swipes on expense cards, the steps taken with
+ * timestamps, outcome (success / gave up) and a 1–7 ease rating. Rows go to a Google Sheet (docs/study-sheet.gs).
+ */
+(function () {
+  var q = new URLSearchParams(location.search);
+  var on = q.get('study') === '1';
+  try { if (on) sessionStorage.setItem('savenow_study', '1'); else on = sessionStorage.getItem('savenow_study') === '1'; } catch (e) { /* private mode */ }
+  var noop = { active: false, note: function () {}, step: function () {} };
+  if (!on) { window.App = window.App || {}; window.App.study = null; return; }
+
+  var cfg = function () { return window.App.config || {}; };
+  var variant = function () { return window.App.state.mazeVariant; };
+  var pid = (function () {
+    var id = null;
+    try { id = localStorage.getItem('savenow_pid'); } catch (e) { /* ignore */ }
+    if (!id) { id = Math.random().toString(36).slice(2, 8); try { localStorage.setItem('savenow_pid', id); } catch (e) { /* ignore */ } }
+    return id;
+  })();
+
+  /* ---------- Tasks ---------- */
+  function find(title) { return App.state.home.latestExpenses.filter(function (e) { return e.title === title; })[0]; }
+  var TASKS = [
+    { id: 'edit', text: 'You entered “Vending snacks” as $2.50, but it was really $3.00. Change the amount.', done: function () { var e = find('Vending snacks'); return !!e && Math.abs(e.amount - 3) < 0.005; } },
+    { id: 'delete', text: 'You logged the “Bus” expense by mistake. Delete it.', done: function () { return !find('Bus'); } }
+  ];
+
+  /* ---------- Logging (Google Sheet via Apps Script; queued locally if offline) ---------- */
+  var QKEY = 'savenow_study_rows', queue = [];
+  try { queue = JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (e) { queue = []; }
+  function persist() { try { localStorage.setItem(QKEY, JSON.stringify(queue)); } catch (e) { /* ignore */ } }
+  function flush() {
+    var url = cfg().STUDY_ENDPOINT;
+    if (!url || !queue.length) return;
+    var batch = queue.splice(0, queue.length); persist();
+    batch.forEach(function (row) {
+      // text/plain keeps this a "simple" request, so the Apps Script endpoint needs no CORS preflight
+      fetch(url, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(row) })
+        .catch(function () { queue.push(row); persist(); });
+    });
+  }
+  function send(kind, data) {
+    var row = Object.assign({ kind: kind, ts: new Date().toISOString(), pid: pid, variant: variant(), device: /Mobi|iPhone|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop', viewport: innerWidth + 'x' + innerHeight }, data);
+    queue.push(row); persist();
+    if (!cfg().STUDY_ENDPOINT && window.console) console.info('[study]', row);
+    flush();
+  }
+
+  /* ---------- State ---------- */
+  var idx = -1, run = null, pending = null; // idx: current task; run: live metrics; pending: finished task row awaiting its rating
+  function newRun() { return { t0: Date.now(), taps: 0, misses: 0, deadTaps: 0, swipes: 0, steps: [] }; }
+  function ms() { return Date.now() - run.t0; }
+
+  window.App.study = {
+    active: true,
+    /** Count a gesture reported by a screen: 'swipe' (a drag on an expense card) or 'deadTap' (a tap that does nothing). */
+    note: function (kind) { if (!run) return; if (kind === 'swipe') run.swipes++; else if (kind === 'deadTap') run.deadTaps++; },
+    /** App.maze.track(step) lands here. */
+    step: function (step) {
+      if (!run || !step) return;
+      run.steps.push(step + ':' + ms());
+      send('event', { task: TASKS[idx].id, type: 'step', detail: step, ms: ms() });
+      setTimeout(function () { if (run && TASKS[idx].done()) finish('success'); }, 60); // state changes land just after the step is tracked
+    }
+  };
+
+  /* ---------- UI ---------- */
+  var root, banner;
+  function el(html) { var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
+  function card(inner, cls) { root.innerHTML = '<div class="study-card ' + (cls || '') + '" role="dialog" aria-modal="true">' + inner + '</div>'; root.hidden = false; }
+
+  function intro() {
+    card('<p class="study-eyebrow">Savenow study</p><h2>Two quick tasks</h2>' +
+      '<p>You’ll try two things in a budgeting app, like you would on your own phone. There are no wrong answers: we’re testing the app, not you.</p>' +
+      '<p>It takes about 3 minutes. We record taps and timing, never anything personal.</p>' +
+      '<button class="btn btn-primary btn-block" id="study-begin">Begin</button>');
+    document.getElementById('study-begin').onclick = function () { send('event', { type: 'begin' }); next(); };
+  }
+
+  function next() {
+    idx++;
+    if (idx >= TASKS.length) return done();
+    var t = TASKS[idx];
+    card('<p class="study-eyebrow">Task ' + (idx + 1) + ' of ' + TASKS.length + '</p><h2>' + t.text + '</h2>' +
+      '<p>Press Start, then do it in the app. The task ends on its own when you’re done.</p>' +
+      '<button class="btn btn-primary btn-block" id="study-start">Start</button>');
+    document.getElementById('study-start').onclick = start;
+  }
+
+  function start() {
+    root.hidden = true; root.innerHTML = '';
+    run = newRun();
+    App.router.go('home', { root: true, instant: true });
+    banner.innerHTML = '<span class="study-task"><b>Task ' + (idx + 1) + ':</b> ' + TASKS[idx].text + '</span><button class="study-giveup" id="study-giveup">I can’t do it</button>';
+    banner.hidden = false;
+    document.getElementById('study-giveup').onclick = function () { finish('gave_up'); };
+    send('event', { task: TASKS[idx].id, type: 'start', ms: 0 });
+  }
+
+  function finish(outcome) {
+    if (!run) return;
+    var r = run; run = null; banner.hidden = true; App.overlay.close();
+    pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, deadTaps: r.deadTaps, swipes: r.swipes, steps: r.steps.join(' ') };
+    var scale = [1, 2, 3, 4, 5, 6, 7].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
+    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was that?</h2>' +
+      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>Very difficult</span><span>Very easy</span></div>');
+    root.querySelectorAll('.study-rate').forEach(function (b) {
+      b.onclick = function () { sendTask(+b.dataset.n); next(); };
+    });
+  }
+
+  function sendTask(rating) {
+    if (!pending) return;
+    send('task', Object.assign({ rating: rating === undefined ? '' : rating }, pending)); pending = null;
+  }
+
+  function done() {
+    card('<p class="study-eyebrow">All done</p><h2>Thank you!</h2><p>That’s everything. You can close this tab now.</p>');
+    send('event', { type: 'complete' });
+  }
+
+  /* ---------- Tap counting while a task is running ---------- */
+  var INTERACTIVE = 'button, a, input, select, textarea, label, [role="button"], [data-goto], [data-tab], [data-back], .swipe-front, .scrim';
+  document.addEventListener('pointerdown', function (e) {
+    if (!run || e.target.closest('.study-banner, .study-root')) return;
+    run.taps++;
+    if (!e.target.closest(INTERACTIVE)) run.misses++;
+  }, true);
+
+  // Leaving mid-task or before rating still saves what we have
+  window.addEventListener('pagehide', function () {
+    if (run) finish('abandoned');
+    sendTask();
+    flush();
+  });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var app = document.getElementById('app');
+    root = el('<div class="study-root" hidden></div>'); app.appendChild(root);
+    banner = el('<div class="study-banner" hidden></div>'); app.appendChild(banner);
+    flush();
+    intro();
+  });
+})();

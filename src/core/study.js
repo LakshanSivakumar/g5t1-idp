@@ -3,7 +3,7 @@
  *
  * Turn on with ?study=1 (the ab.html link does this). A tester sees a short intro, then two tasks. For each task we record
  * time to finish, taps, misses (taps on nothing interactive), dead taps and swipes on expense cards, the steps taken with
- * timestamps, outcome (success / gave up) and a 1–7 ease rating. Rows go to a Google Sheet (docs/study-sheet.gs).
+ * timestamps, outcome (success / gave up) and a 1–10 ease rating. Rows go to a Google Sheet (docs/study-sheet.gs).
  */
 (function () {
   var q = new URLSearchParams(location.search);
@@ -104,9 +104,9 @@
     if (!run) return;
     var r = run; run = null; banner.hidden = true; App.overlay.close();
     pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, deadTaps: r.deadTaps, swipes: r.swipes, steps: r.steps.join(' ') };
-    var scale = [1, 2, 3, 4, 5, 6, 7].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
+    var scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
     card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was that?</h2>' +
-      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>Very difficult</span><span>Very easy</span></div>');
+      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very difficult</span><span>10 = very easy</span></div>');
     root.querySelectorAll('.study-rate').forEach(function (b) {
       b.onclick = function () { sendTask(+b.dataset.n); next(); };
     });

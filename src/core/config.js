@@ -8,7 +8,7 @@
  */
 window.App = window.App || {};
 (function () {
-  var cfg = { MAZE_API_KEY: 'YOUR_MAZE_API_KEY', VARIANT: 'A' };
+  var cfg = { MAZE_API_KEY: 'YOUR_MAZE_API_KEY', VARIANT: 'B' };
   var q = new URLSearchParams(location.search).get('variant');
   cfg.variant = q === 'A' || q === 'B' ? q : cfg.VARIANT;
   window.App.config = cfg;

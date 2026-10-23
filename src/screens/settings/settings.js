@@ -34,15 +34,15 @@
             ui.row({ title: 'Notifications', sub: 'Near-limit alerts on', goto: 'settings-notifications' }),
             ui.row({ title: 'Help &amp; support', sub: 'How Savenow works', goto: 'settings-help' })
           ])}
-          <p class="section-label proto">Prototype tools</p>
-          <div class="list proto-grid">
+          <p class="section-label proto proto-only">Prototype tools</p>
+          <div class="list proto-grid proto-only">
             <div class="eyebrow">Budget state today</div>
             <div class="segmented" id="state-seg" role="radiogroup" aria-label="Budget state">
               <button role="radio" data-state="12">Within</button><button role="radio" data-state="17.4">Near limit</button><button role="radio" data-state="21.2">Over</button></div>
             <button class="btn btn-secondary" id="proto-warning">Preview budget warning</button>
             <button class="btn btn-secondary" data-goto="lock">Preview lock-screen alert</button>
             <div class="eyebrow" style="margin-top:6px">Maze A/B testing <span id="maze-status-badge" class="maze-status">Not connected</span></div>
-            <div class="maze-variants"><button class="btn btn-secondary maze-variant-btn active" id="btn-var-a">Variant A</button><button class="btn btn-secondary maze-variant-btn" id="btn-var-b">Variant B</button></div>
+            <div class="maze-variants"><button class="btn btn-secondary maze-variant-btn" id="btn-var-a">Variant A</button><button class="btn btn-secondary maze-variant-btn" id="btn-var-b">Variant B</button></div>
             <label class="field"><span class="label">Maze API key</span><input id="maze-api-key-input" placeholder="Paste key" autocomplete="off"></label>
             <button class="btn btn-secondary" id="btn-save-maze-key">Save key</button>
             <button class="btn btn-secondary" id="btn-copy-maze-url">Copy test link</button>

@@ -88,7 +88,7 @@ window.App.CATEGORIES = [
 window.App.state = {
   currentScreen: 'screen-onboarding',
   theme: 'light',
-  mazeVariant: 'A',
+  mazeVariant: (window.App.config && window.App.config.variant) || 'A',
 
   user: { name: 'Bob Tan', handle: 'bobsaves', currency: 'SGD', country: 'Singapore', email: 'bob@savenow.app' },
 

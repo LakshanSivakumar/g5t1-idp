@@ -18,7 +18,7 @@
           <div id="home-hero"></div>
           <div class="home-nudge" id="home-nudge"></div>
           <button class="card saved-card" data-tab="insights" aria-label="Saved this month">
-            <div class="eyebrow">Saved · Month</div>
+            <div class="eyebrow">Saved · Month (So Far)</div>
             <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack" id="home-saved-pill"></span></div>
           </button>
           <p class="section-label">Today’s expenses</p>

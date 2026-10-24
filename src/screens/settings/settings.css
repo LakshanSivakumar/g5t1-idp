@@ -8,9 +8,6 @@ html.proto-on .proto-only { display: flex; }
 html.proto-on p.proto-only { display: block; }
 .proto-grid { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
 .proto-grid .btn { min-height: 44px; font-size: 15px; }
-.maze-variants { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.maze-variant-btn.active { background: var(--sn-cta-bg); color: var(--sn-cta-fg); border-color: transparent; }
-.maze-status { font-size: 13px; color: var(--sn-text-secondary); }
 .logout { margin-top: 24px; color: var(--sn-rose-text); }
 [data-theme="dark"] .logout { color: var(--nudge-rose-fg); }
 .save-note { font-size: 13px; color: var(--sn-text-secondary); margin: 12px 4px 0; line-height: 1.4; }

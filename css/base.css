@@ -191,7 +191,7 @@ html.sim-device .home-indicator-sim { display: block; }
 .section-label {
   font-size: 13px; font-weight: 400; letter-spacing: -0.08px; text-transform: uppercase;
   color: var(--sn-text-secondary);
-  margin: 24px 16px 7px;
+  margin: 24px 0 7px;
 }
 .footnote { font-size: 13px; line-height: 1.4; color: var(--sn-text-secondary); margin: 12px 4px 0; }
 .muted { color: var(--sn-text-muted); }

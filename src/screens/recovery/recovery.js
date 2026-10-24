@@ -53,7 +53,7 @@
         '<p class="guide">Suggested daily guide: ' + fmt(p.guide) + '</p>' +
         '<button class="btn btn-primary btn-block" id="rec-use">Use this plan</button></div>' +
         how(p) +
-        '<p class="footnote">This is a suggestion, not an automatic change. Today’s overspend still ends your streak — your ' + App.state.home.bestStreak + '-day best is saved.</p>' +
+        '<p class="footnote">This is a suggestion, not an automatic change. If you use a plan, your streak is protected but will not grow while it runs. If you go over your daily guide during the plan, the streak is lost — your ' + App.state.home.bestStreak + '-day best is saved.</p>' +
         '<button class="btn btn-secondary btn-block" style="margin-top:20px" data-back="home" id="rec-keep">Keep my current plan</button>';
       var self = this;
       var step = function (d) { App.state.recovery.days = p.days + d; self.paint(); };
@@ -77,7 +77,7 @@
         '<p class="guide">Your ' + fmt(h.dailyLimit, 0) + ' daily limit is unchanged.</p>' +
         '<button class="btn btn-primary btn-block" data-tab="home">Done</button></div>' +
         how(p) +
-        '<p class="footnote">You can undo this at any time. Today’s overspend still ended your streak — your ' + h.bestStreak + '-day best is saved.</p>' +
+        '<p class="footnote">Your streak is protected but will not grow during these ' + p.days + ' days. If you go over your daily guide, the streak is lost — your ' + h.bestStreak + '-day best is saved. You can undo this plan at any time.</p>' +
         '<button class="btn btn-secondary btn-block" style="margin-top:20px" id="pa-undo">Undo this plan</button>';
       document.getElementById('pa-undo').onclick = function () { App.state.recovery.applied = false; App.showToast('Plan removed'); App.router.back('recovery'); };
     }

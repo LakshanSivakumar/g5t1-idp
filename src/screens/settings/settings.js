@@ -34,7 +34,7 @@
             ui.row({ title: 'Notifications', sub: 'Near-limit alerts on', goto: 'settings-notifications' }),
             ui.row({ title: 'Help &amp; support', sub: 'How Savenow works', goto: 'settings-help' })
           ])}
-          <p class="section-label proto proto-only">Prototype tools</p>
+          <p class="section-label proto proto-only">Developer settings</p>
           <div class="list proto-grid proto-only">
             <div class="eyebrow">Budget state today</div>
             <div class="segmented" id="state-seg" role="radiogroup" aria-label="Budget state">

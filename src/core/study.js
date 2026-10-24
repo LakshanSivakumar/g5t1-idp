@@ -1,9 +1,10 @@
 /**
  * Savenow Core — in-app usability study ("study mode"). Replaces Maze for the edit/delete A/B test.
  *
- * Turn on with ?study=1 (the ab.html link does this). A tester sees a short intro, then two tasks. For each task we record
- * time to finish, taps, misses (taps on nothing interactive), dead taps and swipes on expense cards, the steps taken with
- * timestamps, outcome (success / gave up) and a 1–10 ease rating. Rows go to a Google Sheet (docs/study-sheet.gs).
+ * Turn on with ?study=1 (the ab.html link does this). A tester sees a short intro, then one task: edit an expense. We record
+ * time to finish, taps (every press while the task runs), misses (taps on nothing interactive), the steps taken with
+ * timestamps and the outcome (success / gave up). Either way they then rate how intuitive it was (1–5) and say whether they
+ * prefer tapping or swiping to reveal actions. Rows go to a Google Sheet (docs/study-sheet.gs).
  */
 (function () {
   var q = new URLSearchParams(location.search);
@@ -24,8 +25,7 @@
   /* ---------- Tasks ---------- */
   function find(title) { return App.state.home.latestExpenses.filter(function (e) { return e.title === title; })[0]; }
   var TASKS = [
-    { id: 'edit', text: 'You entered “Vending snacks” as $2.50, but it was really $3.00. Change the amount.', done: function () { var e = find('Vending snacks'); return !!e && Math.abs(e.amount - 3) < 0.005; } },
-    { id: 'delete', text: 'You logged the “Bus” expense by mistake. Delete it.', done: function () { return !find('Bus'); } }
+    { id: 'edit', text: 'You entered “Vending snacks” as $2.50, but it was really $3.00. Change the amount.', done: function () { var e = find('Vending snacks'); return !!e && Math.abs(e.amount - 3) < 0.005; } }
   ];
 
   /* ---------- Logging (Google Sheet via Apps Script; queued locally if offline) ---------- */
@@ -50,14 +50,12 @@
   }
 
   /* ---------- State ---------- */
-  var idx = -1, run = null, pending = null; // idx: current task; run: live metrics; pending: finished task row awaiting its rating
-  function newRun() { return { t0: Date.now(), taps: 0, misses: 0, deadTaps: 0, swipes: 0, steps: [] }; }
+  var idx = -1, run = null, pending = null; // idx: current task; run: live metrics; pending: finished task row awaiting its feedback
+  function newRun() { return { t0: Date.now(), taps: 0, misses: 0, steps: [] }; }
   function ms() { return Date.now() - run.t0; }
 
   window.App.study = {
     active: true,
-    /** Count a gesture reported by a screen: 'swipe' (a drag on an expense card) or 'deadTap' (a tap that does nothing). */
-    note: function (kind) { if (!run) return; if (kind === 'swipe') run.swipes++; else if (kind === 'deadTap') run.deadTaps++; },
     /** App.maze.track(step) lands here. */
     step: function (step) {
       if (!run || !step) return;
@@ -73,9 +71,9 @@
   function card(inner, cls) { root.innerHTML = '<div class="study-card ' + (cls || '') + '" role="dialog" aria-modal="true">' + inner + '</div>'; root.hidden = false; }
 
   function intro() {
-    card('<p class="study-eyebrow">Savenow study</p><h2>Two quick tasks</h2>' +
-      '<p>You’ll try two things in a budgeting app, like you would on your own phone. There are no wrong answers: we’re testing the app, not you.</p>' +
-      '<p>It takes about 3 minutes. We record taps and timing, never anything personal.</p>' +
+    card('<p class="study-eyebrow">Savenow study</p><h2>One quick task</h2>' +
+      '<p>You’ll try one thing in a budgeting app, like you would on your own phone. There are no wrong answers: we’re testing the app, not you.</p>' +
+      '<p>It takes about a minute. We record taps and timing, never anything personal.</p>' +
       '<button class="btn btn-primary btn-block" id="study-begin">Begin</button>');
     document.getElementById('study-begin').onclick = function () { send('event', { type: 'begin' }); next(); };
   }
@@ -103,18 +101,28 @@
   function finish(outcome) {
     if (!run) return;
     var r = run; run = null; banner.hidden = true; App.overlay.close();
-    pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, deadTaps: r.deadTaps, swipes: r.swipes, steps: r.steps.join(' ') };
-    var scale = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
-    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was that?</h2>' +
-      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very difficult</span><span>10 = very easy</span></div>');
+    pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, steps: r.steps.join(' ') };
+    var scale = [1, 2, 3, 4, 5].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
+    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How intuitive was that?</h2>' +
+      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = not intuitive</span><span>5 = very intuitive</span></div>');
     root.querySelectorAll('.study-rate').forEach(function (b) {
-      b.onclick = function () { sendTask(+b.dataset.n); next(); };
+      b.onclick = function () { pending.rating = +b.dataset.n; prefer(); };
     });
   }
 
-  function sendTask(rating) {
+  function prefer() {
+    var used = variant() === 'B' ? 'swiping' : 'tapping', mark = ' (the version you used)';
+    card('<p class="study-eyebrow">One last question</p><h2>Between tapping and swiping to reveal the edit and delete actions, which would you prefer?</h2>' +
+      '<div class="study-choices"><button class="btn btn-secondary" data-pref="tapping">Tapping' + (used === 'tapping' ? mark : '') + '</button>' +
+      '<button class="btn btn-secondary" data-pref="swiping">Swiping' + (used === 'swiping' ? mark : '') + '</button></div>');
+    root.querySelectorAll('[data-pref]').forEach(function (b) {
+      b.onclick = function () { pending.preference = b.dataset.pref; sendTask(); next(); };
+    });
+  }
+
+  function sendTask() {
     if (!pending) return;
-    send('task', Object.assign({ rating: rating === undefined ? '' : rating }, pending)); pending = null;
+    send('task', pending); pending = null; // a tester who leaves early still saves what they answered
   }
 
   function done() {

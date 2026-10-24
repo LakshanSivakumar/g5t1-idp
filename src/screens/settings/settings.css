@@ -2,10 +2,9 @@
 .avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--sn-cta-bg); color: var(--sn-cta-fg); display: grid; place-items: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
 .profile-name { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
 .profile-sub { font-size: 14px; color: var(--sn-text-secondary); margin-top: 2px; }
-.section-label.proto { margin-top: 40px; }
-.proto-only { display: none; }
-html.proto-on .proto-only { display: flex; }
-html.proto-on p.proto-only { display: block; }
+/* Label + card live in one wrapper so they show/hide together and the gap above them is one margin */
+.proto-section { display: none; margin-top: 40px; }
+html.proto-on .proto-section { display: block; }
 .proto-grid { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; }
 .proto-grid .btn { min-height: 44px; font-size: 15px; }
 .logout { margin-top: 24px; color: var(--sn-rose-text); }

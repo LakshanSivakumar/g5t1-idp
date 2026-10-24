@@ -34,13 +34,15 @@
             ui.row({ title: 'Notifications', sub: 'Near-limit alerts on', goto: 'settings-notifications' }),
             ui.row({ title: 'Help &amp; support', sub: 'How Savenow works', goto: 'settings-help' })
           ])}
-          <p class="section-label proto proto-only">Developer settings</p>
-          <div class="list proto-grid proto-only">
+          <div class="proto-section">
+          <p class="section-label">Developer settings</p>
+          <div class="list proto-grid">
             <div class="eyebrow">Budget state today</div>
             <div class="segmented" id="state-seg" role="radiogroup" aria-label="Budget state">
               <button role="radio" data-state="12">Within</button><button role="radio" data-state="17.4">Near limit</button><button role="radio" data-state="21.2">Over</button></div>
             <button class="btn btn-secondary" id="proto-warning">Preview budget warning</button>
             <button class="btn btn-secondary" data-goto="lock">Preview lock-screen alert</button>
+          </div>
           </div>
           <button class="btn btn-ghost btn-block logout" data-goto="onboarding">Log out</button>
         </div>`;

@@ -43,19 +43,30 @@ App.theme = {
   }
 };
 
-/* Lift sheets above the iOS keyboard (the layout viewport does not shrink when it opens) */
+/* Lift sheets above the iOS keyboard (the layout viewport does not shrink when it opens).
+   Measured as how far the app's bottom edge sits below the visible viewport's bottom, so it works whether the browser
+   shrinks the layout viewport (then the overlap is 0) or leaves it alone (Safari, in-app browsers, Home Screen apps). */
 if (window.visualViewport) {
   var vv = window.visualViewport;
-  var lift = function () { document.documentElement.style.setProperty('--kb', Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px'); };
+  var lift = function () {
+    var app = document.getElementById('app');
+    var bottom = app ? app.getBoundingClientRect().bottom : window.innerHeight;
+    document.documentElement.style.setProperty('--kb', Math.max(0, Math.round(bottom - (vv.offsetTop + vv.height))) + 'px');
+  };
   // iOS can leave the page scrolled after the keyboard closes, which strands the tab bar above the bottom edge
   var settle = function () {
     lift();
     window.scrollTo(0, 0);
     var app = document.getElementById('app'); if (app) app.scrollTop = 0;
   };
-  vv.addEventListener('resize', function () { lift(); if (vv.height >= window.innerHeight - 1) settle(); });
+  vv.addEventListener('resize', function () { lift(); if (!parseInt(document.documentElement.style.getPropertyValue('--kb'), 10)) settle(); });
   vv.addEventListener('scroll', lift);
   document.addEventListener('focusout', function () { setTimeout(settle, 120); });
+  // Some webviews report the new viewport late, and a focused field must stay visible above the keys
+  document.addEventListener('focusin', function (e) {
+    [100, 350, 700].forEach(function (t) { setTimeout(lift, t); });
+    setTimeout(function () { if (e.target.scrollIntoView) e.target.scrollIntoView({ block: 'nearest' }); }, 400);
+  });
 }
 
 /* ---------- Boot ---------- */

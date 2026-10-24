@@ -313,7 +313,7 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
   visibility: hidden;
   transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.34s;
   box-shadow: var(--sn-shadow-lg);
-  max-height: 92%;
+  max-height: min(92%, calc(100% - var(--kb, 0px) - 12px)); /* stays on screen above the keyboard */
   overflow-y: auto;
 }
 .sheet.open { transform: none; visibility: visible; transition-delay: 0s; }

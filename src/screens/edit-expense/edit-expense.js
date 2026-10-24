@@ -85,13 +85,13 @@
       sheet.innerHTML =
         '<div class="grabber"></div>' +
         '<h2 class="sheet-title">Edit expense</h2><p class="sheet-sub" id="edit-sub"></p>' +
-        '<label class="field prefix" for="edit-amount"><span class="label">Amount</span><span class="sym">$</span>' +
-        '<input id="edit-amount" type="text" inputmode="decimal" autocomplete="off" maxlength="8"></label>' +
-        '<label class="field" for="edit-desc"><span class="label">Description (optional)</span>' +
-        '<input id="edit-desc" type="text" autocomplete="off" maxlength="40" placeholder="e.g. Bubble tea"></label>' +
         '<div class="edit-chips" id="edit-chips">' + App.CATEGORIES.map(function (c) {
           return '<button class="chip" data-cat="' + c.id + '" aria-pressed="false">' + c.name + '</button>';
         }).join('') + '</div>' +
+        '<label class="field" for="edit-desc"><span class="label">Description (optional)</span>' +
+        '<input id="edit-desc" type="text" autocomplete="off" maxlength="40" placeholder="e.g. Bubble tea"></label>' +
+        '<label class="field prefix" for="edit-amount"><span class="label">Amount</span><span class="sym">$</span>' +
+        '<input id="edit-amount" type="text" inputmode="decimal" autocomplete="off" maxlength="8"></label>' +
         '<div class="stack"><button class="btn btn-primary" id="edit-save">Save changes</button>' +
         '<button class="btn btn-secondary edit-delete" id="edit-delete">Delete expense</button></div>';
       app.appendChild(sheet);

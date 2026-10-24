@@ -23,8 +23,6 @@
 .latest-item .amt { font-size: 17px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .latest-card { padding: 12px 16px; }
 .latest-card + .latest-card { margin-top: 8px; }
-.latest-card.accent-edge { border-left: 4px solid var(--sn-accent); }
-
 /* Variant B: swipe-left row actions (Edit / Delete) */
 .swipe-card { position: relative; padding: 0; overflow: hidden; }
 .swipe-front { position: relative; z-index: 1; background: var(--sn-bg-card); padding: 12px 16px; touch-action: pan-y; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); outline-offset: -2px; }

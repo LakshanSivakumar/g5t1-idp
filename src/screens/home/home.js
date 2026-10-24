@@ -18,7 +18,7 @@
           <div id="home-hero"></div>
           <div class="home-nudge" id="home-nudge"></div>
           <button class="card saved-card" data-tab="insights" aria-label="Saved this month">
-            <div class="eyebrow">Saved · Month</div>
+            <div class="eyebrow">Saved · Month (So Far)</div>
             <div class="saved-row"><span class="saved-val" id="home-saved"></span><span class="pill pill-ontrack" id="home-saved-pill"></span></div>
           </button>
           <p class="section-label">Today’s expenses</p>
@@ -63,14 +63,13 @@
           if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { cur = null; return; } // vertical scroll wins
           if (Math.abs(dx) < 8) return;
           cur.drag = true; try { cur.card.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
-          if (App.study) App.study.note('swipe');
         }
         cur.dx = dx; setX(cur.card, Math.max(-W - 24, Math.min(0, cur.base + dx)), false);
       });
       var end = function (e) {
         if (!cur || e.pointerId !== cur.id) return;
         var c = cur; cur = null;
-        if (!c.drag) { if (c.card.classList.contains('open')) close(c.card); else if (App.study) App.study.note('deadTap'); return; } // a tap closes an open card; on a closed one it does nothing (counted for the study)
+        if (!c.drag) { if (c.card.classList.contains('open')) close(c.card); return; } // a tap closes an open card; on a closed one it does nothing
         (c.base + c.dx < -W / 2 ? open : close)(c.card);
         c.card.dataset.dragged = '1'; setTimeout(function () { delete c.card.dataset.dragged; }, 0);
       };
@@ -117,9 +116,9 @@
       pill.className = 'pill pill-ontrack ' + t.tone;
       pill.innerHTML = t.over ? App.icon('info.circle', 12) + ' over budget' : t.tone === 'amber' ? App.icon('info.circle', 12) + ' near limit' : App.icon('arrow.up', 12) + ' on track';
       document.getElementById('home-latest').innerHTML = !h.latestExpenses.length ? '<p class="footnote">No expenses yet. Tap + to add one.</p>' : h.latestExpenses.map(function (e, i) {
-        var edge = i === 0 ? 'accent-edge' : '', id = App.escapeHTML(e.id), title = App.escapeHTML(e.title);
+        var id = App.escapeHTML(e.id), title = App.escapeHTML(e.title);
         if (App.state.mazeVariant === 'B') { // B: swipe the card left to reveal Edit / Delete
-          return '<div class="card latest-card swipe-card ' + edge + '" data-swipe>' +
+          return '<div class="card latest-card swipe-card" data-swipe>' +
             '<div class="swipe-actions"><button class="swipe-btn edit" data-sw-edit="' + id + '" aria-label="Edit ' + title + '">Edit</button>' +
             '<button class="swipe-btn del" data-sw-del="' + id + '" aria-label="Delete ' + title + '">Delete</button></div>' +
             '<div class="swipe-front" role="button" tabindex="0" aria-label="' + title + ', ' + fmt(e.amount) + '. Press Enter for Edit and Delete">' +
@@ -127,10 +126,10 @@
             '<span class="row-main"><span class="row-title" style="display:block">' + title + '</span><span class="row-sub" style="display:block">' + App.escapeHTML(e.sub) + '</span></span>' +
             '<span class="amt">' + fmt(e.amount) + '</span></span></div></div>';
         }
-        return '<div class="card latest-card ' + edge + '"><button class="latest-item is-editable" data-edit-expense="' + id + '" aria-label="Edit or delete ' + title + ', ' + fmt(e.amount) + '">' +
+        return '<div class="card latest-card"><button class="latest-item is-editable" data-edit-expense="' + id + '" aria-label="Edit or delete ' + title + ', ' + fmt(e.amount) + '">' +
           '<span class="tile ' + e.category + '">' + App.escapeHTML(e.initials) + '</span>' +
-          '<span class="row-main"><span class="row-title" style="display:block">' + title + '</span><span class="row-sub" style="display:block">' + App.escapeHTML(e.sub) + ' · Tap to edit</span></span>' +
-          '<span class="amt">' + fmt(e.amount) + '</span><span class="edit-hint">' + App.icon('chevron.right', 8) + '</span></button></div>';
+          '<span class="row-main"><span class="row-title" style="display:block">' + title + '</span><span class="row-sub" style="display:block">' + App.escapeHTML(e.sub) + '</span></span>' +
+          '<span class="amt">' + fmt(e.amount) + '</span></button></div>';
       }).join('');
     },
 

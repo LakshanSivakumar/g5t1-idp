@@ -147,11 +147,13 @@ html.sim-device .home-indicator-sim { display: block; }
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* a classic scrollbar would narrow the page and misalign it with the tab bar */
   padding: calc(var(--sat) + 8px) 16px 28px;
   display: flex;
   flex-direction: column;
 }
 /* Never let flex squash cards/lists; the body scrolls instead */
+.screen-body::-webkit-scrollbar { display: none; }
 .screen-body > * { flex-shrink: 0; }
 /* Screens that show the tab bar leave room for it */
 .screen.has-tabbar .screen-body {
@@ -189,7 +191,7 @@ html.sim-device .home-indicator-sim { display: block; }
 .section-label {
   font-size: 13px; font-weight: 400; letter-spacing: -0.08px; text-transform: uppercase;
   color: var(--sn-text-secondary);
-  margin: 24px 16px 7px;
+  margin: 24px 0 7px;
 }
 .footnote { font-size: 13px; line-height: 1.4; color: var(--sn-text-secondary); margin: 12px 4px 0; }
 .muted { color: var(--sn-text-muted); }

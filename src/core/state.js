@@ -23,11 +23,11 @@ window.App.budgetError = function (daily, weekly, monthly) {
 
 /* Categories (palette: Food 34 / Transport 22 / Shopping 20 / Bills 14 / Other 10) */
 window.App.CATEGORIES = [
-  { id: 'food',      name: 'Food',      pct: 34, last: 198.56, color: 'var(--sn-cat-food)',      icon: 'cup.and.saucer' },
-  { id: 'transport', name: 'Transport', pct: 22, last: 128.48, color: 'var(--sn-cat-transport)', icon: 'tram.fill' },
-  { id: 'shopping',  name: 'Shopping',  pct: 20, last: 116.80, color: 'var(--sn-cat-shopping)',  icon: 'bag.fill' },
-  { id: 'bills',     name: 'Bills',     pct: 14, last: 81.76,  color: 'var(--sn-cat-bills)',     icon: 'bolt.fill' },
-  { id: 'other',     name: 'Other',     pct: 10, last: 58.40,  color: 'var(--sn-cat-other)',     icon: 'ellipsis.circle' }
+  { id: 'food',      name: 'Food',      pct: 34, last: 198.56, color: 'var(--sn-cat-food)',      icon: 'fork.knife' },
+  { id: 'transport', name: 'Transport', pct: 22, last: 128.48, color: 'var(--sn-cat-transport)', icon: 'bus' },
+  { id: 'shopping',  name: 'Shopping',  pct: 20, last: 116.80, color: 'var(--sn-cat-shopping)',  icon: 'bag' },
+  { id: 'bills',     name: 'Bills',     pct: 14, last: 81.76,  color: 'var(--sn-cat-bills)',     icon: 'receipt' },
+  { id: 'other',     name: 'Other',     pct: 10, last: 58.40,  color: 'var(--sn-cat-other)',     icon: 'square.grid.2x2' }
 ];
 
 /* Week of 31 Aug – 6 Sep. [day label, time, title, venue, amount, category] */

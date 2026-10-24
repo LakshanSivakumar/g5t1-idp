@@ -37,13 +37,25 @@ App.registerScreen('setup-2', {
     var daily = $('b-daily'), weekly = $('b-weekly'), monthly = $('b-monthly');
     var cont = $('goal-continue');
 
+    // Goal date is optional, but if given it must be a real MM/YYYY this month or later
+    function dateOk() {
+      var v = $('g-date').value;
+      if (!v) return true;
+      var m = /^(\d{2})\/(\d{4})$/.exec(v);
+      if (!m || m[1] < 1 || m[1] > 12) return false;
+      var now = new Date();
+      return +m[2] * 12 + +m[1] >= now.getFullYear() * 12 + now.getMonth() + 1;
+    }
+
     function sync() {
-      var d = num(daily);
+      var d = num(daily), ok = dateOk();
+      $('g-date').closest('.field').classList.toggle('invalid', !ok);
       weekly.placeholder = d ? String(d * 7) : '';
       monthly.placeholder = d ? String(d * 30) : '';
-      cont.classList.toggle('is-disabled', !d);
-      cont.setAttribute('aria-disabled', d ? 'false' : 'true');
-      $('goal-note').hidden = !!d;
+      cont.classList.toggle('is-disabled', !d || !ok);
+      cont.setAttribute('aria-disabled', d && ok ? 'false' : 'true');
+      $('goal-note').textContent = !ok ? 'Enter a goal date as MM/YYYY (this month or later), or leave it blank.' : 'Enter your daily limit to continue.';
+      $('goal-note').hidden = !!d && ok;
     }
     daily.addEventListener('input', sync);
 
@@ -51,11 +63,19 @@ App.registerScreen('setup-2', {
     $('g-date').addEventListener('input', function (e) {
       var v = e.target.value.replace(/\D/g, '').slice(0, 6);
       e.target.value = v.length > 2 ? v.slice(0, 2) + '/' + v.slice(2) : v;
+      sync();
+    });
+
+    // Tapping an empty goal field fills in sample content
+    var next = new Date(); next.setFullYear(next.getFullYear() + 1);
+    var samples = { 'g-purpose': 'MacBook Pro', 'g-amount': '2000', 'g-date': ('0' + (next.getMonth() + 1)).slice(-2) + '/' + next.getFullYear() };
+    Object.keys(samples).forEach(function (id) {
+      $(id).addEventListener('focus', function (e) { if (!e.target.value) { e.target.value = samples[id]; e.target.select(); sync(); } });
     });
 
     cont.addEventListener('click', function () {
       var d = num(daily);
-      if (!d) { daily.focus(); return; }
+      if (!d || !dateOk()) { (d ? $('g-date') : daily).focus(); return; }
       var err = App.budgetError(d, num(weekly), num(monthly));
       if (err) { App.showToast(err); return; }
       var s = App.state;

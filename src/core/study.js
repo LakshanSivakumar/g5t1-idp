@@ -111,8 +111,10 @@
   }
 
   function prefer() {
-    card('<p class="study-eyebrow">One last question</p><h2>Which do you prefer for revealing actions on an item?</h2>' +
-      '<div class="study-choices"><button class="btn btn-secondary" data-pref="tapping">Tapping</button><button class="btn btn-secondary" data-pref="swiping">Swiping</button></div>');
+    var used = variant() === 'B' ? 'swiping' : 'tapping', mark = ' (the version you used)';
+    card('<p class="study-eyebrow">One last question</p><h2>Between tapping and swiping to reveal the edit and delete actions, which would you prefer?</h2>' +
+      '<div class="study-choices"><button class="btn btn-secondary" data-pref="tapping">Tapping' + (used === 'tapping' ? mark : '') + '</button>' +
+      '<button class="btn btn-secondary" data-pref="swiping">Swiping' + (used === 'swiping' ? mark : '') + '</button></div>');
     root.querySelectorAll('[data-pref]').forEach(function (b) {
       b.onclick = function () { pending.preference = b.dataset.pref; sendTask(); next(); };
     });

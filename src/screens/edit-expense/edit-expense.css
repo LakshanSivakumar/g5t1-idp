@@ -1,5 +1,5 @@
 .edit-sheet .field { margin-top: 4px; }
-.edit-chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0 4px; scrollbar-width: none; }
+.edit-chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 8px; scrollbar-width: none; }
 .edit-chips::-webkit-scrollbar { display: none; }
 .edit-sheet .stack { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
 .edit-delete { color: var(--sn-rose-text); }

@@ -6,7 +6,9 @@
 .study-card p { font-size: 15px; color: var(--sn-text-secondary); margin-top: 10px; line-height: 1.4; }
 .study-card .btn { margin-top: 20px; }
 .study-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--sn-text-secondary); margin: 0 0 6px; }
-.study-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;  /* two rows of five keeps every button a full 48pt target */ margin-top: 18px; }
+.study-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 18px; }
+.study-choices { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.study-choices .btn { margin-top: 0; }
 .study-rate { min-height: 48px; border-radius: 12px; background: var(--sn-bg-subtle); font-size: 18px; font-weight: 600; }
 .study-rate:active { background: var(--sn-cta-bg); color: var(--sn-cta-fg); }
 .study-ends { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--sn-text-secondary); }

@@ -19,3 +19,5 @@ html.proto-on p.proto-only { display: block; }
 .val-field .t { flex: 1; }
 .val-edit { display: inline-flex; align-items: center; gap: 2px; }
 .edit-pen { display: inline-flex; margin-left: 6px; color: var(--sn-text-muted); }
+.proto-grid { margin-top: 32px; }
+.section-label + .proto-grid { margin-top: 0; }

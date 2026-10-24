@@ -37,8 +37,8 @@
           </div>
           <div class="card cat-card" id="cat-card"></div>
           <p class="section-label">Recent purchases</p>
-          <label class="cat-select"><span>Choose a category</span><select id="cat-choose" aria-label="Choose a category"><option value="" disabled selected>Choose a category</option>${catOptions()}</select>${App.icon('chevron.down', 16, 'chev')}</label>
-          <p class="footnote">Pick a category above to see your recent purchases in it.</p>
+          <div class="cat-grid" id="cat-grid"></div>
+          <p class="footnote">Tap a category to see your recent purchases in it.</p>
         </div>`;
     },
     onEnter() { this.paint(); },
@@ -48,6 +48,10 @@
         var on = b.dataset.range === range;
         b.classList.toggle('active', on); b.setAttribute('aria-selected', on);
       });
+      document.getElementById('cat-grid').innerHTML = cats.map(function (c, i) {
+        return '<button class="card cat-tile" data-cat="' + c.id + '"><span class="tile ' + c.id + '">' + App.icon(c.icon, 18) + '</span>' +
+          '<span class="cat-tile-name">' + c.name + '</span><span class="cat-tile-amt">' + fmt(d.amounts[i]) + '</span></button>';
+      }).join('');
       document.getElementById('cat-card').innerHTML =
         '<div class="eyebrow">' + r.label + '</div><div class="ins-big">' + fmt(d.total) + '</div>' +
         '<div class="ins-split">' + App.pie(cats.map(function (c, i) { return { pct: d.amounts[i], color: c.color }; }), 'lg') +
@@ -61,9 +65,9 @@
         var b = e.target.closest('[data-range]');
         if (b) { range = b.dataset.range; self.paint(); }
       });
-      document.getElementById('cat-choose').addEventListener('change', function (e) {
-        App.router.go('category', { param: e.target.value });
-        e.target.selectedIndex = 0;
+      document.getElementById('cat-grid').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-cat]');
+        if (b) App.router.go('category', { param: b.dataset.cat });
       });
     }
   });

@@ -16,3 +16,9 @@
 .where-row .t { font-size: 17px; font-weight: 400; display: flex; justify-content: space-between; }
 .where-row .s { font-size: 15px; color: var(--sn-text-secondary); margin-top: 2px; }
 .cat-range { margin-bottom: 12px; }
+.cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cat-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px; }
+.cat-grid .cat-tile + .cat-tile { margin-top: 0; }
+.cat-tile .tile { margin-bottom: 6px; }
+.cat-tile-name { font-size: 17px; font-weight: 600; }
+.cat-tile-amt { font-size: 15px; color: var(--sn-text-secondary); font-variant-numeric: tabular-nums; }

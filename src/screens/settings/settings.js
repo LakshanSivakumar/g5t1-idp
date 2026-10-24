@@ -41,11 +41,6 @@
               <button role="radio" data-state="12">Within</button><button role="radio" data-state="17.4">Near limit</button><button role="radio" data-state="21.2">Over</button></div>
             <button class="btn btn-secondary" id="proto-warning">Preview budget warning</button>
             <button class="btn btn-secondary" data-goto="lock">Preview lock-screen alert</button>
-            <div class="eyebrow" style="margin-top:6px">Maze A/B testing <span id="maze-status-badge" class="maze-status">Not connected</span></div>
-            <div class="maze-variants"><button class="btn btn-secondary maze-variant-btn" id="btn-var-a">Variant A</button><button class="btn btn-secondary maze-variant-btn" id="btn-var-b">Variant B</button></div>
-            <label class="field"><span class="label">Maze API key</span><input id="maze-api-key-input" placeholder="Paste key" autocomplete="off"></label>
-            <button class="btn btn-secondary" id="btn-save-maze-key">Save key</button>
-            <button class="btn btn-secondary" id="btn-copy-maze-url">Copy test link</button>
           </div>
           <button class="btn btn-ghost btn-block logout" data-goto="onboarding">Log out</button>
         </div>`;
@@ -58,8 +53,6 @@
         App.state.emit('budget'); App.screens.settings.paint();
       });
       document.getElementById('proto-warning').onclick = function () { App.overlay.open('alert-warning'); };
-      document.getElementById('btn-var-a').onclick = function () { App.maze.switchVariant('A'); };
-      document.getElementById('btn-var-b').onclick = function () { App.maze.switchVariant('B'); };
       App.state.on('recurring', function () { App.screens.settings.paint(); });
     },
     onEnter() { this.paint(); },

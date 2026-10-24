@@ -20,5 +20,5 @@
 .cat-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 14px; }
 .cat-tile-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .cat-grid .cat-tile + .cat-tile { margin-top: 0; }
-.cat-tile-name { font-size: 17px; font-weight: 600; }
-.cat-tile-amt { font-size: 22px; font-weight: 700; color: var(--sn-text-secondary); font-variant-numeric: tabular-nums; }
+.cat-tile-name { font-size: 19px; font-weight: 600; }
+.cat-tile-amt { font-size: 15px; font-weight: 400; color: var(--sn-text-secondary); font-variant-numeric: tabular-nums; }

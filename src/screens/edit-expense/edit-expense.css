@@ -1,8 +1,7 @@
 .edit-sheet .field { margin-top: 4px; }
-.edit-chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0 4px; scrollbar-width: none; }
+.edit-chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 8px; scrollbar-width: none; }
 .edit-chips::-webkit-scrollbar { display: none; }
 .edit-sheet .stack { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
 .edit-delete { color: var(--sn-rose-text); }
 .edit-delete-confirm { background: var(--sn-rose-600); color: #fff; }
 .latest-item.is-editable { width: 100%; text-align: left; }
-.latest-item .edit-hint { color: var(--sn-text-muted); display: inline-flex; margin-left: 4px; }

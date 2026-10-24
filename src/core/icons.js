@@ -215,6 +215,31 @@ window.App.icons = {
   "vb": "0 0 24 24",
   "attrs": "fill=\"currentColor\"",
   "inner": "<path d=\"M12 2a2 2 0 0 0-2 2v7H9V6a2 2 0 0 0-4 0v8c0 4.4 3.6 8 8 8h1a6 6 0 0 0 6-6V9a2 2 0 0 0-4 0v2h-1V4a2 2 0 0 0-2-2z\"/>"
+ },
+ "fork.knife": {
+  "vb": "0 0 24 24",
+  "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+  "inner": "<path d=\"M7 3v6a2.5 2.5 0 0 0 5 0V3M9.5 3v18\"/><path d=\"M17.5 21V3c-2.2 1.3-3.5 4-3.5 8h3.5\"/>"
+ },
+ "bus": {
+  "vb": "0 0 24 24",
+  "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+  "inner": "<rect x=\"4\" y=\"3.5\" width=\"16\" height=\"14\" rx=\"3\"/><path d=\"M4 11h16M8 21v-3.5M16 21v-3.5M8.5 14.5h.01M15.5 14.5h.01\"/>"
+ },
+ "bag": {
+  "vb": "0 0 24 24",
+  "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+  "inner": "<path d=\"M5.5 8h13l-1 12.5h-11z\"/><path d=\"M9 8V6.5a3 3 0 0 1 6 0V8\"/>"
+ },
+ "receipt": {
+  "vb": "0 0 24 24",
+  "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+  "inner": "<path d=\"M6 3h12v18l-3-2-3 2-3-2-3 2z\"/><path d=\"M9.5 8h5M9.5 12h5\"/>"
+ },
+ "square.grid.2x2": {
+  "vb": "0 0 24 24",
+  "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+  "inner": "<rect x=\"4\" y=\"4\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/><rect x=\"13.5\" y=\"4\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/><rect x=\"4\" y=\"13.5\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/><rect x=\"13.5\" y=\"13.5\" width=\"6.5\" height=\"6.5\" rx=\"1.5\"/>"
  }
 };
 

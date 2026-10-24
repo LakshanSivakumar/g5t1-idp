@@ -49,8 +49,8 @@
         b.classList.toggle('active', on); b.setAttribute('aria-selected', on);
       });
       document.getElementById('cat-grid').innerHTML = cats.map(function (c, i) {
-        return '<button class="card cat-tile" data-cat="' + c.id + '"><span class="tile ' + c.id + '">' + App.icon(c.icon, 18) + '</span>' +
-          '<span class="cat-tile-name">' + c.name + '</span><span class="cat-tile-amt">' + fmt(d.amounts[i]) + '</span></button>';
+        return '<button class="card cat-tile" data-cat="' + c.id + '"><span class="cat-tile-head"><span class="tile ' + c.id + '">' + App.icon(c.icon, 18) + '</span>' +
+          '<span class="cat-tile-name">' + c.name + '</span></span><span class="cat-tile-amt">' + fmt(d.amounts[i]) + '</span></button>';
       }).join('');
       document.getElementById('cat-card').innerHTML =
         '<div class="eyebrow">' + r.label + '</div><div class="ins-big">' + fmt(d.total) + '</div>' +

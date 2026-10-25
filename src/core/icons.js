@@ -243,7 +243,18 @@ window.App.icons = {
  }
 };
 
+// SF Symbols PNG exports (white glyph, alpha) tinted via CSS mask so they follow currentColor. name -> [w, h] of the PNG.
+window.App.pngIcons = {
+  'flame.fill': [17, 23], 'fork.knife': [14, 25], 'bus.fill': [22, 23],
+  'bag.fill': [18, 20], 'text.document.fill': [17, 21], 'ellipsis.circle.fill': [20, 20]
+};
+
 window.App.icon = function (name, size, cls) {
+  var px = window.App.pngIcons[name];
+  if (px) {
+    var pw = size || 22, ph = Math.round(pw * px[1] / px[0]);
+    return '<span class="sf-icon ' + (cls || '') + '" style="display:inline-block;width:' + pw + 'px;height:' + ph + 'px;background:currentColor;-webkit-mask:url(icons/sf/' + name + '.png) center/contain no-repeat;mask:url(icons/sf/' + name + '.png) center/contain no-repeat" aria-hidden="true"></span>';
+  }
   var d = window.App.icons[name];
   if (!d) return '';
   var w = size || 22;

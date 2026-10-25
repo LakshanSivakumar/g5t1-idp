@@ -3,8 +3,8 @@
  *
  * Turn on with ?study=1 (the ab.html link does this). A tester sees a short intro, then one task: edit an expense. We record
  * time to finish, taps (every press while the task runs), misses (taps on nothing interactive), the steps taken with
- * timestamps and the outcome (success / gave up). Either way they then rate how intuitive it was (1–5) and say whether they
- * prefer tapping or swiping to reveal actions. Rows go to a Google Sheet (docs/study-sheet.gs).
+ * timestamps and the outcome (success / gave up). Either way they then rate how easy it was to work out (1–5), say whether they
+ * prefer tapping or swiping to reveal actions and why. Before the task they give their course. Rows go to a Google Sheet (docs/study-sheet.gs).
  */
 (function () {
   var q = new URLSearchParams(location.search);
@@ -43,13 +43,14 @@
     });
   }
   function send(kind, data) {
-    var row = Object.assign({ kind: kind, ts: new Date().toISOString(), pid: pid, variant: variant(), device: /Mobi|iPhone|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop', viewport: innerWidth + 'x' + innerHeight }, data);
+    var row = Object.assign({ kind: kind, ts: new Date().toISOString(), pid: pid, course: course, variant: variant(), device: /Mobi|iPhone|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop', viewport: innerWidth + 'x' + innerHeight }, data);
     queue.push(row); persist();
     if (!cfg().STUDY_ENDPOINT && window.console) console.info('[study]', row);
     flush();
   }
 
   /* ---------- State ---------- */
+  var course = '';
   var idx = -1, run = null, pending = null; // idx: current task; run: live metrics; pending: finished task row awaiting its feedback
   function newRun() { return { t0: Date.now(), taps: 0, misses: 0, steps: [] }; }
   function ms() { return Date.now() - run.t0; }
@@ -75,7 +76,16 @@
       '<p>You’ll try one thing in a budgeting app, like you would on your own phone. There are no wrong answers: we’re testing the app, not you.</p>' +
       '<p>It takes about a minute. We record taps and timing, never anything personal.</p>' +
       '<button class="btn btn-primary btn-block" id="study-begin">Begin</button>');
-    document.getElementById('study-begin').onclick = function () { send('event', { type: 'begin' }); next(); };
+    document.getElementById('study-begin').onclick = function () { send('event', { type: 'begin' }); askCourse(); };
+  }
+
+  function askCourse() {
+    card('<p class="study-eyebrow">Before we start</p><h2>What course are you studying?</h2>' +
+      '<input class="study-input" id="study-course" type="text" autocomplete="off" placeholder="e.g. Business Analytics" aria-label="Your course">' +
+      '<button class="btn btn-primary btn-block" id="study-course-go" disabled>Continue</button>');
+    var inp = document.getElementById('study-course'), go = document.getElementById('study-course-go');
+    inp.oninput = function () { go.disabled = !inp.value.trim(); };
+    go.onclick = function () { course = inp.value.trim(); send('event', { type: 'course', detail: course }); next(); };
   }
 
   function next() {
@@ -103,8 +113,8 @@
     var r = run; run = null; banner.hidden = true; App.overlay.close();
     pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, steps: r.steps.join(' ') };
     var scale = [1, 2, 3, 4, 5].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
-    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How intuitive was that?</h2>' +
-      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = not intuitive</span><span>5 = very intuitive</span></div>');
+    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was it to work out how to change the amount, without any help?</h2>' +
+      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very hard to work out</span><span>5 = very easy to work out</span></div>');
     root.querySelectorAll('.study-rate').forEach(function (b) {
       b.onclick = function () { pending.rating = +b.dataset.n; prefer(); };
     });
@@ -112,12 +122,21 @@
 
   function prefer() {
     var used = variant() === 'B' ? 'swiping' : 'tapping', mark = ' (the version you used)';
-    card('<p class="study-eyebrow">One last question</p><h2>Between tapping and swiping to reveal the edit and delete actions, which would you prefer?</h2>' +
+    card('<p class="study-eyebrow">Almost done</p><h2>Between tapping and swiping to reveal the edit and delete actions, which would you prefer?</h2>' +
       '<div class="study-choices"><button class="btn btn-secondary" data-pref="tapping">Tapping' + (used === 'tapping' ? mark : '') + '</button>' +
       '<button class="btn btn-secondary" data-pref="swiping">Swiping' + (used === 'swiping' ? mark : '') + '</button></div>');
     root.querySelectorAll('[data-pref]').forEach(function (b) {
-      b.onclick = function () { pending.preference = b.dataset.pref; sendTask(); next(); };
+      b.onclick = function () { pending.preference = b.dataset.pref; why(); };
     });
+  }
+
+  function why() {
+    card('<p class="study-eyebrow">One last question</p><h2>Why do you prefer ' + pending.preference + '?</h2>' +
+      '<p>A short sentence is fine.</p><textarea class="study-input" id="study-why" rows="3" aria-label="Why you prefer ' + pending.preference + '"></textarea>' +
+      '<button class="btn btn-primary btn-block" id="study-why-go" disabled>Finish</button>');
+    var inp = document.getElementById('study-why'), go = document.getElementById('study-why-go');
+    inp.oninput = function () { go.disabled = !inp.value.trim(); };
+    go.onclick = function () { pending.why = inp.value.trim(); sendTask(); next(); };
   }
 
   function sendTask() {

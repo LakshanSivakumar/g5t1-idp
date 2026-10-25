@@ -9,6 +9,8 @@
 .study-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 18px; }
 .study-choices { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
 .study-choices .btn { margin-top: 0; }
+.study-input { display: block; width: 100%; margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: var(--sn-bg-subtle); font: inherit; font-size: 16px; color: inherit; border: 0; resize: none; }
+.study-card .btn:disabled { opacity: 0.4; }
 .study-rate { min-height: 48px; border-radius: 12px; background: var(--sn-bg-subtle); font-size: 18px; font-weight: 600; }
 .study-rate:active { background: var(--sn-cta-bg); color: var(--sn-cta-fg); }
 .study-ends { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--sn-text-secondary); }

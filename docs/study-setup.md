@@ -13,7 +13,7 @@ Testers open one link, get version A or B at random, do one task (edit an expens
    Then `ab.html?reset=1` before sending the real link.
 
 ## Sending it
-Send `https://<site>.netlify.app/ab.html`. Assignment is random and remembered per device.
+Send `https://<site>.netlify.app/ab.html`. Assignment is handled by the Apps Script: each version stops at 20 testers (`CAP` in `docs/study-sheet.gs`) and everyone after that sees "study is now full". It is remembered per device and counted in the `assignments` tab. Re-deploy the script after changing `CAP`.
 
 ## What you get
 `tasks` tab, one row per tester: `variant, task (edit), outcome (success|gave_up|abandoned), ms, taps, misses, rating (1-5, how easy it was to change the amount), preference (tapping|swiping), steps, course, why (free text), uni (SMU|NUS|NTU|SIT|SUTD|SIM|SUSS)`. The new columns go last so the Analysis tab's column letters still line up.

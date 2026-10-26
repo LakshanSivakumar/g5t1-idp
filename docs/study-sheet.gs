@@ -8,7 +8,7 @@
  * Two tabs are created automatically: "tasks" (one row per task) and "events" (every step/start/begin/complete).
  */
 var HEADERS = {
-  tasks:  ['ts', 'pid', 'variant', 'device', 'viewport', 'task', 'outcome', 'ms', 'taps', 'misses', 'rating', 'preference', 'steps', 'course', 'why'],
+  tasks:  ['ts', 'pid', 'variant', 'device', 'viewport', 'task', 'outcome', 'ms', 'taps', 'misses', 'rating', 'preference', 'steps', 'course', 'why', 'uni'],
   events: ['ts', 'pid', 'variant', 'device', 'viewport', 'task', 'type', 'detail', 'ms']
 };
 

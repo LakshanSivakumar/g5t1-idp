@@ -4,7 +4,7 @@
  * Turn on with ?study=1 (the ab.html link does this). A tester sees a short intro, then one task: edit an expense. We record
  * time to finish, taps (every press while the task runs), misses (taps on nothing interactive), the steps taken with
  * timestamps and the outcome (success / gave up). Either way they then rate how easy it was to work out (1–5), say whether they
- * prefer tapping or swiping to reveal actions and why. Before the task they give their university and course. Rows go to a Google Sheet (docs/study-sheet.gs).
+ * prefer tapping or swiping to reveal actions and why. Before the intro and task they give their university and course. Rows go to a Google Sheet (docs/study-sheet.gs).
  */
 (function () {
   var q = new URLSearchParams(location.search);
@@ -76,7 +76,7 @@
       '<p>You’ll try one thing in a budgeting app, like you would on your own phone. There are no wrong answers: we’re testing the app, not you.</p>' +
       '<p>It takes about a minute. We record taps and timing, never anything personal.</p>' +
       '<button class="btn btn-primary btn-block" id="study-begin">Begin</button>');
-    document.getElementById('study-begin').onclick = function () { send('event', { type: 'begin' }); askUni(); };
+    document.getElementById('study-begin').onclick = function () { send('event', { type: 'begin' }); next(); };
   }
 
   var UNIS = ['SMU', 'NUS', 'NTU', 'SIT', 'SUTD', 'SIM', 'SUSS'];
@@ -96,7 +96,7 @@
       '<button class="btn btn-primary btn-block" id="study-course-go" disabled>Continue</button>');
     var inp = document.getElementById('study-course'), go = document.getElementById('study-course-go');
     inp.oninput = function () { go.disabled = !inp.value.trim(); };
-    go.onclick = function () { course = inp.value.trim(); send('event', { type: 'course', detail: course }); next(); };
+    go.onclick = function () { course = inp.value.trim(); send('event', { type: 'course', detail: course }); intro(); };
   }
 
   function next() {
@@ -124,8 +124,8 @@
     var r = run; run = null; banner.hidden = true; App.overlay.close();
     pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, steps: r.steps.join(' ') };
     var scale = [1, 2, 3, 4, 5].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
-    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was it to work out how to change the amount, without any help?</h2>' +
-      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very hard to work out</span><span>5 = very easy to work out</span></div>');
+    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was it to change the amount, without any help?</h2>' +
+      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very hard</span><span>5 = very easy</span></div>');
     root.querySelectorAll('.study-rate').forEach(function (b) {
       b.onclick = function () { pending.rating = +b.dataset.n; prefer(); };
     });
@@ -181,6 +181,6 @@
     root = el('<div class="study-root" hidden></div>'); app.appendChild(root);
     banner = el('<div class="study-banner" hidden></div>'); app.appendChild(banner);
     flush();
-    intro();
+    askUni();
   });
 })();

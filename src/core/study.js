@@ -124,8 +124,8 @@
     var r = run; run = null; banner.hidden = true; App.overlay.close();
     pending = { task: TASKS[idx].id, outcome: outcome, ms: Date.now() - r.t0, taps: r.taps, misses: r.misses, steps: r.steps.join(' ') };
     var scale = [1, 2, 3, 4, 5].map(function (n) { return '<button class="study-rate" data-n="' + n + '" aria-label="' + n + '">' + n + '</button>'; }).join('');
-    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was it to work out how to change the amount, without any help?</h2>' +
-      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very hard to work out</span><span>5 = very easy to work out</span></div>');
+    card('<p class="study-eyebrow">' + (outcome === 'success' ? 'Done' : 'No problem') + '</p><h2>How easy was it to change the amount, without any help?</h2>' +
+      '<div class="study-scale">' + scale + '</div><div class="study-ends"><span>1 = very hard</span><span>5 = very easy</span></div>');
     root.querySelectorAll('.study-rate').forEach(function (b) {
       b.onclick = function () { pending.rating = +b.dataset.n; prefer(); };
     });

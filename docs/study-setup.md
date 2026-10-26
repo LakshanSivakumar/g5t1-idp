@@ -1,6 +1,6 @@
 # Running the edit-expense A/B study (no Maze)
 
-Testers open one link, get version A or B at random, do one task (edit an expense), give their course, then answer three feedback questions, and every result lands in a Google Sheet.
+Testers open one link, get version A or B at random, do one task (edit an expense), give their university and course, then answer three feedback questions, and every result lands in a Google Sheet.
 
 ## One-time setup
 1. **Google Sheet**: create a new sheet → Extensions → Apps Script → paste `docs/study-sheet.gs` → Save.
@@ -16,7 +16,7 @@ Testers open one link, get version A or B at random, do one task (edit an expens
 Send `https://<site>.netlify.app/ab.html`. Assignment is random and remembered per device.
 
 ## What you get
-`tasks` tab, one row per tester: `variant, task (edit), outcome (success|gave_up|abandoned), ms, taps, misses, rating (1-5, how easy it was to work out), preference (tapping|swiping), steps, course, why (free text)`. The new columns go last so the Analysis tab's column letters still line up.
+`tasks` tab, one row per tester: `variant, task (edit), outcome (success|gave_up|abandoned), ms, taps, misses, rating (1-5, how easy it was to work out), preference (tapping|swiping), steps, course, why (free text), uni (SMU|NUS|NTU|SIT|SUTD|SIM|SUSS)`. The new columns go last so the Analysis tab's column letters still line up.
 `taps` is every press while the task runs; `misses` is presses on nothing interactive.
 `events` tab: every step with its timestamp, for drill-downs.
 Compare A vs B on success rate, median `ms`, `taps`, `misses` and `rating`, and look at `preference` overall.

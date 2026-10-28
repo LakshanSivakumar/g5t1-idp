@@ -22,6 +22,8 @@ function doPost(e) {
     var sh = ss.getSheetByName(name) || ss.insertSheet(name);
     if (sh.getLastRow() === 0) sh.appendRow(HEADERS[name]);
     sh.appendRow(HEADERS[name].map(function (h) { return d[h] === undefined ? '' : d[h]; }));
+    // An abandoned tester should not use up a slot; finishing later (success / gave_up) takes the slot back.
+    if (d.kind === 'task' && d.aid) setAssignmentStatus(String(d.aid), d.outcome === 'abandoned' ? 'abandoned' : '');
     return ContentService.createTextOutput('ok');
   } finally {
     lock.releaseLock();
@@ -31,22 +33,41 @@ function doPost(e) {
 // Max testers per version. ab.html asks for a version here (?assign=1&id=<device id>) so A and B each stop at CAP.
 var CAP = 20;
 
+function assignmentsSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('assignments') || ss.insertSheet('assignments');
+  if (sh.getLastRow() === 0) sh.appendRow(['ts', 'id', 'variant', 'status']);
+  else if (sh.getRange(1, 4).getValue() === '') sh.getRange(1, 4).setValue('status');
+  return sh;
+}
+
+// status 'abandoned' means the tester left without finishing: kept in the tab for the record, but not counted towards CAP.
+function setAssignmentStatus(id, status) {
+  var sh = assignmentsSheet();
+  if (sh.getLastRow() < 2) return;
+  var rows = sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues();
+  rows.forEach(function (r, i) {
+    if (r[1] === id && r[3] !== status) sh.getRange(i + 2, 4).setValue(status);
+  });
+}
+
 function assign(id) {
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sh = ss.getSheetByName('assignments') || ss.insertSheet('assignments');
-    if (sh.getLastRow() === 0) sh.appendRow(['ts', 'id', 'variant']);
-    var rows = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues() : [];
+    var sh = assignmentsSheet();
+    var rows = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues() : [];
     var n = { A: 0, B: 0 };
-    rows.forEach(function (r) { if (r[1] === id) n.mine = r[2]; if (n[r[2]] !== undefined) n[r[2]]++; });
+    rows.forEach(function (r) {
+      if (r[1] === id) n.mine = r[2];
+      if (n[r[2]] !== undefined && r[3] !== 'abandoned') n[r[2]]++;
+    });
     if (n.mine) return n.mine; // same device asking again keeps its version
     var open = ['A', 'B'].filter(function (v) { return n[v] < CAP; });
     if (!open.length) return null;
     // fewer testers first, coin flip on a tie
     var v = open.length === 1 ? open[0] : n.A === n.B ? (Math.random() < 0.5 ? 'A' : 'B') : (n.A < n.B ? 'A' : 'B');
-    sh.appendRow([new Date().toISOString(), id, v]);
+    sh.appendRow([new Date().toISOString(), id, v, '']);
     return v;
   } finally {
     lock.releaseLock();

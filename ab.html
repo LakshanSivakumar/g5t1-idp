@@ -31,7 +31,8 @@
     if (forced === 'A' || forced === 'B') return location.replace(SITE[forced]);
     function go(variant) {
       try { localStorage.setItem(key, variant); } catch (e) { /* ignore */ }
-      location.replace(SITE[variant]);
+      // aid lets the study report back which assignment this was, so abandoned testers can be released from the cap
+      location.replace(SITE[variant].replace('#', '&aid=' + encodeURIComponent(id) + '#'));
     }
     if (v === 'A' || v === 'B') return go(v);
     var ctl = new AbortController(); setTimeout(function () { ctl.abort(); }, 8000);

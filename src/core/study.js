@@ -15,6 +15,12 @@
 
   var cfg = function () { return window.App.config || {}; };
   var variant = function () { return window.App.state.mazeVariant; };
+  // Assignment id from ab.html: lets the Apps Script release this tester's slot if they abandon the study
+  var aid = (function () {
+    var id = q.get('aid');
+    try { if (id) sessionStorage.setItem('savenow_aid', id); else id = sessionStorage.getItem('savenow_aid'); } catch (e) { /* private mode */ }
+    return id || '';
+  })();
   var pid = (function () {
     var id = null;
     try { id = localStorage.getItem('savenow_pid'); } catch (e) { /* ignore */ }
@@ -43,7 +49,7 @@
     });
   }
   function send(kind, data) {
-    var row = Object.assign({ kind: kind, ts: new Date().toISOString(), pid: pid, course: course, uni: uni, variant: variant(), device: /Mobi|iPhone|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop', viewport: innerWidth + 'x' + innerHeight }, data);
+    var row = Object.assign({ kind: kind, ts: new Date().toISOString(), pid: pid, aid: aid, course: course, uni: uni, variant: variant(), device: /Mobi|iPhone|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop', viewport: innerWidth + 'x' + innerHeight }, data);
     queue.push(row); persist();
     if (!cfg().STUDY_ENDPOINT && window.console) console.info('[study]', row);
     flush();

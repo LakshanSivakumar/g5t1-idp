@@ -23,12 +23,17 @@ function doPost(e) {
     if (sh.getLastRow() === 0) sh.appendRow(HEADERS[name]);
     sh.appendRow(HEADERS[name].map(function (h) { return d[h] === undefined ? '' : d[h]; }));
     // An abandoned tester should not use up a slot; finishing later (success / gave_up) takes the slot back.
-    if (d.kind === 'task' && d.aid) setAssignmentStatus(String(d.aid), d.outcome === 'abandoned' ? 'abandoned' : '');
+    if (d.kind === 'task' && d.aid) setAssignmentStatus(String(d.aid), d.outcome === 'abandoned' ? 'abandoned' : 'done');
     return ContentService.createTextOutput('ok');
   } finally {
     lock.releaseLock();
   }
 }
+
+// A new assignment is 'pending' until its tester submits a result ('done') or leaves ('abandoned').
+// A pending assignment that is still unfinished after PENDING_HOURS stops counting towards CAP, so people who opened the link and never
+// started do not keep the study "full". Rows with a blank status (from before this existed) always count.
+var PENDING_HOURS = 2;
 
 // Max testers per version. ab.html asks for a version here (?assign=1&id=<device id>) so A and B each stop at CAP.
 var CAP = 20;
@@ -42,6 +47,7 @@ function assignmentsSheet() {
 }
 
 // status 'abandoned' means the tester left without finishing: kept in the tab for the record, but not counted towards CAP.
+// status 'done' means they submitted a result and always counts.
 function setAssignmentStatus(id, status) {
   var sh = assignmentsSheet();
   if (sh.getLastRow() < 2) return;
@@ -60,14 +66,15 @@ function assign(id) {
     var n = { A: 0, B: 0 };
     rows.forEach(function (r) {
       if (r[1] === id) n.mine = r[2];
-      if (n[r[2]] !== undefined && r[3] !== 'abandoned') n[r[2]]++;
+      var stale = r[3] === 'pending' && Date.now() - new Date(r[0]).getTime() > PENDING_HOURS * 3600000;
+      if (n[r[2]] !== undefined && r[3] !== 'abandoned' && !stale) n[r[2]]++;
     });
     if (n.mine) return n.mine; // same device asking again keeps its version
     var open = ['A', 'B'].filter(function (v) { return n[v] < CAP; });
     if (!open.length) return null;
     // fewer testers first, coin flip on a tie
     var v = open.length === 1 ? open[0] : n.A === n.B ? (Math.random() < 0.5 ? 'A' : 'B') : (n.A < n.B ? 'A' : 'B');
-    sh.appendRow([new Date().toISOString(), id, v, '']);
+    sh.appendRow([new Date().toISOString(), id, v, 'pending']);
     return v;
   } finally {
     lock.releaseLock();

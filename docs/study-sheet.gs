@@ -12,11 +12,19 @@ var HEADERS = {
   events: ['ts', 'pid', 'variant', 'device', 'viewport', 'task', 'type', 'detail', 'ms']
 };
 
+// Timestamps are written in Singapore time (GMT+8, no daylight saving) as ISO text with the offset, e.g. 2026-10-26T19:58:06.164+08:00.
+// The offset keeps them unambiguous and parseable by new Date().
+function sgt(date) {
+  return Utilities.formatDate(date, 'Asia/Singapore', "yyyy-MM-dd'T'HH:mm:ss.SSS") + '+08:00';
+}
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
     var d = JSON.parse(e.postData.contents);
+    var when = new Date(d.ts);
+    d.ts = isNaN(when.getTime()) ? sgt(new Date()) : sgt(when); // the browser sends UTC (Z); store SGT
     var name = d.kind === 'task' ? 'tasks' : 'events';
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = ss.getSheetByName(name) || ss.insertSheet(name);
@@ -74,7 +82,7 @@ function assign(id) {
     if (!open.length) return null;
     // fewer testers first, coin flip on a tie
     var v = open.length === 1 ? open[0] : n.A === n.B ? (Math.random() < 0.5 ? 'A' : 'B') : (n.A < n.B ? 'A' : 'B');
-    sh.appendRow([new Date().toISOString(), id, v, 'pending']);
+    sh.appendRow([sgt(new Date()), id, v, 'pending']);
     return v;
   } finally {
     lock.releaseLock();

@@ -10,7 +10,7 @@
 .ring-fill.amber { stroke: var(--sn-amber-500); }
 .ring-fill.rose { stroke: var(--sn-rose-500); }
 .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 28px; }
-.ring-amount { font-size: clamp(38px, 12vw, 48px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; margin: 6px 0 4px; font-variant-numeric: tabular-nums; }
+.ring-amount { font-size: clamp(38px, 12vw, 48px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; margin: 6px 0 4px; font-variant-numeric: tabular-nums; max-width: 100%; white-space: nowrap; }
 .ring-sub { font-size: 13px; color: var(--sn-text-secondary); }
 
 

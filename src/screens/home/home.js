@@ -46,6 +46,7 @@
       streak.innerHTML = App.icon('flame.fill', 14) + (t.over ? h.bestStreak + '-day best' : h.streakDays + '-day streak');
 
       document.getElementById('home-hero').innerHTML = this.ring(h, t);
+      this.fitRingAmount();
       var f = document.getElementById('ring-fill');
       requestAnimationFrame(function () { f.style.strokeDashoffset = C * (1 - Math.min(t.pct, 1)); });
 
@@ -74,6 +75,14 @@
       }).join('');
     },
 
+    /** Shrink the centre figure until it fits inside the ring */
+    fitRingAmount() {
+      var el = document.querySelector('.ring-amount');
+      if (!el) return;
+      el.style.fontSize = '';
+      var size = parseFloat(getComputedStyle(el).fontSize);
+      while (el.scrollWidth > el.clientWidth && size > 18) { size -= 2; el.style.fontSize = size + 'px'; }
+    },
     ring(h, t) {
       var sub = t.over ? fmt(h.spentToday - h.dailyLimit) + ' over your ' + fmt(h.dailyLimit, 0) + ' limit' : fmt(t.left) + ' under your ' + fmt(h.dailyLimit, 0) + ' limit';
       return '<div class="ring-wrap" role="img" aria-label="Spent today ' + fmt(h.spentToday) + ', ' + sub + '">' +

@@ -22,6 +22,7 @@
           <p class="footnote">Tracked automatically against your <span id="soc-limit"></span> daily limit. A day over your limit breaks the streak.</p>
           <p class="section-label" style="margin-top:28px">Friends’ activity</p>
           <div class="list" id="soc-friends"></div>
+          <div id="soc-extra"></div>
           <button class="btn btn-secondary btn-block" style="margin-top:12px" data-goto="find-friends">Find friends ${App.icon('chevron.right', 8)}</button>
           <p class="footnote">Friends see shared streaks, never spending amounts.</p>
         </div>`;
@@ -48,13 +49,24 @@
         ? 'You are ' + fmt(h.spentToday - h.dailyLimit) + ' over your ' + fmt(h.dailyLimit, 0) + ' limit today. Your ' + h.bestStreak + '-day best is saved.'
         : 'days within your daily budget';
       document.getElementById('soc-limit').textContent = fmt(h.dailyLimit, 0);
+      // People added during setup (Contacts / Username / Group) join the seeded friends
+      var added = App.state.socials.filter(function (x) { return !x.pending; });
+      var pending = App.state.socials.filter(function (x) { return x.pending; });
       document.getElementById('soc-friends').innerHTML = FRIENDS.map(function (f, i) {
         return App.ui.row({
           tile: { text: f.n.slice(0, 2).toUpperCase(), cls: 'emerald' },
           title: f.n + ' ' + f.h.toLowerCase(), sub: f.t,
           toggle: '<button class="cheer ' + (f.cheered ? 'done' : '') + '" data-cheer="' + i + '"' + (f.cheered ? ' disabled' : '') + '>' + (f.cheered ? 'Cheered' : App.icon('hands.clap.fill', 14) + ' Cheer') + '</button>'
         });
-      }).join('');
+      }).concat(added.map(function (x) {
+        return App.ui.row({ tile: { text: x.name.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: esc(x.name), sub: x.type + ' · added in setup' });
+      })).join('');
+      document.getElementById('soc-extra').innerHTML = pending.length
+        ? '<p class="section-label">Friend requests sent</p><div class="list">' + pending.map(function (x) {
+            return App.ui.row({ tile: { text: x.name.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: esc(x.name), sub: 'Waiting for them to accept',
+              toggle: '<button class="cheer done" disabled>Pending</button>' });
+          }).join('') + '</div>'
+        : '';
     }
   });
 
@@ -63,6 +75,8 @@
     { h: 'jonlim', n: 'Jon Lim', s: '1 mutual friend', friend: true },
     { h: 'testuser', n: 'Test User', s: '3 mutual friends' }
   ];
+
+  function requested(p) { return App.state.socials.some(function (x) { return x.handle === p.h; }); }
 
   App.registerScreen('find-friends', {
     tab: 'social',
@@ -85,8 +99,9 @@
       document.getElementById('ff-results').addEventListener('click', function (e) {
         var b = e.target.closest('[data-add]');
         if (!b) return;
-        PEOPLE.filter(function (p) { return p.h === b.dataset.add; })[0].added = true;
-        App.showToast('Friend request sent');
+        var p = PEOPLE.filter(function (p) { return p.h === b.dataset.add; })[0];
+        App.state.socials.push({ name: p.n, handle: p.h, type: 'Username', pending: true });
+        App.showToast('Friend request sent to ' + p.n);
         self.paint();
       });
     },
@@ -95,7 +110,7 @@
       var term = document.getElementById('ff-q').value.replace(/^@/, '').trim().toLowerCase();
       var res = PEOPLE.filter(function (p) { return !term || p.h.indexOf(term) > -1 || p.n.toLowerCase().indexOf(term) > -1; });
       document.getElementById('ff-results').innerHTML = res.length ? res.map(function (p) {
-        var act = '<button class="add-btn" data-add="' + p.h + '"' + (p.added || p.friend ? ' disabled' : '') + '>' + (p.friend ? 'Friends' : p.added ? 'Added' : 'Add') + '</button>';
+        var act = '<button class="add-btn" data-add="' + p.h + '"' + (requested(p) || p.friend ? ' disabled' : '') + '>' + (p.friend ? 'Friends' : requested(p) ? 'Requested' : 'Add') + '</button>';
         return App.ui.row({ tile: { text: p.n.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: '@' + p.h, sub: p.s, toggle: act });
       }).join('') : '<div class="empty"><strong>No one found</strong><span>Check the username and try again</span></div>';
     }

@@ -219,7 +219,7 @@ window.App.icons = {
  "fork.knife": {
   "vb": "0 0 24 24",
   "attrs": "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
-  "inner": "<g transform=\"translate(12 12) scale(0.8) translate(-12 -12)\"><path d=\"M7 3v6a2.5 2.5 0 0 0 5 0V3M9.5 3v18\"/><path d=\"M17.5 21V3c-2.2 1.3-3.5 4-3.5 8h3.5\"/></g>"
+  "inner": "<g transform=\"translate(12 12) scale(0.92) translate(-12 -12)\"><path d=\"M7 3v6a2.5 2.5 0 0 0 5 0V3M9.5 3v18\"/><path d=\"M17.5 21V3c-2.2 1.3-3.5 4-3.5 8h3.5\"/></g>"
  },
  "bus": {
   "vb": "0 0 24 24",

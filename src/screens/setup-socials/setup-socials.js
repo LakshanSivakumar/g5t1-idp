@@ -28,6 +28,9 @@ App.registerScreen('setup-4', {
       </div>`;
   },
 
+  // Reflect friends already added elsewhere (e.g. requests sent from the Social tab)
+  onEnter() { if (this.renderAdded) this.renderAdded(); },
+
   init() {
     var $ = function (id) { return document.getElementById(id); };
     var mode = 'group';
@@ -48,7 +51,7 @@ App.registerScreen('setup-4', {
       var list = App.state.socials;
       $('soc-added').innerHTML = list.length
         ? '<p class="section-label" style="margin-top:0">Added</p><div class="list">' + list.map(function (s, i) {
-            return App.ui.row({ title: App.escapeHTML(s.name), sub: s.type, tile: { text: s.name.slice(0, 2).toUpperCase(), cls: 'emerald' },
+            return App.ui.row({ title: App.escapeHTML(s.name), sub: s.pending ? 'Request sent' : s.type, tile: { text: s.name.slice(0, 2).toUpperCase(), cls: 'emerald' },
               toggle: '<button class="soc-remove" data-remove="' + i + '" aria-label="Remove ' + App.escapeHTML(s.name) + '">Remove</button>' });
           }).join('') + '</div>'
         : '';
@@ -71,6 +74,7 @@ App.registerScreen('setup-4', {
       renderAdded();
       App.showToast('Added ' + v);
     };
+    this.renderAdded = renderAdded;
     $('soc-continue').onclick = function () { App.router.go('home', { root: true }); };
   }
 });

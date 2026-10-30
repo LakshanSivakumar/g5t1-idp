@@ -5,13 +5,14 @@
 
 .bank-list { display: flex; flex-direction: column; gap: 12px; }
 .bank-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 8px 8px 8px 16px; }
-.bank-logo { display: inline-flex; align-items: center; justify-content: center; height: 44px; min-width: 96px; padding: 0 12px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px rgba(60, 60, 67, 0.12); }
-.bank-logo img { display: block; height: 26px; width: auto; max-width: 120px; }
-.bank-logo.trust { min-width: 0; padding: 0; width: 44px; background: none; box-shadow: none; overflow: hidden; }
+.bank-logo { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; height: 44px; width: 120px; padding: 0 12px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px rgba(60, 60, 67, 0.12); overflow: hidden; }
+.bank-logo img { display: block; height: 26px; width: auto; max-width: 100%; }
+/* Trust's mark is a square tile: let its blue fill the whole chip so it matches the other logos' size */
+.bank-logo.trust { padding: 0; background: #02A0E2; box-shadow: none; }
 .bank-logo.trust img { height: 44px; width: 44px; max-width: none; }
-.bank-logo.big { height: 84px; min-width: 200px; padding: 0 24px; border-radius: 18px; }
-.bank-logo.big img { height: 48px; max-width: 220px; }
-.bank-logo.big.trust { width: 84px; min-width: 0; padding: 0; }
+.bank-logo.big { height: 84px; width: 220px; padding: 0 24px; border-radius: 18px; }
+.bank-logo.big img { height: 48px; max-width: 100%; }
+.bank-logo.big.trust { padding: 0; }
 .bank-logo.big.trust img { height: 84px; width: 84px; }
 .bank-btn { min-width: 112px; }
 .bank-btn.connected { background: var(--sn-emerald-50); color: var(--sn-accent); border-color: var(--sn-emerald-border); }

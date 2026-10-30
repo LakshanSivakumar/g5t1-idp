@@ -61,6 +61,8 @@
       document.getElementById('bank-footer-setup').hidden = fromSettings;
       document.getElementById('bank-footer-settings').hidden = !fromSettings;
       document.getElementById('bank-skip').hidden = fromSettings;
+      // The "Setup" eyebrow only belongs to the first-run flow
+      document.querySelector('#bank-skip').closest('.screen-body').querySelector('.setup-head .eyebrow').style.display = fromSettings ? 'none' : '';
       document.querySelectorAll('[data-bank]').forEach(function (btn) {
         var on = !!App.state.connectedBanks[btn.getAttribute('data-bank')];
         btn.textContent = on ? 'Connected' : 'Connect';

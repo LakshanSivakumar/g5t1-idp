@@ -29,6 +29,14 @@
     },
     init() {
       document.getElementById('soc-friends').addEventListener('click', function (e) {
+        var a = e.target.closest('[data-cheer-added]');
+        if (a) {
+          var x = App.state.socials[+a.dataset.cheerAdded];
+          x.cheered = true;
+          App.showToast('You cheered ' + x.name);
+          App.screens.social.paint();
+          return;
+        }
         var b = e.target.closest('[data-cheer]');
         if (!b) return;
         var f = FRIENDS[+b.dataset.cheer];
@@ -50,7 +58,8 @@
         : 'days within your daily budget';
       document.getElementById('soc-limit').textContent = fmt(h.dailyLimit, 0);
       // People added during setup (Contacts / Username / Group) join the seeded friends
-      var added = App.state.socials.filter(function (x) { return !x.pending; });
+      var added = App.state.socials.filter(function (x) { return !x.pending && x.type !== 'Group'; });
+      var groups = App.state.socials.filter(function (x) { return !x.pending && x.type === 'Group'; });
       var pending = App.state.socials.filter(function (x) { return x.pending; });
       document.getElementById('soc-friends').innerHTML = FRIENDS.map(function (f, i) {
         return App.ui.row({
@@ -59,14 +68,22 @@
           toggle: '<button class="cheer ' + (f.cheered ? 'done' : '') + '" data-cheer="' + i + '"' + (f.cheered ? ' disabled' : '') + '>' + (f.cheered ? 'Cheered' : App.icon('hands.clap.fill', 14) + ' Cheer') + '</button>'
         });
       }).concat(added.map(function (x) {
-        return App.ui.row({ tile: { text: x.name.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: esc(x.name), sub: x.type + ' · added in setup' });
+        return App.ui.row({
+          tile: { text: x.name.slice(0, 2).toUpperCase(), cls: 'emerald' },
+          title: esc(x.name), sub: 'Within budget · Just added',
+          toggle: '<button class="cheer ' + (x.cheered ? 'done' : '') + '" data-cheer-added="' + App.state.socials.indexOf(x) + '"' + (x.cheered ? ' disabled' : '') + '>' + (x.cheered ? 'Cheered' : App.icon('hands.clap.fill', 14) + ' Cheer') + '</button>'
+        });
       })).join('');
-      document.getElementById('soc-extra').innerHTML = pending.length
+      document.getElementById('soc-extra').innerHTML = (groups.length
+        ? '<p class="section-label">Groups joined</p><div class="list">' + groups.map(function (x) {
+            return App.ui.row({ tile: { text: x.name.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: esc(x.name), sub: 'Saving circle' });
+          }).join('') + '</div>'
+        : '') + (pending.length
         ? '<p class="section-label">Friend requests sent</p><div class="list">' + pending.map(function (x) {
             return App.ui.row({ tile: { text: x.name.slice(0, 2).toUpperCase(), cls: 'emerald' }, title: esc(x.name), sub: 'Waiting for them to accept',
               toggle: '<button class="cheer done" disabled>Pending</button>' });
           }).join('') + '</div>'
-        : '';
+        : '');
     }
   });
 

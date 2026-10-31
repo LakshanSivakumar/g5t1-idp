@@ -242,7 +242,7 @@
       var n = App.state.settings.notif;
       var r = function (id, t, s) { return ui.row({ title: t, sub: s, toggle: ui.switchEl(id, n[id.replace('nt-', '')]) }); };
       return '<p class="section-label" style="margin-top:0">Budget</p><div class="list">' + r('nt-nearLimit', 'Near-limit alert', 'When about 15% of today’s budget is left') + r('nt-daily', 'Daily summary', 'A short recap at 9:00 pm') + '</div>' +
-        '<p class="section-label">Streak &amp; friends</p><div class="list">' + r('nt-milestones', 'Streak milestones', 'At 7, 30 and 100 days') + r('nt-friends', 'Friend activity', 'When a friend reaches a milestone') + '</div>' +
+        '<p class="section-label">Streak &amp; friends</p><div class="list">' + r('nt-milestones', 'Streak milestones', 'Every week and at the end of every month') + r('nt-friends', 'Friend activity', 'When a friend reaches a milestone') + '</div>' +
         '<button class="btn btn-secondary btn-block" style="margin-top:20px" data-goto="lock">Preview near-limit alert</button>' +
         '<p class="footnote">Savenow sends at most one budget alert a day, so a run of small purchases will not keep interrupting you.</p>';
     },

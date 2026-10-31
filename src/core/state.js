@@ -9,6 +9,7 @@ window.App = window.App || {};
 window.App.fmt = {
   money(n, dp) {
     var d = dp === undefined ? 2 : dp;
+    if (d === 0 && Number(n) % 1 !== 0) d = 2; // keep cents a user typed, e.g. $20.50
     return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
   }
 };

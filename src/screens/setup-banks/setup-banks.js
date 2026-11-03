@@ -17,6 +17,13 @@
     return '<header class="setup-head"><p class="eyebrow">Setup</p><h1>' + title + '</h1>' + (sub ? '<p>' + sub + '</p>' : '') + '</header>';
   };
 
+  var fromSettingsFlag = false;
+  /** The "no bank account" link only makes sense while nothing is linked; hiding it once a bank connects avoids a slip */
+  function syncSkip(fromSettings) {
+    var linked = Object.keys(App.state.connectedBanks).some(function (k) { return App.state.connectedBanks[k]; });
+    document.getElementById('bank-skip').hidden = fromSettings || linked;
+  }
+
   App.registerScreen('setup-1', {
     title: 'Connect your bank',
     render() {
@@ -58,9 +65,10 @@
     // Opened from Settings (param 'settings'): save back to Connected accounts instead of continuing the setup flow
     onEnter(param) {
       var fromSettings = param === 'settings';
+      fromSettingsFlag = fromSettings;
       document.getElementById('bank-footer-setup').hidden = fromSettings;
       document.getElementById('bank-footer-settings').hidden = !fromSettings;
-      document.getElementById('bank-skip').hidden = fromSettings;
+      syncSkip(fromSettings);
       // The "Setup" eyebrow only belongs to the first-run flow
       document.querySelector('#bank-skip').closest('.screen-body').querySelector('.setup-head .eyebrow').style.display = fromSettings ? 'none' : '';
       document.querySelectorAll('[data-bank]').forEach(function (btn) {
@@ -92,6 +100,7 @@
           if (!on) {
             App.state.connectedBanks[id] = false;
             btn.textContent = 'Connect'; btn.classList.remove('connected');
+            syncSkip(fromSettingsFlag);
             return;
           }
           document.getElementById('bank-splash-logo').innerHTML = bank.mark.replace('bank-logo', 'bank-logo big');
@@ -102,6 +111,7 @@
             App.state.connectedBanks[id] = true;
             btn.textContent = 'Connected';
             btn.classList.add('connected');
+            syncSkip(fromSettingsFlag);
             App.showToast(bank.name + ' connected');
           }, 1500);
         });

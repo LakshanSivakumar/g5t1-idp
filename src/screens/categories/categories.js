@@ -141,13 +141,18 @@
   /** August's discretionary extras plus anything the user has logged under Food or Shopping since (live) */
   var AUGUST_EXTRAS = [['Bubble tea & coffee', 16, 38.40], ['Vending drinks & snacks', 16, 30.60], ['Convenience-store snacks', 14, 21.00]];
   App.goalExtras = function () {
-    var items = AUGUST_EXTRAS.slice(), total = 90;
+    var items = AUGUST_EXTRAS.map(function (x) { return x.slice(); }), total = 90, other = [0, 0];
     var logged = App.state.home.latestExpenses.filter(function (e) { return e.logged && (e.category === 'food' || e.category === 'shopping'); });
-    if (logged.length) {
-      var sum = logged.reduce(function (a, e) { return a + e.amount; }, 0);
-      items.push(['Logged since August', logged.length, sum, true]);
-      total += sum;
-    }
+    // Match each logged purchase to the extra it belongs to; anything else goes under "Logged since August"
+    var match = [/bubble|boba|tea|coffee|latte/i, /vending|drink|soda|juice|snack/i, /convenience|7-?eleven|cheers/i];
+    logged.forEach(function (e) {
+      var k = match.findIndex(function (re) { return re.test(e.title); });
+      var row = k > -1 ? items[k] : null;
+      if (row) { row[1] += 1; row[2] += e.amount; row[3] = (row[3] || 0) + 1; }
+      else { other[0] += 1; other[1] += e.amount; }
+      total += e.amount;
+    });
+    if (other[0]) items.push(['Logged since August', other[0], other[1], 'new']);
     return { items: items, total: total };
   };
   /** Share of the current goal those extras would cover, e.g. "4.5" */
@@ -167,7 +172,7 @@
         '<div class="ins-big">' + pct + '%</div>' +
         '<div class="ins-cap">' + fmt(tot) + ' of your ' + fmt(s.amount, 0) + ' ' + esc(s.purpose) + ' goal. Put toward the goal instead, these extras would cover ' + pct + '% of it.</div></div>' +
         '<p class="section-label">What’s counted</p><div class="list">' + items.map(function (i) {
-          return App.ui.row({ title: i[0], sub: i[1] + (i[3] ? ' new purchase' + (i[1] === 1 ? '' : 's') : ' purchases in August'), value: fmt(i[2]) });
+          return App.ui.row({ title: i[0], sub: i[3] === 'new' ? i[1] + ' new purchase' + (i[1] === 1 ? '' : 's') : i[1] + ' purchases' + (i[3] ? ' (' + i[3] + ' since August)' : ' in August'), value: fmt(i[2]) });
         }).join('') + App.ui.row({ title: 'Edit what counts', sub: 'Move anything back to everyday spending', goto: 'goal-tradeoff', action: 'edit-counts' }) + '</div>' +
         '<p class="footnote">Transport, bills and groceries are not counted here. Anything you log under Food or Shopping is. Savenow tags these extras automatically and you can change any of them.</p>';
       document.querySelector('#gt-body [data-action="edit-counts"]').onclick = function (e) { e.stopPropagation(); App.showToast('Editing tags is coming soon'); };

@@ -31,6 +31,9 @@ window.App.CATEGORIES = [
   { id: 'other',     name: 'Other',     pct: 10, last: 58.40,  color: 'var(--sn-cat-other)',     icon: 'ellipsis.circle.fill' }
 ];
 
+/** Placeholder examples so the description hint matches the chosen category */
+window.App.CATEGORY_HINTS = { food: 'e.g. Bubble tea', transport: 'e.g. Bus fare', shopping: 'e.g. New headphones', bills: 'e.g. Phone bill', other: 'e.g. Gift' };
+
 /* Week of 31 Aug – 6 Sep. [day label, time, title, venue, amount, category] */
 (function () {
   var D = {
@@ -113,11 +116,11 @@ window.App.state = {
     ],
     latestExpenses: [
       { id: 'exp_1', title: 'Bubble tea', sub: 'Grab · 6:40pm', initials: 'BT', amount: 3.40, category: 'food', time: '6:40 pm', where: 'Grab' },
-      // Seeded so today's list adds up to spentToday; `seed` keeps them out of the week ledger, which already counts them
-      { id: 'exp_5', seed: true, title: 'Vending snacks', sub: 'Food · 3:20pm', initials: 'VS', amount: 2.50, category: 'food', time: '3:20 pm', where: '' },
-      { id: 'exp_2', seed: true, title: 'Lunch', sub: 'Food court · 12:35pm', initials: 'LU', amount: 4.90, category: 'food', time: '12:35 pm', where: 'Food court' },
-      { id: 'exp_3', seed: true, title: 'Mobile top-up', sub: 'Singtel · 11:00am', initials: 'MT', amount: 4.00, category: 'bills', time: '11:00 am', where: 'Singtel' },
-      { id: 'exp_4', seed: true, title: 'Bus', sub: 'Transport · 9:10am', initials: 'BU', amount: 2.60, category: 'transport', time: '9:10 am', where: '' }
+      // Seeded so today's list adds up to spentToday; `seed` keeps them out of the week ledger, which already counts them (`wk` = the ledger rows they stand for, so edits and deletes carry over)
+      { id: 'exp_5', seed: true, wk: ['wk1'], title: 'Vending snacks', sub: 'Food · 3:20pm', initials: 'VS', amount: 2.50, category: 'food', time: '3:20 pm', where: '' },
+      { id: 'exp_2', seed: true, wk: ['wk2'], title: 'Lunch', sub: 'Food court · 12:35pm', initials: 'LU', amount: 4.90, category: 'food', time: '12:35 pm', where: 'Food court' },
+      { id: 'exp_3', seed: true, wk: ['wk31'], title: 'Mobile top-up', sub: 'Singtel · 11:00am', initials: 'MT', amount: 4.00, category: 'bills', time: '11:00 am', where: 'Singtel' },
+      { id: 'exp_4', seed: true, wk: ['wk18', 'wk19'], title: 'Bus', sub: 'Transport · 9:10am', initials: 'BU', amount: 2.60, category: 'transport', time: '9:10 am', where: '' }
     ]
   },
 

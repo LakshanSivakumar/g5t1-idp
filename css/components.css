@@ -189,7 +189,7 @@ button.card, a.card, .card[data-goto] { width: 100%; text-align: left; display: 
   white-space: nowrap;
 }
 .pill-streak { background: var(--sn-streak-50); color: var(--sn-streak-600); border-color: var(--sn-streak-border); text-transform: uppercase; letter-spacing: 0.04em; font-size: 12px; font-weight: 700; }
-.pill-ontrack { background: var(--sn-emerald-50); color: var(--sn-emerald-text); border-color: transparent; font-size: 12px; font-weight: 700; min-height: 28px; }
+.pill-ontrack { background: var(--sn-emerald-50); color: var(--sn-emerald-text); border-color: transparent; font-size: 14px; font-weight: 600; min-height: var(--touch-min); padding: 10px 16px; gap: 8px; } /* same size as the .nudge banner */
 .pill-ontrack.amber { background: var(--nudge-amber-bg); color: var(--nudge-amber-fg); border-color: var(--nudge-amber-bd); }
 .pill-ontrack.rose { background: var(--nudge-rose-bg); color: var(--nudge-rose-fg); border-color: var(--nudge-rose-bd); }
 .pill-shopping { background: var(--sn-cat-shopping-tint); color: var(--sn-cat-shopping-ink); border-color: transparent; }

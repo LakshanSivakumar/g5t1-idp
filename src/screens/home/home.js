@@ -66,7 +66,7 @@
       document.getElementById('home-saved').textContent = (saved < 0 ? '−' : '') + fmt(Math.abs(saved), 0);
       var pill = document.getElementById('home-saved-pill');
       pill.className = 'pill pill-ontrack ' + t.tone;
-      pill.innerHTML = t.over ? App.icon('info.circle', 12) + ' over budget' : t.tone === 'amber' ? App.icon('info.circle', 12) + ' near limit' : App.icon('arrow.up', 12) + ' on track';
+      pill.innerHTML = t.over ? App.icon('info.circle', 18) + ' over budget' : t.tone === 'amber' ? App.icon('info.circle', 18) + ' near limit' : App.icon('arrow.up', 18) + ' on track';
       document.getElementById('home-latest').innerHTML = !h.latestExpenses.length ? '<p class="footnote">No expenses yet. Tap + to add one.</p>' : h.latestExpenses.map(function (e, i) {
         return '<div class="card latest-card"><button class="latest-item is-editable" data-edit-expense="' + App.escapeHTML(e.id) + '" aria-label="Edit or delete ' + App.escapeHTML(e.title) + ', ' + fmt(e.amount) + '">' +
           '<span class="tile ' + e.category + '">' + App.escapeHTML(e.initials) + '</span>' +

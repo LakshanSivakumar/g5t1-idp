@@ -25,7 +25,7 @@
     s.emit('budget');
     var after = s.budgetStatus();
     App.showToast('Added ' + fmt(amt) + ' · ' + c.name);
-    if (after.pct >= 0.8 && before < 0.8 && !after.over) setTimeout(function () { App.overlay.open('alert-warning'); }, 450);
+    if (s.settings.notif.nearLimit && after.pct >= 0.8 && before < 0.8 && !after.over) setTimeout(function () { App.overlay.open('alert-warning'); }, 450);
   }
 
   App.overlays = App.overlays || [];
@@ -39,7 +39,7 @@
         '<div class="add-top"><span class="label">Category</span></div>' +
         '<div class="add-chips" id="add-chips" role="group" aria-label="Category">' + App.CATEGORIES.map(function (c) { return '<button class="chip" data-cat="' + c.id + '" aria-pressed="' + (c.id === cat) + '">' + c.name + '</button>'; }).join('') + '</div>' +
         '<label class="field add-desc" for="add-desc"><span class="label">Description (optional)</span>' +
-        '<input id="add-desc" type="text" autocomplete="off" maxlength="40" enterkeyhint="done" placeholder="e.g. Bubble tea"></label>' +
+        '<input id="add-desc" type="text" autocomplete="off" maxlength="40" enterkeyhint="done" placeholder="' + App.CATEGORY_HINTS[cat] + '"></label>' +
         '<div class="add-entry"><label class="field prefix add-amount" for="add-amt"><span class="label">Amount</span><span class="sym">$</span>' +
         '<input id="add-amt" type="text" inputmode="decimal" autocomplete="off" maxlength="8" enterkeyhint="done" placeholder="0.00"></label>' +
         '<button class="btn btn-primary is-disabled" id="add-submit">Add expense</button></div>';
@@ -49,6 +49,7 @@
         var c = e.target.closest('[data-cat]');
         if (c) {
           cat = c.dataset.cat;
+          document.getElementById('add-desc').placeholder = App.CATEGORY_HINTS[cat];
           sheet.querySelectorAll('.chip').forEach(function (b) { b.setAttribute('aria-pressed', b === c); });
           show();
         }

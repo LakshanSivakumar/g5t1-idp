@@ -31,3 +31,4 @@
 @media (prefers-reduced-motion: reduce) { .bank-spinner { animation-duration: 2s; } }
 
 .bank-list + .btn-ghost { margin-top: 12px; }
+.bank-btn.connected[disabled] { opacity: 1; }

@@ -30,9 +30,9 @@
           <div class="card profile-card"><span class="avatar">BT</span><div><div class="profile-name">${esc(u.name)}</div><div class="profile-sub">@${esc(u.handle)} · ${u.currency} · ${u.country}</div></div></div>
           <div id="settings-money"></div>
           ${section('Preferences', [
-            ui.row({ title: 'Privacy &amp; sharing', sub: 'You choose what friends see', goto: 'settings-privacy' }),
-            ui.row({ title: 'Notifications', sub: 'Near-limit alerts on', goto: 'settings-notifications' }),
-            ui.row({ title: 'Help &amp; support', sub: 'How Savenow works', goto: 'settings-help' })
+            ui.row({ title: 'Privacy &amp; Sharing', sub: 'You choose what friends see', goto: 'settings-privacy' }),
+            ui.row({ title: 'Notifications', sub: '<span id="settings-notif-sub"></span>', goto: 'settings-notifications' }),
+            ui.row({ title: 'Help &amp; Support', sub: 'How Savenow works', goto: 'settings-help' })
           ])}
           <div class="proto-section">
           <p class="section-label">Developer settings</p>
@@ -63,10 +63,11 @@
       var s = App.state, banks = connectedBanks();
       var rec = s.recurringExpenses, recTot = rec.reduce(function (a, e) { return a + e.amount; }, 0);
       document.getElementById('settings-money').innerHTML = section('Your money', [
-        ui.row({ title: 'Goal &amp; budget', sub: esc(s.goal.purpose) + ' · ' + fmt(s.budget.daily, 0) + ' daily limit', goto: 'settings-goal' }),
-        ui.row({ title: 'Connected accounts', sub: banks.length ? banks.map(function (b) { return b.name; }).join(', ') + ' connected' : 'No accounts connected', goto: 'settings-accounts' }),
-        ui.row({ title: 'Recurring expenses', sub: rec.length + ' expense' + (rec.length === 1 ? '' : 's') + ' · ' + fmt(recTot) + ' / month', goto: 'settings-recurring' })
+        ui.row({ title: 'Goal &amp; Budget', sub: esc(s.goal.purpose) + ' · ' + fmt(s.budget.daily, 0) + ' daily limit', goto: 'settings-goal' }),
+        ui.row({ title: 'Connected Accounts', sub: banks.length ? banks.map(function (b) { return b.name; }).join(', ') + ' connected' : 'No accounts connected', goto: 'settings-accounts' }),
+        ui.row({ title: 'Recurring Expenses', sub: rec.length + ' expense' + (rec.length === 1 ? '' : 's') + ' · ' + fmt(recTot) + ' / month', goto: 'settings-recurring' })
       ]);
+      document.getElementById('settings-notif-sub').textContent = s.settings.notif.nearLimit ? 'Near-limit alerts on' : 'Near-limit alerts off';
       var pct = s.home.spentToday;
       document.querySelectorAll('[data-state]').forEach(function (b) {
         var on = Math.abs(parseFloat(b.dataset.state) - pct) < 0.005;
@@ -101,7 +102,7 @@
   });
 
   page('settings-goal', {
-    title: 'Goal & budget', sub: 'Your target and your limits',
+    title: 'Goal & Budget', sub: 'Your target and your limits',
     html() {
       var s = App.state;
       var pen = '<span class="edit-pen">' + App.icon('pencil', 14) + '</span>';
@@ -161,7 +162,7 @@
   });
 
   page('settings-accounts', {
-    title: 'Connected accounts', sub: 'Where your spending is read from',
+    title: 'Connected Accounts', sub: 'Where your spending is read from',
     html() { return '<div id="acc-connected"></div>' +
         section('Add', [ui.row({ title: 'Add an account', sub: 'Bank or card', goto: 'setup-1', param: 'settings' }), ui.row({ title: 'Enter expenses manually', sub: 'Use the Add tab instead', id: 'acc-manual' })]) +
         '<p class="footnote">Savenow can read transactions so it can track spending for you. It can never move money or make payments.</p>';
@@ -202,7 +203,7 @@
   });
 
   page('settings-recurring', {
-    title: 'Recurring expenses', sub: 'Bills and subscriptions',
+    title: 'Recurring Expenses', sub: 'Bills and subscriptions',
     html() { return '<p class="section-label" style="margin-top:0">This month</p><div class="card exp-list" id="sr-list"></div>' +
       '<div class="list" style="margin-top:12px">' + ui.row({ title: 'Add a recurring expense', sub: 'Rent, subscriptions, bills', goto: 'setup-3', param: 'settings' }) + '</div>' +
       '<p class="section-label">Total</p><div class="list" id="sr-total"></div>' +
@@ -224,7 +225,7 @@
   });
 
   page('settings-privacy', {
-    title: 'Privacy & sharing', sub: 'Choose what others can see',
+    title: 'Privacy & Sharing', sub: 'Choose what others can see',
     html() {
       var s = App.state.settings;
       return '<div class="list">' + ui.row({ title: 'Allow friend requests', sub: 'People can find your username', toggle: ui.switchEl('pv-req', s.friendRequests) }) +
@@ -254,7 +255,7 @@
   });
 
   page('settings-help', {
-    title: 'Help & support', sub: 'How Savenow works',
+    title: 'Help & Support', sub: 'How Savenow works',
     html() {
       var t = function (x, s, k) { return ui.row({ title: x, sub: s, id: k }); };
       return '<p class="section-label" style="margin-top:0">The basics</p><div class="list">' +

@@ -22,6 +22,18 @@
     App.state.emit('budget');
   }
 
+  /** Seeded expenses stand for rows in the week ledger: carry edits (delta) or a delete (null) over so Insights stays in step */
+  function syncLedger(e, delta) {
+    if (!e.wk) return;
+    var rows = App.WEEK_EXPENSES.filter(function (r) { return e.wk.indexOf(r.id) > -1; });
+    if (delta === null) {
+      App.WEEK_EXPENSES = App.WEEK_EXPENSES.filter(function (r) { return rows.indexOf(r) < 0; });
+      return;
+    }
+    rows.forEach(function (r) { r.cat = e.category; });
+    if (rows[0]) rows[0].amount = Math.max(0.01, Math.round((rows[0].amount + delta) * 100) / 100);
+  }
+
   function open(id) {
     var e = App.state.home.latestExpenses.filter(function (x) { return x.id === id; })[0];
     if (!e) return;
@@ -30,6 +42,7 @@
     document.getElementById('edit-amount').value = e.amount.toFixed(2);
     document.getElementById('edit-desc').value = e.title === catOf(e.category).name ? '' : e.title;
     document.querySelectorAll('#edit-chips .chip').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.cat === cat); });
+    document.getElementById('edit-desc').placeholder = App.CATEGORY_HINTS[cat];
     document.getElementById('edit-sub').textContent = e.sub;
     validate();
     track('edit-open');
@@ -54,6 +67,7 @@
     editing.initials = App.initialsOf(editing.title);
     editing.amount = Math.round(amt * 100) / 100;
     editing.category = cat;
+    syncLedger(editing, delta);
     editing.sub = next.name + (editing.where ? ' · ' + editing.where : '') + ' · ' + (editing.time || 'Just now');
     editing = null;
     track('edit-saved');
@@ -69,6 +83,7 @@
     editing = null; viaSwipe = false;
     track('deleted');
     h.latestExpenses = h.latestExpenses.filter(function (x) { return x !== gone; });
+    syncLedger(gone, null);
     App.overlay.close();
     applyDelta(-gone.amount);
     App.showToast('Deleted ' + fmt(gone.amount) + ' · ' + catOf(gone.category).name);
@@ -117,6 +132,7 @@
         var c = e.target.closest('[data-cat]');
         if (!c) return;
         cat = c.dataset.cat;
+        document.getElementById('edit-desc').placeholder = App.CATEGORY_HINTS[cat];
         document.querySelectorAll('#edit-chips .chip').forEach(function (b) { b.setAttribute('aria-pressed', b === c); });
       });
       document.getElementById('edit-save').addEventListener('click', save);

@@ -62,7 +62,7 @@
           </button>
 
           <button class="card ins-card" data-goto="timeline">
-            <div class="card-head"><span class="eyebrow">${App.icon('chart.pie.fill', 14)} Timeline</span><span class="go">View all ${App.icon('chevron.right', 7)}</span></div>
+            <div class="card-head"><span class="eyebrow">${App.icon('clock', 14)} Timeline</span><span class="go">View all ${App.icon('chevron.right', 7)}</span></div>
             <div class="ins-split"><div><div class="ins-big delta ${tl.delta > 0 ? 'up' : ''}">${tl.delta > 0 ? '+' : '−'}${dpct}%</div><div class="ins-cap">${tl.delta > 0 ? 'more' : 'less'} than last week</div></div><div class="bars mini-bars" aria-hidden="true">${timeline}</div></div>
           </button>
 

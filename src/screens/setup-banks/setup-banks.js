@@ -67,6 +67,7 @@
         var on = !!App.state.connectedBanks[btn.getAttribute('data-bank')];
         btn.textContent = on ? 'Connected' : 'Connect';
         btn.classList.toggle('connected', on);
+        btn.disabled = on; // once linked, the button is a status, not a toggle
       });
     },
     init() {
@@ -102,6 +103,7 @@
             App.state.connectedBanks[id] = true;
             btn.textContent = 'Connected';
             btn.classList.add('connected');
+            btn.disabled = true;
             App.showToast(bank.name + ' connected');
           }, 1500);
         });

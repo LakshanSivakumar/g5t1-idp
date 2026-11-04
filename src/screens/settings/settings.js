@@ -27,7 +27,7 @@
       return `
         <div class="screen-body">
           ${ui.head('Settings', 'Your account and preferences')}
-          <div class="card profile-card"><span class="avatar">BT</span><div><div class="profile-name">${esc(u.name)}</div><div class="profile-sub">@${esc(u.handle)} · ${u.currency} · ${u.country}</div></div></div>
+          <div class="card profile-card"><span class="avatar" id="settings-avatar">BT</span><div><div class="profile-name">${esc(u.name)}</div><div class="profile-sub">@${esc(u.handle)} · ${u.currency} · ${u.country}</div></div></div>
           <div id="settings-money"></div>
           ${section('Preferences', [
             ui.row({ title: 'Privacy &amp; Sharing', sub: 'You choose what friends see', goto: 'settings-privacy' }),
@@ -42,6 +42,7 @@
               <button role="radio" data-state="12">Within</button><button role="radio" data-state="17.4">Near limit</button><button role="radio" data-state="21.2">Over</button></div>
             <button class="btn btn-secondary" id="proto-warning">Preview budget warning</button>
             <button class="btn btn-secondary" data-goto="lock">Preview lock-screen alert</button>
+            <button class="btn btn-secondary" data-goto="cash-reminder" id="proto-cash">Send “Log today’s cash” reminder</button>
           </div>
           </div>
           <button class="btn btn-ghost btn-block logout" data-goto="onboarding">Log out</button>
@@ -49,6 +50,19 @@
     },
 
     init() {
+      // Hidden menu: tap the profile avatar 5 times quickly to reveal the developer settings (same switch as ?proto=1)
+      var taps = 0, last = 0;
+      document.getElementById('settings-avatar').addEventListener('click', function () {
+        var now = Date.now();
+        taps = now - last < 1500 ? taps + 1 : 1; last = now;
+        if (taps < 5) return;
+        taps = 0;
+        try { sessionStorage.setItem('savenow_proto', '1'); } catch (e) { /* private mode */ }
+        document.documentElement.classList.add('proto-on');
+        App.showToast('Developer settings unlocked');
+        var sec = document.querySelector('.proto-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
       document.getElementById('state-seg').addEventListener('click', function (e) {
         var b = e.target.closest('[data-state]'); if (!b) return;
         var h = App.state.home; h.spentToday = parseFloat(b.dataset.state); h.week[h.week.length - 1].v = h.spentToday;

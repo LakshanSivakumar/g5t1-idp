@@ -6,11 +6,10 @@
 <meta name="robots" content="noindex">
 <title>Savenow study</title>
 <!--
-  One link for every tester. Each visitor is assigned version A or B by the Apps Script (docs/study-sheet.gs), which caps each version at CAP testers, and sent to that site in study mode.
-  The assignment is remembered on that device, so reopening the link always lands on the same version.
+  One link for everyone (open to all, e.g. for grading). Each visit is a fresh 50/50 coin flip between version A and B, with no cap and no sign-in.
 
-  Send testers:  https://<your-site>/ab.html
-  Team tools:    ab.html?force=A   ab.html?force=B   ab.html?reset=1
+  Link:        https://<your-site>/ab.html
+  Pick one:    ab.html?force=A   ab.html?force=B
 -->
 <script>
   // Edit these if your Netlify site name differs. ?study=1 switches on the in-app tasks and result logging.
@@ -18,34 +17,11 @@
     A: 'https://gregarious-taffy-eea441.netlify.app/?study=1#home',
     B: 'https://design-b--gregarious-taffy-eea441.netlify.app/?study=1#home'
   };
-  var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxkxM7TiB9ptxaOiXZCnFIrxoRlhjQ-tZ_8uzrK2WgkdRHwArIciYirYDlU9n4fHMIgJA/exec';
   (function () {
-    var q = new URLSearchParams(location.search), key = 'savenow_ab_variant', idKey = 'savenow_ab_id', v = null, id = null;
-    try {
-      if (q.get('reset') === '1') localStorage.removeItem(key);
-      v = localStorage.getItem(key);
-      id = localStorage.getItem(idKey);
-      if (!id) { id = Math.random().toString(36).slice(2, 10); localStorage.setItem(idKey, id); }
-    } catch (e) { id = Math.random().toString(36).slice(2, 10); /* private mode: ask fresh every time */ }
-    var forced = q.get('force');
-    if (forced === 'A' || forced === 'B') return location.replace(SITE[forced]);
-    function go(variant) {
-      try { localStorage.setItem(key, variant); } catch (e) { /* ignore */ }
-      // aid lets the study report back which assignment this was, so abandoned testers can be released from the cap
-      location.replace(SITE[variant].replace('#', '&aid=' + encodeURIComponent(id) + '#'));
-    }
-    if (v === 'A' || v === 'B') return go(v);
-    var ctl = new AbortController(); setTimeout(function () { ctl.abort(); }, 8000);
-    fetch(ENDPOINT + '?assign=1&id=' + encodeURIComponent(id), { signal: ctl.signal })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (d.variant === 'A' || d.variant === 'B') return go(d.variant);
-        document.body.textContent = 'Thank you! This study is now full.';
-      })
-      .catch(function () {
-        // shortcut: endpoint unreachable falls back to a coin flip (cap not enforced), fix the endpoint if it keeps happening
-        var a = new Uint8Array(1); crypto.getRandomValues(a); go(a[0] % 2 ? 'B' : 'A');
-      });
+    var forced = new URLSearchParams(location.search).get('force');
+    var a = new Uint8Array(1); crypto.getRandomValues(a);
+    var variant = forced === 'A' || forced === 'B' ? forced : (a[0] % 2 ? 'B' : 'A');
+    location.replace(SITE[variant]);
   })();
 </script>
 </head>

@@ -9,11 +9,10 @@ Testers open one link, get version A or B at random, do one task (edit an expens
 3. **Config**: put the URL in `STUDY_ENDPOINT` in `src/core/config.js` on **both** `design-a`/`main` and `design-b`. Commit and push.
 4. **Netlify**: branch deploys on for `design-b`. A = `https://<site>.netlify.app`, B = `https://design-b--<site>.netlify.app`.
    Check the two `SITE` URLs at the top of `ab.html`.
-5. **Dry run**: open `ab.html?force=A&reset=1`, finish the task and both questions, check the `tasks` and `events` tabs fill in. Repeat with `force=B`.
-   Then `ab.html?reset=1` before sending the real link.
+5. **Dry run**: open `ab.html?force=A`, finish the task and both questions, check the `tasks` and `events` tabs fill in. Repeat with `force=B`.
 
 ## Sending it
-Send `https://<site>.netlify.app/ab.html`. Assignment is handled by the Apps Script: each version stops at 20 testers (`CAP` in `docs/study-sheet.gs`) and everyone after that sees "study is now full". It is remembered per device and counted in the `assignments` tab. Testers who abandon the study (the `tasks` row says `abandoned`) are marked `abandoned` in that tab's `status` column and do not count towards the cap, so their slot opens up again; if they come back and finish, they count again. To free slots for abandoned testers from before this change, type `abandoned` in the `status` column (D) of their rows in `assignments`. Assignments that are still unfinished after 2 hours (`PENDING_HOURS`) also stop counting, so people who open the link and never start don't keep the study full. Re-deploy the script (new version) after pasting it. Re-deploy the script after changing `CAP`.
+Send `https://<site>.netlify.app/ab.html`. The link is open to everyone: each visit is a random 50/50 split between A and B, with no cap. `ab.html?force=A` and `ab.html?force=B` go straight to one version.
 
 ## What you get
 All `ts` values are Singapore time (GMT+8) as text like `2026-10-26T19:58:06.164+08:00`; the `+08:00` at the end is the offset.
